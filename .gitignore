@@ -1,0 +1,30 @@
+# LaTeX compilation artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.brf
+*.ind
+*.idx
+*.ilg
+*.synctex.gz
+*.run.xml
+*.fdb_latexmk
+*.fls
+*.pdf
+*.dvi
+*.ps
+*.bcf
+*.nav
+*.snm
+*.vrb
+
+# Build directories
+build/
+
+# OS
+.DS_Store

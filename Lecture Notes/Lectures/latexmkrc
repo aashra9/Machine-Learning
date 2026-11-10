@@ -1,0 +1,8 @@
+$pdf_mode = 1;
+$out_dir = 'build';
+$aux_dir = 'build';
+$halt_on_error = 1;
+
+# Let \usepackage{course} find ../Files/Style/course.sty without abusing
+# \input@path (which makes LaTeX report the package under the wrong name).
+$ENV{'TEXINPUTS'} = '../Files/Style//:' . ($ENV{'TEXINPUTS'} // '');

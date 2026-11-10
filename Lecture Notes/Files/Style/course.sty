@@ -1,0 +1,711 @@
+\ProvidesPackage{course}[2026/11/08 v2.2 Course notes]
+%--- We create a style file for all projects related to matroids.
+
+
+% Author: Ahmed Ashraf
+% Email: aashra9@gmail.com
+% Dated: February 18, 2025
+% Version: 2.2
+
+
+%--- Notation for this document. Skip it now. Only read if needed
+%--- TCS: Theoretical Computer Science
+%--- TOC: Table of Contents
+
+
+
+%--- UTF-8 is the default input encoding in modern LaTeX (since 2018).
+% \usepackage[utf8]{inputenc}
+%--- T1 fontenc for accented characters.
+\usepackage[T1]{fontenc}
+%--- supports accented characters
+% \usepackage{lmodern}
+% %--- The Latin Modern fonts
+% \usepackage{textcomp}
+% %--- Text Companion
+
+
+
+%\usepackage{etex}
+%--- This increase the number of registers available for allocation
+%--- The newer distribution may not need this
+
+
+%--- Package for creating index 
+\usepackage[noautomatic,quiet]{imakeidx} % make index; latexmk runs makeindex
+\makeindex
+% \makeindex[name=notation, title=Notation Index]
+% \makeindex[name=general, title=General Index]
+%--- We can make more indices. 
+\usepackage[toc,page]{appendix}
+%--- We would want to have an appendix
+
+%--- We tried using the package: glossaries
+%--- This was not working correctly
+
+
+%--- For epigraphs/quotations and margin notes
+\usepackage{epigraph} % for epigraph and quotations
+\usepackage{marginnote} % for margin note
+\setlength{\epigraphwidth}{0.6\textwidth}
+%--- \usepackage{glossaries}
+%--- glossary for symbols and notation asked by overleaf good for bigger documents
+%--- We use glossaries-extra to include list of symbols
+%--- There is alternative way to include it as a chapter within appendices
+% \usepackage[symbols,nogroupskip]{glossaries-extra}
+% \makeglossaries
+%--- We would like to include list of figures, tables, symbols, algorithms in the toc, the following does that. The option [nottoc] avoid the self-reference of toc.
+\usepackage[nottoc]{tocbibind}
+
+
+\usepackage{etoolbox}
+%--- etoolbox: this will help us define subtitle
+%--- which we do right below
+\makeatletter
+\providecommand{\@subtitle}{}
+\def\subtitle#1{\gdef\@subtitle{#1}}
+\patchcmd\maketitle
+  {{\LARGE \@title \par}}
+  {{\LARGE \@title \par}%
+   \vskip 1.5em
+   {\Large \@subtitle \par}}
+\makeatother
+
+
+%--- General Math Packages
+\usepackage{amsmath,amssymb, amsbsy,amsthm, amsfonts, amscd} 
+%--- amsmath: general math eg. \operatorname{}
+%--- amssymb: math symbols eg. \nRightarrow
+%--- amsbsy: bold symbols eg. \boldsymbol{\alpha}
+%--- amscd: commutative diagrams eg. \begin{CD} A @>>> B \end{CD}
+%--- amsthm: theorem-like envirom=nments eg. \newtheorem{theorem}{Theorem}
+%--- amsfonts: mathematical fonts eg. \mathfrak{}
+\usepackage{manfnt} %--- for Bourbaki's symbol \dbend
+%--- Note: Use \dbend without (dollar) math environment
+
+
+%--- Special Math Packages
+\usepackage{stmaryrd, mathrsfs, thmtools, upgreek, mathtools, faktor, kbordermatrix, ytableau, shuffle, euscript}
+%--- stmaryrd: TCS symbols eg. \llbracket \rrbracket, diamond
+%--- mathrsfs: Raph Smith Formal Script eg. \mathscr{} looks better
+%--- thmtools: Clickable theorem eg. example continues
+%--- upgreek: Upright greek letters eg. updelta
+%--- mathtools: Extra formatting of equations eg. for dcases
+%--- faktor: Nicely formatting quotient groups.
+%--- kbordermatrix: for matrices with labelling entries outside the border
+%--- ytableau: for making young tableau
+%--- shuffle: for shuffle product
+\usepackage[makeroom]{cancel} % for striking a letter
+%--- cancel: for striking a letter, makeroom: makes it prettier
+
+
+
+%--- Bibliography is intentionally not loaded: the notes currently use
+%--- \href for references rather than \cite.  Add biblatex back when a
+%--- course-specific .bib file is introduced.
+
+% bibliography
+\usepackage[
+  style=alphabetic, % or your chosen style
+  backref=true   % <--- Enables backreferences natively
+]{biblatex}
+\addbibresource{../Files/Bibliography/References.bib}
+
+
+\usepackage{pdflscape}
+
+%--- For hyperlinking text
+%\usepackage[pdftex, backref=page,linktoc=all]{hyperref}
+\usepackage[linktoc=all]{hyperref}
+%--- Use \texorpdfstring{<TeX>}{<pdfstring>} for mathematical section names
+%--- backref=page option: bibliography entry will include a link to the page(s) where the citation occurred
+
+\usepackage{bookmark}
+
+
+%--- The code below is going to make section headings clickable and hyperlinked to the place where they occur in table of contents. This is taken from here: https://tex.stackexchange.com/questions/251904/hyperlinks-from-chapter-and-section-headings-back-to-the-table-of-contents and is the work of John Kormylo
+\makeatletter
+\let\hyperchapter\chapter
+\def\chapter{\@ifstar\starchapter\mychapter}
+\def\starchapter{\hyperchapter*}
+\newcommand{\mychapter}[2][\@empty]% #1=optional (toc and top of page), #2=title
+{\ifx#1\@empty \hyperchapter[#2]{\hyperlink{toc.\@currentHref}{#2}}
+ \else \hyperchapter[#1]{\hyperlink{toc.\@currentHref}{#2}}
+ \fi}
+
+\let\hypersection\section
+\def\section{\@ifstar\starsection\mysection}
+\def\starsection{\hypersection*}
+\newcommand{\mysection}[2][\@empty]% #1=optional (toc), #2=title
+{\ifx#1\@empty \hypersection[#2]{\hyperlink{toc.\@currentHref}{#2}}
+ \else \hypersection[#1]{\hyperlink{toc.\@currentHref}{#2}}
+ \fi}
+
+\let\hypersubsection\subsection
+\def\subsection{\@ifstar\starsubsection\mysubsection}
+\def\starsubsection{\hypersubsection*}
+\newcommand{\mysubsection}[2][\@empty]% #1=optional (toc), #2=title
+{\ifx#1\@empty \hypersubsection[#2]{\hyperlink{toc.\@currentHref}{#2}}
+ \else \hypersubsection[#1]{\hyperlink{toc.\@currentHref}{#2}}
+ \fi}
+\makeatother
+%--- This code will make the chapter, section, subsection headings to be hyerlinked to their respective places in TOC
+
+
+%--- The color setup for hyperlinking text.
+\hypersetup{
+    colorlinks = true,
+    linkcolor = red,
+    citecolor = blue,
+    urlcolor = magenta
+}
+
+
+
+%--- To use colors in the document. These can be applied to text, backgrounds, rules and boxes. Some colors are predefined: red, blue, green, yellow, cyan, magenta, black, white
+\usepackage{xcolor}
+%--- We can define colors via \definecolor{darkblue}{rgb}{<R>, <G>, <B>}
+%--- We can take some help from https://latexcolor.com/
+
+%--- Incomplete-material markers.  The manuscript is written with inline
+%--- \todo{...} notes for material still to be written (proofs, examples,
+%--- diagrams, citations).  Set \todosoff (or pass class option "notodos")
+%--- to compile them out of the final PDF.
+
+\newif\iftodos
+\todostrue
+\newcommand{\todo}[1]{\iftodos\textcolor{red}{[#1]}\fi}
+
+
+
+%--- Packages for introducing graphical capabilities
+\usepackage{graphicx, pgf, tikz}
+%--- graphicx: for including and manipulating graphics eg. \includegraphics
+%--- pgf: "portable graphics format", included in tikz
+%--- tikz:
+%--- the manual for pgf and tikz can be found here: https://www.bu.edu/math/files/2013/08/tikzpgfmanual.pdf
+\usetikzlibrary{decorations, calc, matrix, cd, graphs, arrows, arrows.meta, quotes, positioning}
+%--- These are the libraries used.
+%--- Some documentation is here: https://tikz.dev/libraries
+
+
+
+\usepackage{array, blkarray}
+\usepackage{booktabs, tabularx}
+%--- array: for various kind of arrays: multicolumn, tabular environment
+%---blkarray: for environments: matrix, bmatrix, pmatrix, vmatrix
+
+
+
+%--- Auxiliary packages for formatting figures, tables and other floats
+\usepackage{rotating, caption, subcaption, longtable, placeins, ragged2e, float} 
+%--- rotating: for rotating figures
+%--- longtable: for tables spanning more than one page
+%--- subcaption: captions for subtables
+%--- placeins: to keep floats section-wise
+%--- ragged2e: the modified package for tackeling ragged text. Check: https://ctan.org/pkg/ragged2e?lang=en
+%--- float: to have the option H for putting figure, tables at the exact spot desired
+
+%--- Version counting (mVersion) removed: \increaseBuild rewrites version.dat
+%--- on every pass, which makes latexmk loop forever.
+
+
+
+
+% %--- Reviewing the draft
+% \usepackage{showkeys}
+% %--- this package shows keys.
+% \usepackage[left]{showlabels}
+% %--- this package shows labels
+% %--- we can chose whose labels to be shown as below
+% \showlabels{ref}
+% \showlabels{cite}
+% \showlabels[\fbox]{bibitem}
+
+
+% \usepackage{subfigure}
+% \usepackage{subcaption}
+
+
+
+%--- NOTES
+%- Labels of figures should always be after their caption.
+
+
+
+\usepackage[automark,headsepline]{scrlayer-scrpage}
+\clearpairofpagestyles
+
+\cfoot[\pagemark]{\pagemark}
+
+
+% % remove uppercase behavior
+\renewcommand*{\chaptermark}[1]{\markboth{#1}{}}
+\renewcommand*{\sectionmark}[1]{\markright{#1}}
+
+% headers
+\lehead{\headmark}
+\rohead{\headmark}
+
+\pagestyle{scrheadings}
+
+
+
+% \usepackage[frame,cmtip,arrow,matrix,line,graph,curve]{xy}
+% \usepackage{graphpap,color,paralist,pstricks}
+% \usepackage[mathscr]{eucal}
+% \usepackage[matha,mathb]{mathabx}
+% \usepackage{epic,eepic}
+% \usepackage{yfonts}
+% \usepackage{enumerate}
+% \usepackage{blkarray}
+% \usepackage{mathtools}
+% \usepackage{setspace}
+%\usepackage[english]{babel}
+
+% fonts
+%\usepackage[T1]{fontenc}
+\usepackage{lmodern}   % Latin modern for sans serif
+%\usepackage{mathpazo}  % Palatino for serif and math
+\usepackage{sansmath} % for sanserif
+\usepackage[protrusion=true,expansion=true]{microtype} % better justification
+%\usepackage{mathscinet}
+
+
+
+%\usepackage{breqn} % for equations spanning multiple lines
+
+
+
+
+
+
+% linespread
+%\usepackage[onehalfspacing]{setspace}
+
+%--- We do not need the below code anymore, it is automated.
+% for bibliography
+% the following code will only show cited references in bibilography
+% \makeatletter
+% \let\@@citation@@=\citation
+% \renewcommand{\citation}[1]{\@@citation@@{#1}%
+% \@for\@tempa:=#1\do{\@ifundefined{cit@\@tempa}%
+%   {\global\@namedef{cit@\@tempa}{}}{}}%
+% }
+% \def\@lbibitem[#1]#2#3\par{%
+%   \@ifundefined{cit@#2}{}{\item[\@biblabel{#1}\hfill]}%
+%   \if@filesw
+%       {\let\protect\noexpand
+%        \immediate
+%        \write\@auxout{\string\bibcite{#2}{#1}}}\fi\ignorespaces
+%   \@ifundefined{cit@#2}{}{#3}}
+% \def\@bibitem#1#2\par{%
+%   \@ifundefined{cit@#1}{}{\item}%
+%   \if@filesw \immediate\write\@auxout
+%     {\string\bibcite{#1}{\the\value{\@listctr}}}\fi\ignorespaces
+%   \@ifundefined{cit@#1}{}{#2}}
+% \makeatother
+
+
+
+
+
+
+
+
+
+
+
+
+% various environments
+\theoremstyle{remark}
+\newtheorem{theorem}{Theorem}[chapter] % change this later to section
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{question}[theorem]{Question}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{nonexample}[theorem]{Nonexample}
+% a different one for example-likes
+\theoremstyle{remark}
+\newtheorem{axioms}[theorem]{Axioms}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{algorithm}[theorem]{Algorithm}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{observation}[theorem]{Observation}
+\newtheorem{formula}[theorem]{Formula}
+\newtheorem{problem}[theorem]{Problem}
+
+%--- Chapter-qualified hyperref anchors so theorem environments and footnotes
+%--- do not collide across chapters (duplicate PDF destinations).
+\makeatletter
+\renewcommand{\theHtheorem}{\thechapter.\arabic{theorem}}
+\renewcommand{\theHfootnote}{\thechapter.\arabic{footnote}}
+\makeatother
+
+
+% Quotient
+\def\quotient#1#2{%
+    \raise1ex\hbox{$#1$}/\lower1ex\hbox{$#2$}%
+}
+
+
+%--- Notes
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+\tcbuselibrary{breakable}
+%--- sidenote
+%--- sidenote
+\newcommand{\sidenote}[1]{%
+  \marginpar{%
+    \vspace{1em}% <-- adjust this value to move it down more
+    \begin{tcolorbox}[
+        enhanced,
+        colback=red!10, % Background color
+        boxrule=0pt,
+        sharp corners,
+        left=1pt,
+        right=1pt,
+        top=1pt,
+        bottom=1pt,
+        width=\marginparwidth,
+        boxsep=0pt
+      ]
+      \footnotesize #1
+    \end{tcolorbox}
+  }%
+}
+% \newcommand{\sidenote}[1]{%
+%   \marginpar{%
+%     \noindent\fbox{\begin{minipage}{\marginparwidth}
+%         { \noindent \scriptsize #1} \hspace{-1em}
+%         \end{minipage}}
+%     %\vspace{-1em}% <-- adjust this value to move it down more
+%     % \begin{tcolorbox}[
+%     %     %enhanced,
+%     %     colback=red!0, % Background color
+%     %     boxrule=0pt,
+%     %     %sharp corners,
+%     %     left=1pt,
+%     %     right=1pt,
+%     %     top=1pt,
+%     %     bottom=1pt,
+%     %     width=\marginparwidth,
+%     %     boxsep=0pt
+%     %   ]
+%     %   {\footnotesize #1}
+%     % \end{tcolorbox}
+%   }%
+% }
+
+%--- innote
+\newcommand{\innote}[2]{%
+  \noindent\fbox{\begin{minipage}{\textwidth}
+        \textbf{#1} \hspace{-1em} #2
+        \end{minipage}}%
+}
+
+
+
+%--- Bourbaki caution symbol
+\newcommand{\caution}{\begingroup\mdseries\raisebox{0.8ex}{\scalebox{0.5}{\dbend}}\endgroup}
+
+%--- Commands
+
+%--- Different types of equalities 
+\newcommand{\defn}{\overset{\mathrm{def}}{=}} 
+%--- should be read "_____defined by_____" or "______defined as______"
+\newcommand{\givn}{\overset{\text{by}}{=}} 
+%--- should be read "_____given by_______"
+\newcommand{\letn}{\overset{\text{be}}{=}} 
+%--- should be read "Let  ______ be __________"
+\newcommand{\setn}{\overset{\text{set}}{=}}
+%--- should be read "set _______ to be _______"
+\newcommand{\detn}{\overset{\text{den}}{=}} 
+%--- should be read "Let _______ denote _______"
+
+
+
+\newcommand{\zerovec}{\mathord{\textbf{0}}}
+
+%--- Sage Math Symbol
+\definecolor{ao}{rgb}{0.0, 0.0, 1.0}
+\newcommand\Sage{\textcolor{ao}{\mathsf{Sage}}~}
+
+%--- Can use \bf 
+\DeclareOldFontCommand{\bf}{\normalfont\bfseries}{\mathbf} 
+
+%--- Multichoose symbol
+\def\multichoose#1#2{\ensuremath{\left(\kern-.3em\left(\genfrac{}{}{0pt}{}{#1}{#2}\right)\kern-.3em\right)}}
+
+%--- Integers in sans math
+\newcommand{\sanset}[1]{\mbox{\sansmath$\mathsf{#1}$}}
+
+%--- Defining tetra symbol for K4
+\newcommand{\tetra}{
+{\begin{tikzpicture}[scale=0.035,tempstyle/.style={ inner sep=0pt}]
+		\node [style=tempstyle] (0) at (0, 7.25) {};
+		\node [style=tempstyle] (1) at (-3.25, 1) {};
+		\node [style=tempstyle] (2) at (3.25, 1) {};
+		\node [style=tempstyle] (3) at (0, 3.25) {};
+		\draw (0.center) to (1.center);
+		\draw (1.center) to (2.center);
+		\draw (0.center) to (2.center);
+		\draw (1.center) to (3.center);
+		\draw (0.center) to (3.center);
+		\draw (3.center) to (2.center);
+\end{tikzpicture}}
+}
+
+%--- Norm
+\newcommand{\norm}[1]{\ensuremath{ \left\| #1 \right\| }}
+
+%--- Circle integer
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}} % circling
+%--- We use the circled when we would like to partition our proof of showing 1 -> 2-> 3 -> ..
+
+%--- 
+\DeclareMathOperator*{\bigstarr}{\raisebox{-0.6ex}{\scalebox{2.5}{$\star$}}}
+
+%--- For qnomial coefficient
+\newcommand{\qnomial}[2]{%
+  \genfrac{[}{]}{0pt}{}{#1}{#2}%
+}
+
+%--- For square notation of stirling numbers. We might just use S(n, k)
+\newcommand{\stirling}[2]{%
+  \genfrac{[}{]}{0pt}{}{#1}{#2}%
+}
+
+%--- For Eulerian numbers
+\newcommand{\eulerian}[2]{%
+  \left< \hspace{-2mm}
+    \begin{array}{c}
+      {#1}\\
+      {#2}
+    \end{array} \hspace{-2mm} 
+  \right>
+%
+}
+
+
+
+%--- For a bigger sum symbol as a matrix entry
+\newcommand\dsum[2]{{\displaystyle\sum_{#1}^{#2}}} 
+
+
+
+\newcommand{\tikzmark}[2]{\tikz[overlay,remember picture] \node[minimum width=1.5em] (#1) {#2};}
+
+
+%--- General notation
+%--- It is notation that is common to many areas
+\DeclareMathOperator\rk{rk} % rank functions
+\DeclareMathOperator\cl{cl} % closure operator
+\DeclareMathOperator\inter{int} % interior points
+\DeclareMathOperator\proj{proj} % projection
+\DeclareMathOperator\id{id} % identity function
+\DeclareMathOperator\type{type} % type
+\DeclareMathOperator\tr{tr} % trace
+\DeclareMathOperator\im{im} % image
+\DeclareMathOperator\conn{conn} % connected components
+\DeclareMathOperator\ord{ord} % order/valuation
+\DeclareMathOperator\coker{coker} % cokernel
+\DeclareMathOperator\Ext{Ext} % Ext functor
+\DeclareMathOperator\Aut{Aut} % automorphism group
+\DeclareMathOperator\epi{epi} % for epigraph of a function
+
+
+
+%\DeclareMathOperator\L{\mathcal{L}}
+
+%--- Logic
+\newcommand{\up}[1]{\uparrow \hspace{-1mm} {#1}} 
+\newcommand{\down}[1]{\downarrow \hspace{-1mm} {#1}} 
+\newcommand{\st}{\hspace{2mm}{\supset}\kern-1em{-} \hspace{2mm}}
+\newcommand{\true}{\texttt{True}}
+\newcommand{\false}{\texttt{False}}
+\newcommand{\wff}{\mathrm{wff}} % well-formed formulas
+\newcommand{\PL}{\mathsf{PL}} % propositional logic
+\newcommand{\Var}{\mathrm{Var}} % set of variables of propositional logic
+
+
+%--- For partially ordered sets
+\DeclareMathOperator\Ch{Ch} % set of chains
+\DeclareMathOperator\MCh{MCh} % set of maximal chains
+\DeclareMathOperator\atoms{atoms} %  atoms 
+\newcommand{\Mob}{\mathrm{M\ddot{o}b}} % Mobius algebra
+\DeclareMathOperator{\Wk}{Wk} % weak order
+\DeclareMathOperator\Int{Int} % collection of subintervals
+\DeclareMathOperator\irr{irr} % irreducible components
+\DeclareMathOperator\Bl{Bl} % blowup
+\DeclareMathOperator\Comp{Comp} % set of compositions
+\DeclareMathOperator\comp{comp} % number of compositions
+\DeclareMathOperator\diag{diag} % diagram of a composition or other objects
+
+%--- Permutations
+\DeclareMathOperator\rev{rev} % reverse of permutations
+\DeclareMathOperator\Des{Des} % descent set
+\DeclareMathOperator\des{des} % number of descents
+\DeclareMathOperator\Inv{Inv} % set of inversions
+\DeclareMathOperator\inv{inv} % number of inversions
+\DeclareMathOperator\sgn{sgn} % sign of a permutation
+\DeclareMathOperator\Fix{Fix} % fixture of a group
+\DeclareMathOperator\Stab{Stab} % stabilizer of an element
+%--- Permutations statistics
+\DeclareMathOperator\Asc{Asc} % ascent set
+\DeclareMathOperator\asc{asc} % ascents
+\DeclareMathOperator\Wex{Wex} % weak excedance sets
+\DeclareMathOperator\wex{wex} % weak excedances
+\DeclareMathOperator\Exc{Exc} % excedance set
+\DeclareMathOperator\exc{exc} % excedances
+\DeclareMathOperator\LRmax{LRmax} % left to right max set
+\DeclareMathOperator\lrmax{lrmax} % number of left-to-right max
+\DeclareMathOperator\maj{maj} % major index
+\DeclareMathOperator\comaj{comaj} % comajor index
+
+
+
+%--- For Linear Algebra
+\DeclareMathOperator\Hom{Hom} % Hom set: set of maps
+\DeclareMathOperator\lin{lin} % linear span
+\DeclareMathOperator\aff{aff} % affine span
+\DeclareMathOperator\col{col} % column space
+\DeclareMathOperator\Gr{Gr} % Grassmannian
+\DeclareMathOperator\GL{GL} % General Linear Group
+\DeclareMathOperator\codim{codim} % codimension
+
+
+
+
+%--- Matroids
+\newcommand\M{\mathsf{M}} % a matroid
+\newcommand{\U}{\mathsf{U}} % a uniform matroid
+\DeclareMathOperator\crk{crk} % corank
+\DeclareMathOperator\nullity{nullity} % \nullity
+\DeclareMathOperator\G{\mathcal{G}} % G invariant
+\DeclareMathOperator\Mat{Mat} % set of matroids
+\DeclareMathOperator\cyc{\mathrm{cyc}} % for cyclic part of a flat
+\DeclareMathOperator\fr{fr} % for free part of a flat
+\DeclareMathOperator\frk{frk} % for free rank.
+\DeclareMathOperator\FG{FG} % fundamental bipartite graph of a basis 
+\DeclareMathOperator\nbc{nbc} % no broken circuit
+\DeclareMathOperator\res{res} % restriction
+\newcommand{\I}{\mathscr{I}} % collection of independent sets
+\DeclareMathOperator\SM{SM} % Schubert matroid
+
+
+\newcommand{\Z}{\mathcal{Z}}
+\newcommand{\Fd}{\mathrm{Fd}} % freedom matroid
+\newcommand{\CL}{\mathrm{CL}}
+\newcommand{\lspan}{\mathrm{span}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\Irr}{\mathrm{Irr}}
+\newcommand{\depth}{\mathrm{depth}}
+\newcommand{\wt}{\mathrm{wt}}
+\newcommand{\ind}{\mathrm{ind}}
+\newcommand{\B}{\mathcal{B}} % collection of bases
+\newcommand{\C}{\mathcal{C}} % collection of circuits
+
+
+
+
+
+
+
+%--- Polytopes
+\DeclareMathOperator\K{K} %  set of convex bodies 
+\DeclareMathOperator\F{\mathcal{F}} % face poset/lattice
+\newcommand\N{\mathcal{N}}  % normal fan
+\newcommand\Boxd{\mathsf{Box}} % box
+\newcommand\PolyBox{\mathsf{PolyBox}} % polybox
+\newcommand\Vol{\mathrm{Vol}} %  volume (Normalized)
+\newcommand\vol{\mathrm{vol}} %  volume (Euclidean)
+\newcommand\Q{\mathcal{Q}} % d-dimensional polyhedra
+\newcommand\SQ{\mathrm{SQ}} % polyhedral simple functions
+\newcommand\SP{\mathrm{SP}} % \SP for polytopal simple functions
+\newcommand\PC{\mathsf{PC}} % \PC for polyconvex sets
+%\newcommand\C{\mathcal{C}} % \C for cone
+%\newcommand\lin{\mathsf{lin}} % \lin(S) linear hull of S
+%\newcommand\aff{\mathsf{aff}} % aff(S) affine hull of S
+\newcommand\conv{\mathrm{conv}} % \conv(S) for convex hull of S
+\DeclareMathOperator\ehr{ehr} % ehrhart polynomial
+\DeclareMathOperator\Ehr{Ehr} % ehrhart series
+%--- Construction over polytopes
+\DeclareMathOperator\pyr{pyr} % % pyramid over a polytope
+\DeclareMathOperator\bipyr{bipyr} %  bipyramid over a polytope
+\DeclareMathOperator\prism{prism} %  prism over a polytope
+\newcommand{\emb}{\mathrm{emb}} % embedding
+\DeclareMathOperator\MV{MV} % mixed volume
+\DeclareMathOperator\Dehn{Dehn} % Dehn invariant
+\newcommand\e{\mathsf{e}} % euler map
+\newcommand\T{\mathsf{T}} % tangent cone
+\newcommand\ext{\mathrm{ext}} % exterior
+%\newcommand\id{\mathrm{id}} % identity map
+\newcommand\cone{\mathrm{cone}} % cone
+\newcommand{\diam}{\mathrm{diam}} % diameter of a Euclidean set
+\DeclareMathOperator\relint{relint} % relative interior
+\DeclareMathOperator\indeg{indeg} % morse theory on polytopes
+
+
+
+
+
+%--- Symmetric and Quasisymmetric functions
+\newcommand{\Sym}{\mathrm{Sym}} % ring of symmetric functions
+\newcommand{\QSym}{\mathrm{QSym}} % ring of quasisymmetric functions
+\DeclareMathOperator\ps{ps} % principal specialization in Sym and Qsym
+\DeclareMathOperator\sps{sps} % stable principal specialization
+\newcommand{\Br}{\mathrm{Br}}
+\newcommand{\SSYT}{\mathrm{SSYT}}
+\newcommand{\Split}{\mathrm{Split}}
+\newcommand{\sh}{\mathrm{sh}} % shape of a tableau
+\newcommand{\flag}{\mathsf{flag}}
+
+
+
+% For graphs
+\DeclareMathOperator{\Gen}{Gen} % generating series
+\DeclareMathOperator{\BC}{BC} % broken circuits
+
+
+%--- Commutative Algebra
+\DeclareMathOperator\Ann{Ann} % annihilator
+\DeclareMathOperator\hyt{ht} % height
+\DeclareMathOperator\Spec{Spec} % Spectrum
+\DeclareMathOperator\trdeg{trdeg} % transcendence degree
+\DeclareMathOperator\HF{HF} % Hilbert function
+\DeclareMathOperator{\Hilb}{Hilb} % Hilbert series
+
+%--- Simplicial Complexes
+\DeclareMathOperator{\nface}{nf}
+\DeclareMathOperator{\mface}{miss}
+\DeclareMathOperator{\facets}{facets}
+\DeclareMathOperator{\lk}{link}
+% \DeclareMathOperator{\st}{star}
+\DeclareMathOperator{\sd}{sd} % barycentric subdivision
+\DeclareMathOperator{\del}{del}
+\DeclareMathOperator{\rF}{r} % restriction facets
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\Skel}{Skel} % skeleton
+
+
+%--- Polynomials
+\DeclareMathOperator{\gen}{gen} % generating function
+
+
+%--- Tropical Geometry
+\DeclareMathOperator{\val}{val} % for valuations
+\newcommand*{\ldblbrace}{\{\mskip-5mu\{} % for Piuseux series
+\newcommand*{\rdblbrace}{\}\mskip-5mu\}} % for Piuseux series
+\DeclareMathOperator{\trop}{trop} % for tropicalization
+\DeclareMathOperator{\Star}{\mathrm{star}}
+
+
+%------ Symmetric and Quasisymmetric functions
+\DeclareMathOperator\NSym{NSym} % 

@@ -1,0 +1,325 @@
+\documentclass[a4paper, 12pt]{book} 
+
+\usepackage{course}
+
+%--- Fixed head height to satisfy scrlayer-scrpage's minimum.
+\setlength{\headheight}{15pt}
+
+%--- The documentation for the title can be found at: https://en.wikibooks.org/wiki/LaTeX/Title_Creation
+\title{Machine Learning}
+\author{Ahmed U. Ashraf}
+\date{\today }
+
+\begin{document}
+
+
+
+\maketitle
+%--- we would like to hyperlink each item in contensts page
+% \let\hypercontentsline=\contentsline
+% \renewcommand{\contentsline}[4]{\hypertarget{toc.#4}{}\hypercontentsline{#1}{#2}{#3}{#4}}
+%--- We print ToC: Table of Contents
+
+% \DeclareFontShape{U}{stmry}{b}{n}{<-> ssub * stmry/m/n}{}
+
+\tableofcontents\label{toc}
+%--- We print the list of figures, this might go at the end.
+
+
+
+
+% \listoffigures
+% %--- We print the list of tables, this might also go at the end.
+% \listoftables
+% %--- This is to add list of symbols as glossary
+% % \printunsrtglossary[type=symbols,style=long,title={List of Symbols}]
+
+
+% % List of Algorithms (- taken the idea from Discrete Algorithmic Mathematics by Stephen B.Maurer and ANthony Ralston.pdf)
+
+% \listofalgorithms
+% \addcontentsline{toc}{chapter}{List of Algorithms}
+
+% \listofflowcharts
+% %\addcontentsline{toc}{chapter}{List of Flowcharts}
+
+
+
+
+
+
+
+\chapter{Resources}
+
+
+\section{People}
+
+Roger Grosse, Murat Erdogdu, Richard Zemel, Juan Felipe Carrasquilla, Emad Andrews, Amir-massoud Farahmand.
+
+
+
+
+\section{References}
+
+
+
+
+
+
+
+
+\section{Courses}
+
+\begin{enumerate}
+    \item \href{https://web.stanford.edu/class/cme250/}{Stanford University - CME 250}.
+\end{enumerate}
+
+
+\section{Books}
+
+\begin{enumerate}
+    \item An Introduction to Statistical Learning with
+Applications in R. \cite{james2021introduction}.
+    \item The Elements of Statistical Learning. \cite{hastie2009elements}.
+\end{enumerate}
+
+
+\chapter{Introduction}
+
+What is learning? 
+
+\begin{epigraph}
+{
+The activity or process of gaining knowledge or skill by studying, practicing, being taught, or experiencing something
+}{Merriam Webster dictionary}
+\end{epigraph}
+
+\begin{epigraph}
+{
+A computer program is said to learn from experience E with respect to some class of tasks T and performance measure P, if its performance at tasks in T, as measured by P, improves with experience E
+}{Tom Mitchell}
+\end{epigraph}
+
+\emph{Machine learning approach}: program an algorithm to automatically learn from data, or from experience.
+
+Why might you want to use a learning algorithm?
+\begin{enumerate}
+    \item Supervised learning: Builds a statistical model to predict an output from inputs. It further has two types:
+    \begin{enumerate}
+        \item \emph{Classification}: Output is qualitative (categorical).
+        \begin{example}
+            Predict whether a credit card transaction is fraudulent.
+        \end{example}
+        \item \emph{Regression}: Output is quantitative (continuous or ordered).
+        \begin{example}
+            Predict the value of a stock tomorrow.
+        \end{example}
+    \end{enumerate}
+    \item Unsupervised learning: • Learns structure from data without supervising output. It further has two types:
+    \begin{enumerate}
+        \item \emph{Clustering}: Partition data into subsets that share common characteristics.
+        \item \emph{Dimensionality reduction}: Create new features from original inputs that retain important information.
+\end{enumerate}
+
+
+Let $\EuScript{X}$ be the input variables (predictors, independent variables, features) and $\EuScript{Y}$ be the output variable (response, dependent variable). Machine learning aims to estimate a function $f$ that describes the relationship between the predictors and the response:
+\begin{align}
+     \EuScript{Y} = f(\EuScript{X}) + \varepsilon 
+\end{align}
+
+
+\begin{innote}{\emph{Prediction vs Inference}}{
+    Predict response $\EuScript{Y}$ given inputs $\EuScript{X}$. \emph{Inference}: Understand the relationship between $\EuScript{Y}$ and individual predictors $\EuScript{X}_i$. Do not want a black-box model.
+}
+\end{innote}
+
+
+\section{KNN classifier}
+
+
+\emph{KNN classifier}: A classification algorithm that labels observations based on “nearby” examples with known labels. Many classifiers build a model of $\mathrm{Prob}(Y|X)$. KNN classifier predicts that the class for observation $X$ is the class most common among its $k$ nearest neighbors in the training set.
+
+\section{No free lunch theorem}
+
+Wolpert (1996): All algorithms perform equally when averaged over all possible problems.
+
+
+\section{Trade-off and decisions}
+
+\begin{enumerate}
+    \item Bias vs. variance
+    \item Accuracy vs. interpretability
+    \item Accuracy vs. scalability
+    \item Domain-knowledge vs. data-driven
+    \item More data vs. better algorithm
+    \item Accuracy vs. fairness
+\end{enumerate}
+
+\section{Assessing Model Performance}
+
+We want to know how good predictions are when we apply our method to previously unseen data. Why? The ability to generalize to unseen data is what makes these methods useful.
+
+\section{Data sets}
+
+\begin{enumerate}
+    \item \emph{Training data}: Data used to train the model.
+    \item \emph{Validation data}: Data used to tune hyperparameters\index{hyperparameters} and select the best model. Observations used to estimate error for parameter-tuning or model selection
+    \item \emph{Test data}: Data used to evaluate the final performance of the selected model. Not available to the algorithm during any part of the learning process
+\end{enumerate}
+
+
+\section{Model Flexibility}
+
+As model flexibility increases, training error will decrease. The model can fit more and more of the variance in the training set. Some of this variance, however, may be noise. Therefore the test error may or may not decrease. If training error is much larger than test error, the model is overfitting.  
+
+
+\section{Bias vs Variance}
+
+Bias is the error caused by simplifying assumptions built into the model. Variance is how much the learned function will change if trained on a different training set.
+
+\begin{align}
+    \mathrm{E}[(y - \hat{y})^2] = \mathrm{Bias}[\hat{f}(x)]^2 + \mathrm{Var}[\hat{f}(x)] + \sigma^2
+\end{align}
+
+
+\section{Bias-Variance Trade-off}: Generally, more flexible methods have more variance and less bias. Less flexible methods have more bias and less variance. The best method for a task will balance the two types of error to achieve the lowest test error.
+
+
+
+
+\chapter{Linear and Logistic Regression}
+Linear regression is a simple supervised learning method, used to predict quantitative output values. Many machine learning methods are generalizations of linear regression. It illustrates key concepts in supervised learning while maintaining interpretability.
+
+
+\section{Simple Linear Regression}
+
+Predict a quantitative response $Y$ on the basis of a single predictor variable $X$. Assumes there is an approximately linear relationship between $X$ and $Y$.
+\begin{align}
+    Y &= \beta_0 + \beta_1 X + \epsilon
+\end{align} 
+where $\beta_0, \beta_1$ are the \emph{coefficients} or \emph{parameters} of the linear model. In this case they represent the intercept and slope terms of a line. We estimate the parameters $\beta_0, \beta_1$ using the training data.
+\begin{align}
+    (x^{i}, y^{i})
+\end{align}
+Once $\beta$'s are estimated, we denote them using $\hat{\beta}$. For a particular realization of $X$, say $X = x$, the predicted output is denoted $\hat{y}$:
+\begin{align}
+    \hat{y} &= \hat{\beta}_0 + \hat{\beta}_1 x  
+\end{align} 
+Our goal is to pick, such that the model is a good fit to the training data.
+\begin{align}
+    y^{(i)} \approx \hat{\beta}_0 + \hat{\beta}_1 x^{(i)}
+\end{align}
+for $i = 1, \ldots, n$. How do we estimate the coefficients? that is, \emph{fit the model}. What is a \emph{good fit} to the data?
+
+\section{Least squares}
+Typically, how well a linear model is fit to the data is measured using least squares:
+\begin{definition}
+    The \emph{residual} for the $i$-th observation is defined as:
+    \begin{align}
+        \epsilon^{(i)} = y^{(i)} - \hat{y}^{(i)}
+    \end{align}
+    The \emph{Residual sum of squares (RSS)} \index{Residual sum of squares} is defined as:
+    \begin{align}
+        \mathrm{RSS} &= \sum_{i=1}^n (\epsilon^{(i)})^2\\
+        &= \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2
+    \end{align}
+\end{definition}
+
+
+
+\begin{definition}
+    The model fit using least squares finds the coefficients $\hat{\beta}_0, \hat{\beta}_1$ that minimize the RSS. That is,
+    \begin{align}
+        \hat{\beta}_0 &\defn \mathrm{argmin}_{\beta_0} \sum_{i=1}^n (y^{(i)} - \beta_0 - \beta_1 x^{(i)})^2\\
+        \hat{\beta}_1 &\defn \mathrm{argmin}_{\beta_1} \sum_{i=1}^n (y^{(i)} - \hat{\beta}_0 - \beta_1 x^{(i)})^2
+    \end{align}
+\end{definition}
+\chapter{Regularization and Sparsity}
+\todo{Regularization and sparsity: ridge, LASSO, elastic net, L1/L2 penalties}
+
+
+\chapter{Cross-validation and Imputation}
+\todo{Cross-validation: k-fold, LOOCV, nested CV; imputation: mean/median, MICE, KNN}
+
+
+\chapter{Support Vector Machines}
+\todo{Support vector machines: hard/soft margin, kernel trick, dual formulation}
+
+
+\chapter{Classification and Regression Trees}
+\todo{Classification and regression trees: CART, splitting criteria, pruning}
+
+
+\chapter{Gradient Descent}
+\todo{Gradient descent: batch, stochastic, mini-batch, learning rate, momentum}
+
+
+\chapter{Unsupervised Methods}
+\todo{Unsupervised methods: clustering, dimensionality reduction, PCA, t-SNE}
+
+
+\chapter{Neural Networks}
+
+
+\section{Perceptron}
+
+\section{Multilayer Perceptrons}
+
+
+\chapter{Deep Learning}
+\todo{Deep Learning: CNNs, RNNs, transformers, autoencoders, generative models}
+
+
+\chapter{Probabilistic Models}
+\todo{Probabilistic models: Bayesian networks, HMMs, GMMs, variational inference}
+
+\chapter{Reinforcement Learning}
+\todo{Reinforcement Learning: MDPs, Q-learning, policy gradients, actor-critic}
+
+
+\chapter{Statistical Learning Theory }
+\todo{Statistical Learning Theory: PAC learning, VC dimension, generalization bounds}
+
+\chapter{Tools}
+
+\section{PyTorch}
+
+\href{https://pytorch.org/}{\emph{PyTorch}}: an open-source machine learning library based on the Torch library.
+
+\section{TensorFlow}
+
+\href{https://www.tensorflow.org/}{\emph{TensorFlow}}: an open-source machine learning framework developed by Google.
+
+\section{scikit-learn}
+
+\href{https://scikit-learn.org/}{\emph{scikit-learn}}: a Python library for machine learning built on top of NumPy, SciPy, and matplotlib.
+
+\section{XGBoost}
+
+\href{https://xgboost.readthedocs.io/}{\emph{XGBoost}}: an open-source gradient boosting library that implements machine learning algorithms in a more efficient and flexible way than traditional gradient boosting methods.
+
+
+
+\section{Keras}
+
+\section{NumPy}
+
+\section{Pandas}
+
+
+
+
+
+
+
+
+\printindex
+\printbibliography
+
+
+
+
+
+
+
+\end{document}
