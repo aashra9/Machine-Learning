@@ -28,3 +28,11 @@ build/
 
 # OS
 .DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*.ipynb_checkpoints
+.env
+.venv/
+venv/

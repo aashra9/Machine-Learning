@@ -119,6 +119,7 @@ Why might you want to use a learning algorithm?
     \begin{enumerate}
         \item \emph{Clustering}: Partition data into subsets that share common characteristics.
         \item \emph{Dimensionality reduction}: Create new features from original inputs that retain important information.
+    \end{enumerate}
 \end{enumerate}
 
 
@@ -234,6 +235,24 @@ Typically, how well a linear model is fit to the data is measured using least sq
         \hat{\beta}_1 &\defn \mathrm{argmin}_{\beta_1} \sum_{i=1}^n (y^{(i)} - \hat{\beta}_0 - \beta_1 x^{(i)})^2
     \end{align}
 \end{definition}
+Recall that the extrema of a function can be found by setting its derivative to zero, and verified to be minima via the second derivative.
+\begin{align}
+    \hat{\beta}_1 &= \frac{\sum_{i=1}^n (x^{(i)} - \overline{x})(y^{(i)} - \overline{y})}{\sum_{i=1}^n (x^{(i)} - \overline{x})^2},
+    \hat{\beta}_0 &= \overline{y} - \hat{\beta}_1 x
+\end{align}
+
+Linear regression is typically assessed using two related metrics: 
+\begin{enumerate}
+    \item Residual standard error (RSE) 
+    \begin{align}
+        \mathrm{RSE} &= \sqrt{\frac{1}{n-2}} \mathrm{RSS}\\
+        &=\sqrt{\frac{1}{n-2} \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}
+    \end{align}
+    \item a
+\end{enumerate}
+
+
+
 \chapter{Regularization and Sparsity}
 \todo{Regularization and sparsity: ridge, LASSO, elastic net, L1/L2 penalties}
 
