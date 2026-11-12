@@ -1,12 +1,18 @@
 \documentclass[a4paper, 12pt]{book} 
+\makeatletter
+\def\input@path{%
+    {../Files/Diagrams/}%
+    {../Files/Snips/}%
+    {../Files/Tables/}%
+}
+\makeatother
 
 \usepackage{course}
-
 %--- Fixed head height to satisfy scrlayer-scrpage's minimum.
 \setlength{\headheight}{15pt}
 
 %--- The documentation for the title can be found at: https://en.wikibooks.org/wiki/LaTeX/Title_Creation
-\title{Machine Learning}
+\title{Machine (or Automated) Learning}
 \author{Ahmed U. Ashraf}
 \date{\today }
 
@@ -78,10 +84,39 @@ Roger Grosse, Murat Erdogdu, Richard Zemel, Juan Felipe Carrasquilla, Emad Andre
 \section{Books}
 
 \begin{enumerate}
-    \item An Introduction to Statistical Learning with
-Applications in R. \cite{james2021introduction}.
+    \item An Introduction to Statistical Learning with Applications in R. \cite{james2021introduction}.
     \item The Elements of Statistical Learning. \cite{hastie2009elements}.
+    \item Pattern Recognition and Machine Learning. \cite{theodoridis2006pattern}.
+    \item Information Theory, Inference, and Learning Algorithms. \cite{mackay2003information}.
+    \item Bayesian Reasoning and Machine Learning. \cite{barber2012bayesian}.
+    \item Reinforcement Learning: An Introduction. \cite{sutton1998reinforcement}.
+    \item Math for ML. \cite{deisenroth2020mathematics}.
+    \item Understanding Machine Learning: From Theory to Algorithms. \cite{shalev2014understanding}.
+    \item Machine Learning: a Probabilistic Perspective. \cite{murphy2012machine}.
 \end{enumerate}
+
+
+
+\chapter{Review: Multivariable Calculus}
+
+
+
+\chapter{Review: Probability}
+
+
+\section{Expected value}
+
+\section{Joint and Conditional Probability Distributions}
+
+\chapter{Learning}
+We describe four parameters along which learning paradigms can be classified.
+\begin{enumerate}
+    \item Supervised versus Unsupervised.
+    \item Active versus Passive Learners.
+    \item Online versus Batch Learning Protocol.
+    \item Helpfulness of the Teacher
+\end{enumerate}
+
 
 
 \chapter{Introduction}
@@ -101,10 +136,8 @@ A computer program is said to learn from experience E with respect to some class
 \end{epigraph}
 
 \emph{Machine learning approach}: program an algorithm to automatically learn from data, or from experience.
-
-Why might you want to use a learning algorithm?
 \begin{enumerate}
-    \item Supervised learning: Builds a statistical model to predict an output from inputs. It further has two types:
+    \item \emph{Supervised learning}: Builds a statistical model to predict an output from inputs. It further has two types:
     \begin{enumerate}
         \item \emph{Classification}: Output is qualitative (categorical).
         \begin{example}
@@ -115,11 +148,12 @@ Why might you want to use a learning algorithm?
             Predict the value of a stock tomorrow.
         \end{example}
     \end{enumerate}
-    \item Unsupervised learning: • Learns structure from data without supervising output. It further has two types:
+    \item \emph{Unsupervised learning}: Learns structure from data without supervising output. It further has two types:
     \begin{enumerate}
         \item \emph{Clustering}: Partition data into subsets that share common characteristics.
         \item \emph{Dimensionality reduction}: Create new features from original inputs that retain important information.
     \end{enumerate}
+    \item \emph{Reinforcement learning}: Learns a policy for selecting actions based on rewards received from the environment.
 \end{enumerate}
 
 
@@ -129,10 +163,58 @@ Let $\EuScript{X}$ be the input variables (predictors, independent variables, fe
 \end{align}
 
 
-\begin{innote}{\emph{Prediction vs Inference}}{
+\begin{innote}{Prediction vs Inference:}{
     Predict response $\EuScript{Y}$ given inputs $\EuScript{X}$. \emph{Inference}: Understand the relationship between $\EuScript{Y}$ and individual predictors $\EuScript{X}_i$. Do not want a black-box model.
 }
 \end{innote}
+
+
+\section{Supervised Learning}
+Learning a function
+\begin{align}
+    f: I \longrightarrow \Omega
+\end{align}
+given example input-output pairs 
+\begin{align}
+    (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n) \in f
+\end{align}
+Given a set of labelled examples (called the \emph{training data}\index{training data}), determine or predict the labels of the set of unlabelled examples (called the \emph{test data}\index{test data}).
+
+\begin{example}[\emph{Age prediction}]
+    Age prediction given a headshot. Here the input is an image of a person's face and the output is their age.
+\end{example}
+
+\begin{example}[\emph{Image captioning}]
+    Image captioning given an image. Here the input is an image and the output is a description of the image.
+\end{example}
+
+\begin{example}[\emph{Exam grade}]
+    Predicting exam grades given student performance data in assignments. Here the input is student performance information in assignments and the output is their exam grade.
+\end{example}
+
+\begin{example}[\emph{Email spam detection}]
+    Email spam detection given an email. Here the input is an email and the output is whether it is spam or not.
+\end{example}
+
+\begin{example}[\emph{Iris classification}]
+    Classifying iris flowers into species based on measurements of their petals and sepals. Here the input is a set of measurements and the output is the species of the flower.
+\end{example}
+
+\begin{example}[\emph{Sentiment analysis}]
+    Sentiment analysis given a piece of text. Here the input is a piece of text and the output is the sentiment (positive, negative, or neutral).
+\end{example}
+
+
+\begin{example}[\emph{Handwritten digits}]
+    Recognizing handwritten digits given an image of a digit. Here the input is an image of a digit and the output is the digit itself.
+\end{example}
+
+In supervised learning, the input is represented via a vector $\mathbf{v} \in \mathbb{R}^d$. Each coordinate $x_i$ of the vector $\mathbf{x}$ is a \emph{feature}, a numerical value describing a characteristic of the input. We can represent any type of data this way, for example, images, text, audio, waveforms etc. Vectore are a great representation since we can do linear algebra. Out is represented using a number, say $t \in \mathbb{R}$. In a regression problem, $t$ is a real number (for example stock price). In classification problem, $t$ is an element of discrete set.
+
+In supervised learning, we have some labelled \emph{training data}
+\begin{align}
+    (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n)
+\end{align}
 
 
 \section{KNN classifier}
@@ -183,7 +265,12 @@ Bias is the error caused by simplifying assumptions built into the model. Varian
 \end{align}
 
 
-\section{Bias-Variance Trade-off}: Generally, more flexible methods have more variance and less bias. Less flexible methods have more bias and less variance. The best method for a task will balance the two types of error to achieve the lowest test error.
+\section{Bias-Variance Trade-off}
+ Generally, more flexible methods have more variance and less bias. Less flexible methods have more bias and less variance. The best method for a task will balance the two types of error to achieve the lowest test error.
+
+
+\section{Curse of dimensionality}
+Curse of Dimensionality refers to the phenomenon where the efficiency and effectiveness of algorithms deteriorate as the dimensionality of the data increases exponentially.
 
 
 
@@ -200,7 +287,7 @@ Predict a quantitative response $Y$ on the basis of a single predictor variable 
 \end{align} 
 where $\beta_0, \beta_1$ are the \emph{coefficients} or \emph{parameters} of the linear model. In this case they represent the intercept and slope terms of a line. We estimate the parameters $\beta_0, \beta_1$ using the training data.
 \begin{align}
-    (x^{i}, y^{i})
+    (\mathbf{x}^{(i)}, y^{(i)})
 \end{align}
 Once $\beta$'s are estimated, we denote them using $\hat{\beta}$. For a particular realization of $X$, say $X = x$, the predicted output is denoted $\hat{y}$:
 \begin{align}
@@ -248,7 +335,13 @@ Linear regression is typically assessed using two related metrics:
         \mathrm{RSE} &= \sqrt{\frac{1}{n-2}} \mathrm{RSS}\\
         &=\sqrt{\frac{1}{n-2} \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}
     \end{align}
-    \item a
+    higher RSE means worse fit.
+    \item $R^2$ statistic:
+    \begin{align}
+        R^2 &= \frac{\mathrm{TSS} - \mathrm{RSS}}{\mathrm{TSS}} \\
+        &= 1 - \frac{\mathrm{RSS}}{\mathrm{TSS}}
+    \end{align}
+    $R^2$ measures the proportion of variability in $Y$ explained by $X$.
 \end{enumerate}
 
 
