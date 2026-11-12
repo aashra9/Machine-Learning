@@ -1,4 +1,11 @@
 numpy
+scipy
 matplotlib
 scikit-learn
 jupyter
+
+# Optional: deep-learning companion (Code/deep_learning.py)
+# pip install torch torchvision
+
+# Optional: loading real image folders in Code/knn_datasets_worksheet.ipynb
+# pip install pillow

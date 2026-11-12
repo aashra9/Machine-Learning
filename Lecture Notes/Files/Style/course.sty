@@ -90,6 +90,32 @@
 %--- Colors
 \usepackage{xcolor}
 
+%--- Code listings (short snippets; full programs live in the Code/ folder)
+\usepackage{listings}
+\lstdefinestyle{python}{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!70!black}\bfseries,
+  commentstyle=\color{green!45!black}\itshape,
+  stringstyle=\color{red!60!black},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=6pt,
+  frame=single,
+  rulecolor=\color{gray!45},
+  backgroundcolor=\color{gray!5},
+  showstringspaces=false,
+  breaklines=true,
+  columns=fullflexible
+}
+\lstnewenvironment{pycode}[1][]{\lstset{style=python,#1}}{}
+
+%--- Pointer to a runnable companion script in the Code/ folder
+\newcommand{\coderef}[1]{%
+  \par\medskip\noindent
+  \textbf{Code companion:} \texttt{\detokenize{#1}}\par
+}
+
 %--- To-do markers for incomplete material
 \newif\iftodos
 \todostrue
@@ -97,7 +123,10 @@
 
 %--- Graphics
 \usepackage{graphicx, tikz}
-\usetikzlibrary{decorations, calc, matrix, cd, graphs, arrows.meta, quotes, positioning}
+\usetikzlibrary{decorations, decorations.pathreplacing, calc, matrix, cd, graphs,
+  arrows.meta, quotes, positioning, patterns}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 
 %--- Tables
 \usepackage{array, booktabs, tabularx}
@@ -172,8 +201,8 @@
 
 %--- innote (boxed note with title)
 \newcommand{\innote}[2]{%
-  \noindent\fbox{\begin{minipage}{\textwidth}
-        \textbf{#1} \hspace{-1em} #2
+  \noindent\fbox{\begin{minipage}{\dimexpr\textwidth-2\fboxsep-2\fboxrule\relax}%
+        \raggedright\textbf{#1}\quad #2\par
         \end{minipage}}%
 }
 

@@ -1,4 +1,4 @@
-\documentclass[a4paper, 12pt]{book} 
+\documentclass[a4paper, 12pt]{book}
 
 \usepackage{course}
 %--- Fixed head height to satisfy scrlayer-scrpage's minimum.
@@ -6,425 +6,3000 @@
 
 %--- The documentation for the title can be found at: https://en.wikibooks.org/wiki/LaTeX/Title_Creation
 \title{Machine (or Automated) Learning}
+\subtitle{Lecture Notes with Python Companions}
 \author{Ahmed U. Ashraf}
-\date{\today }
+\date{\today}
 
 \begin{document}
 
-
-
+\frontmatter
 \maketitle
-%--- we would like to hyperlink each item in contensts page
-% \let\hypercontentsline=\contentsline
-% \renewcommand{\contentsline}[4]{\hypertarget{toc.#4}{}\hypercontentsline{#1}{#2}{#3}{#4}}
+%--- Make every table-of-contents item a hyperlink target, so that the
+%--- chapter/section headings can link back to their ToC entry.
+\makeatletter
+\let\hypercontentsline=\contentsline
+\renewcommand{\contentsline}[4]{%
+  \hypertarget{toc.#4}{}\hypercontentsline{#1}{#2}{#3}{#4}}
+\makeatother
 %--- We print ToC: Table of Contents
-
-% \DeclareFontShape{U}{stmry}{b}{n}{<-> ssub * stmry/m/n}{}
-
 \tableofcontents\label{toc}
-%--- We print the list of figures, this might go at the end.
 
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
 
+These notes collect the core ideas of a first course in machine learning. They are
+organised around three questions: \emph{what} are we trying to learn, \emph{how} do
+we learn it from data, and \emph{how do we know} that what we learned will work on
+new observations? The mathematical prerequisites are reviewed in
+Chapters~\ref{ch:calc} and~\ref{ch:prob}; no prior machine-learning background is
+assumed.
 
+Each methodological chapter ends with a \emph{code companion}: a short, runnable
+Python script in the \texttt{Code/} folder that reproduces the main ideas with
+\texttt{scikit-learn}, \texttt{NumPy}, and \texttt{matplotlib}. The scripts are
+deliberately small and self-contained; they are meant to be read, modified, and
+broken. Notebook versions of the linear-regression and MNIST examples are included
+as well.
 
-% \listoffigures
-% %--- We print the list of tables, this might also go at the end.
-% \listoftables
-% %--- This is to add list of symbols as glossary
-% % \printunsrtglossary[type=symbols,style=long,title={List of Symbols}]
+\begin{quote}
+\emph{All models are wrong, but some are useful.} --- George E. P. Box
+\end{quote}
 
+\section*{Notation}
+\addcontentsline{toc}{section}{Notation}
 
-% % List of Algorithms (- taken the idea from Discrete Algorithmic Mathematics by Stephen B.Maurer and ANthony Ralston.pdf)
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{ll}
+\toprule
+Symbol & Meaning \\
+\midrule
+$\mathbf{x} \in \R^d$ & input (feature) vector \\
+$y$ or $t$ & target (label, response) \\
+$n$ & number of training examples \\
+$d$ or $p$ & number of features \\
+$\mathbf{X} \in \R^{n \times d}$ & design matrix, one example per row \\
+$\boldsymbol{\beta}$ & model parameters \\
+$\hat{y}$ & prediction \\
+$\ell(\cdot,\cdot)$ & loss function \\
+$\mathcal{D}$ & data distribution \\
+$\mathcal{H}$ & hypothesis class \\
+$\risk(\cdot)$ & risk (expected loss) \\
+$\norm{\cdot}_1, \norm{\cdot}_2$ & $\ell_1$ and $\ell_2$ norms \\
+$\nabla f$, $H_f$ & gradient and Hessian of $f$ \\
+$\E[\cdot]$, $\Var[\cdot]$ & expectation and variance \\
+$\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})$ & Gaussian distribution \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-% \listofalgorithms
-% \addcontentsline{toc}{chapter}{List of Algorithms}
-
-% \listofflowcharts
-% %\addcontentsline{toc}{chapter}{List of Flowcharts}
-
-
-
-
-
-
+\mainmatter
 
 \chapter{Resources}
-
+\label{ch:resources}
 
 \section{People}
 
-Roger Grosse, Murat Erdogdu, Richard Zemel, Juan Felipe Carrasquilla, Emad Andrews, Amir-massoud Farahmand.
-
-
-
-
-\section{References}
-
-
-
-
-
-
-
+\href{https://www.cs.toronto.edu/~rgrosse/}{Roger Grosse}, \href{https://www.cs.toronto.edu/~murat/}{Murat Erdogdu}, \href{https://www.cs.toronto.edu/~zemel/}{Richard Zemel}, \href{https://www.cs.toronto.edu/~juan/}{Juan Felipe Carrasquilla}, \href{https://www.cs.toronto.edu/~emad/}{Emad Andrews}, \href{https://www.cs.toronto.edu/~amir/}{Amir-massoud Farahmand}.
 
 \section{Courses}
 
 \begin{enumerate}
-    \item \href{https://web.stanford.edu/class/cme250/}{Stanford University - CME 250}.
+    \item \href{https://web.stanford.edu/class/cme250/}{Stanford University --- CME 250:
+    Introduction to Machine Learning}.
+    \item \href{https://www.cs.toronto.edu/~rgrosse/courses/csc321_2018/}{University of
+    Toronto --- CSC 321: Intro to Neural Networks and Machine Learning}.
+    \item \href{https://www.d2l.ai/}{Dive into Deep Learning} --- an interactive,
+    open-access deep-learning book.
 \end{enumerate}
-
 
 \section{Books}
 
 \begin{enumerate}
-    \item An Introduction to Statistical Learning with Applications in R. \cite{james2021introduction}.
-    \item The Elements of Statistical Learning. \cite{hastie2009elements}.
-    \item Pattern Recognition and Machine Learning. \cite{theodoridis2006pattern}.
-    \item Information Theory, Inference, and Learning Algorithms. \cite{mackay2003information}.
-    \item Bayesian Reasoning and Machine Learning. \cite{barber2012bayesian}.
-    \item Reinforcement Learning: An Introduction. \cite{sutton1998reinforcement}.
-    \item Math for ML. \cite{deisenroth2020mathematics}.
-    \item Understanding Machine Learning: From Theory to Algorithms. \cite{shalev2014understanding}.
-    \item Machine Learning: a Probabilistic Perspective. \cite{murphy2012machine}.
+    \item \emph{An Introduction to Statistical Learning with Applications in R}
+    \cite{james2021introduction}. Accessible first text; strong on regression,
+    classification, resampling, and trees.
+    \item \emph{The Elements of Statistical Learning}
+    \cite{hastie2009elements}. The more theoretical companion to the previous book.
+    \item \emph{Pattern Recognition and Machine Learning}
+    \cite{theodoridis2006pattern}. Broad coverage with a probabilistic emphasis.
+    \item \emph{Information Theory, Inference, and Learning Algorithms}
+    \cite{mackay2003information}. Beautiful treatment of inference and learning.
+    \item \emph{Bayesian Reasoning and Machine Learning}
+    \cite{barber2012bayesian}. Graphical models and Bayesian methods.
+    \item \emph{Reinforcement Learning: An Introduction}
+    \cite{sutton1998reinforcement}. The standard reference for RL.
+    \item \emph{Mathematics for Machine Learning}
+    \cite{deisenroth2020mathematics}. Linear algebra, calculus, and probability for ML.
+    \item \emph{Understanding Machine Learning: From Theory to Algorithms}
+    \cite{shalev2014understanding}. Learning theory and algorithmic foundations.
+    \item \emph{Machine Learning: A Probabilistic Perspective}
+    \cite{murphy2012machine}. Comprehensive probabilistic treatment.
 \end{enumerate}
 
 
+\section{Online resources}
 
-\chapter{Review: Multivariable Calculus}
-
-
-
-\chapter{Review: Probability}
-
-
-\section{Expected value}
-
-\section{Joint and Conditional Probability Distributions}
-
-\chapter{Learning}
-We describe four parameters along which learning paradigms can be classified.
 \begin{enumerate}
-    \item Supervised versus Unsupervised.
-    \item Active versus Passive Learners.
-    \item Online versus Batch Learning Protocol.
-    \item Helpfulness of the Teacher
+    \item \href{https://huggingface.co/}{Hugging Face}:
 \end{enumerate}
 
+\section{Software documentation}
 
+\begin{enumerate}
+    \item \href{https://numpy.org/doc/}{NumPy}.
+    \item \href{https://scikit-learn.org/stable/user_guide.html}{scikit-learn user guide}.
+    \item \href{https://pytorch.org/tutorials/}{PyTorch tutorials}.
+    \item \href{https://www.tensorflow.org/tutorials}{TensorFlow tutorials}.
+    \item \href{https://xgboost.readthedocs.io/}{XGBoost documentation}.
+\end{enumerate}
+
+\section{Helpful websites}
+
+\begin{enumerate}
+    \item \href{https://stats.stackexchange.com/}{Cross Validated} --- a question and answer site for people interested in statistics.
+    \item \href{https://www.kaggle.com/}{Kaggle} --- a platform for data science competitions and datasets.
+    \item \href{https://arxiv.org/}{arXiv} --- a repository of electronic preprints of scientific papers in the fields of physics, mathematics, computer science, and quantitative biology.
+\end{enumerate}
+
+\chapter{Mathematical Background}
+\label{ch:calc}
+
+
+\section{Calculus}
+
+Differentiation is the operation of transforming one mathematical function to another, called the derivative. The derivative tells the slope, or the rate of change, of the original function.
+
+\section{Vectors, matrices, and norms}
+
+We write vectors as columns and use
+\begin{align}
+    \mathbf{x}^\top \mathbf{y} = \sum_{i=1}^d x_i y_i
+\end{align}
+for the Euclidean inner product. The most common norms are
+\begin{align}
+    \norm{\mathbf{x}}_1 &\defn \sum_{i=1}^d |x_i|, \\
+    \norm{\mathbf{x}}_2 &\defn \sqrt{\sum_{i=1}^d x_i^2}, \\
+    \norm{\mathbf{x}}_\infty &\defn \max_i |x_i|.
+\end{align}
+\begin{example}[Norms of a vector]
+    For $\mathbf{x} = (3,-4)^\top$,
+    \begin{align}
+        \norm{\mathbf{x}}_1 &= |3|+|-4| = 7, &
+        \norm{\mathbf{x}}_2 &= \sqrt{3^2+(-4)^2} = 5, \\
+        \norm{\mathbf{x}}_\infty &= \max\{3,4\} = 4.
+    \end{align}
+    The $\ell_2$ norm is the ordinary Euclidean length, while the $\ell_1$ norm is
+    the sum of absolute coordinates and often encourages sparsity when used as a
+    penalty.
+\end{example}
+
+\begin{definition}
+    A symmetric matrix $\mathbf{A}$ is \emph{positive semidefinite}\index{positive semidefinite} (PSD) if
+    \begin{align}
+        \mathbf{x}^\top \mathbf{A}\mathbf{x} \geq 0
+    \end{align}
+    for all $\mathbf{x}$. We call it \emph{positive definite}\index{positive definite} if the inequality is strict for $\mathbf{x} \neq \mathbf{0}$.
+\end{definition}
+
+\begin{example}[Positive definite, semidefinite, and indefinite matrices]
+    The matrix
+    $\mathbf{A} = \begin{bmatrix}2&1\\1&2\end{bmatrix}$
+    has eigenvalues $1$ and $3$, so it is positive definite. The matrix
+    $\mathbf{B} = \begin{bmatrix}1&1\\1&1\end{bmatrix}$
+    has eigenvalues $0$ and $2$: it is PSD but not positive definite, because
+    $\mathbf{v}=(1,-1)^\top$ gives $\mathbf{v}^\top\mathbf{B}\mathbf{v}=0$. The matrix
+    $\mathbf{C} = \begin{bmatrix}1&2\\2&1\end{bmatrix}$ has an eigenvalue $-1$, so it
+    is neither PSD nor positive definite.
+\end{example}
+
+\begin{example}[Gram matrices are PSD]
+    For any real matrix $\mathbf{X} \in \R^{n \times d}$, the Gram matrix
+    $\mathbf{X}^\top\mathbf{X}$ is PSD because
+    \begin{align}
+        \mathbf{v}^\top \mathbf{X}^\top\mathbf{X}\mathbf{v}
+        = \norm{\mathbf{X}\mathbf{v}}_2^2 \geq 0.
+    \end{align}
+    It is positive definite exactly when $\mathbf{X}$ has full column rank: if
+    $\mathbf{X}\mathbf{v}=\mathbf{0}$ for some $\mathbf{v}\neq\mathbf{0}$, then the
+    quadratic form vanishes.
+\end{example}
+
+\begin{theorem}
+    Every covariance matrix is positive semidefinite.
+\end{theorem}
+\begin{proof}
+    Let $\mathbf{X}$ be a random vector with mean $\boldsymbol{\mu}$. Its covariance
+    matrix is
+    \begin{align}
+        \boldsymbol{\Sigma}
+        = \E\big[(\mathbf{X}-\boldsymbol{\mu})(\mathbf{X}-\boldsymbol{\mu})^\top\big].
+    \end{align}
+    For any vector $\mathbf{a}$,
+    \begin{align}
+        \mathbf{a}^\top\boldsymbol{\Sigma}\mathbf{a}
+        = \E\big[\mathbf{a}^\top(\mathbf{X}-\boldsymbol{\mu})
+          (\mathbf{X}-\boldsymbol{\mu})^\top\mathbf{a}\big]
+        = \E\big[(\mathbf{a}^\top(\mathbf{X}-\boldsymbol{\mu}))^2\big] \geq 0.
+    \end{align}
+    Hence $\boldsymbol{\Sigma}$ is PSD. It is positive definite unless some non-zero
+    linear combination of the coordinates of $\mathbf{X}$ is almost surely constant.
+\end{proof}
+
+\begin{example}[Covariance matrices for two features]
+    Suppose two features have variances $1$ and $4$ and covariance $1$. Their
+    covariance matrix is
+    \begin{align}
+        \boldsymbol{\Sigma} = \begin{bmatrix}1&1\\1&4\end{bmatrix}.
+    \end{align}
+    Its determinant is $1\cdot4-1\cdot1=3>0$ and its trace is $5>0$, so both
+    eigenvalues are positive and $\boldsymbol{\Sigma}$ is positive definite.
+\end{example}
+
+\begin{example}[A rank-one covariance matrix]
+    If two features are perfectly correlated, for example $X_2 = 2X_1$ with
+    $\Var(X_1)=1$, then
+    \begin{align}
+        \boldsymbol{\Sigma}
+        = \begin{bmatrix}1&2\\2&4\end{bmatrix}
+        = \begin{bmatrix}1\\2\end{bmatrix}\begin{bmatrix}1&2\end{bmatrix}.
+    \end{align}
+    This matrix has eigenvalues $0$ and $5$: it is PSD but not positive definite. The
+    zero eigenvalue corresponds to the direction $(2,-1)^\top$, along which the data
+    have no variation.
+\end{example}
+
+\begin{theorem}
+    If $\mathbf{x}^\star$ is a local minimizer of a twice continuously differentiable
+    function $f$, then the Hessian $H_f(\mathbf{x}^\star)$ is positive semidefinite.
+\end{theorem}
+\begin{proof}
+    Let $\mathbf{u}$ be any direction and define the one-dimensional function
+    $g(t) = f(\mathbf{x}^\star + t\mathbf{u})$. Since $\mathbf{x}^\star$ is a local
+    minimizer of $f$, $t=0$ is a local minimizer of $g$. Therefore
+    $g'(0)=0$ and $g''(0)\geq 0$. By the chain rule,
+    \begin{align}
+        g'(t) = \nabla f(\mathbf{x}^\star+t\mathbf{u})^\top\mathbf{u},
+        \qquad
+        g''(t) = \mathbf{u}^\top H_f(\mathbf{x}^\star+t\mathbf{u})\,\mathbf{u}.
+    \end{align}
+    At $t=0$, $g''(0)=\mathbf{u}^\top H_f(\mathbf{x}^\star)\mathbf{u}\geq 0$. Since
+    $\mathbf{u}$ was arbitrary, $H_f(\mathbf{x}^\star)$ is PSD.
+\end{proof}
+
+\begin{example}[One-dimensional minima and inflection points]
+    For $f(x)=x^2$ at $x=0$, $f'(0)=0$ and $f''(0)=2>0$, so the Hessian is positive
+    definite and the point is a strict local minimum. For $f(x)=x^4$ at $x=0$,
+    $f'(0)=0$ and $f''(0)=0$: the Hessian is only PSD, yet the point is still a local
+    minimum. For $f(x)=x^3$ at $x=0$, again $f'(0)=0$ and $f''(0)=0$, but the point is
+    not a minimum. This shows that a PSD Hessian at a stationary point is necessary,
+    not sufficient, for a local minimum.
+\end{example}
+
+\begin{example}[A saddle point in two dimensions]
+    For $f(x,y)=x^2-y^2$ at $(0,0)$, the gradient is zero and the Hessian is
+    \begin{align}
+        H_f(0,0) = \begin{bmatrix}2&0\\0&-2\end{bmatrix},
+    \end{align}
+    which is indefinite. The point is a saddle, not a minimum. By contrast,
+    $f(x,y)=x^2+y^2$ has Hessian $2\mathbf{I}$ at the origin, which is positive
+    definite, and the origin is a strict local (and global) minimum.
+\end{example}
+
+
+\section{Gradients and directional derivatives}
+
+\begin{definition}
+    The \emph{gradient} of a differentiable function $f : \R^d \to \R$ at a point $\mathbf{x}$ is the vector of partial derivatives
+    \begin{align}
+    \nabla f(\mathbf{x}) =
+    \begin{bmatrix}
+        \dfrac{\partial f}{\partial x_1}(\mathbf{x})\\
+        \vdots\\
+        \dfrac{\partial f}{\partial x_d}(\mathbf{x})
+    \end{bmatrix}.
+    \end{align}
+    The gradient points in the direction of steepest ascent.
+\end{definition}
+
+\begin{example}[Gradient of a polynomial]
+    For $f(x,y)=x^2y+3y$,
+    \begin{align}
+        \nabla f(x,y) = \begin{bmatrix}2xy\\ x^2+3\end{bmatrix}.
+    \end{align}
+    At $(1,2)$ the gradient is $(4,4)^\top$, so moving in the direction $(1,1)^\top$
+    increases $f$ most rapidly at that point.
+\end{example}
+
+\begin{example}[Gradient of a least-squares objective]
+    For $f(\mathbf{x})=\frac12\norm{\mathbf{A}\mathbf{x}-\mathbf{b}}_2^2$,
+    \begin{align}
+        \nabla f(\mathbf{x})
+        = \mathbf{A}^\top(\mathbf{A}\mathbf{x}-\mathbf{b}).
+    \end{align}
+    Setting the gradient to zero recovers the normal equations
+    $\mathbf{A}^\top\mathbf{A}\mathbf{x}=\mathbf{A}^\top\mathbf{b}$.
+\end{example}
+
+\begin{definition}
+    The \emph{directional derivative} of $f$ at a point $\mathbf{x}$ in the direction $\mathbf{u}$ (with $\norm{\mathbf{u}}=1$) is
+    \begin{align}
+    D_{\mathbf{u}} f(\mathbf{x}) &\defn \nabla f(\mathbf{x})^\top \mathbf{u}
+    = \sum_{i=1}^{d} \frac{\partial f}{\partial x_i}(\mathbf{x}) u_i.
+    \end{align}
+    Its value at $\mathbf{x}_0$ is given by
+    \begin{align}
+          (D_{\mathbf{u}} f)(\mathbf{x}_0)
+          &= \lim_{h \to 0} \frac{f(\mathbf{x}_0 + h\mathbf{u}) - f(\mathbf{x}_0)}{h}.
+    \end{align}
+\end{definition}
+Consequently, $-\nabla f(\mathbf{x})$ is the direction of steepest descent, which is
+the intuition behind gradient-based optimisation.
+
+\begin{example}[Directional derivative]
+    Let $f(x,y)=x^2+y^2$ and $\mathbf{u}=(3/5,4/5)^\top$, which is a unit vector.
+    At $(1,2)$,
+    \begin{align}
+        \nabla f(1,2) = (2,4)^\top,
+        \qquad
+        D_{\mathbf{u}}f(1,2) = 2\cdot\frac35 + 4\cdot\frac45 = \frac{22}{5}.
+    \end{align}
+    Moving a small distance $h$ in direction $\mathbf{u}$ therefore changes $f$ by
+    approximately $\frac{22}{5}h$.
+\end{example}
+
+\begin{example}[Steepest ascent]
+    For the same function, the unit direction of steepest ascent at $(1,2)$ is
+    \begin{align}
+        \mathbf{u}^\star = \frac{\nabla f(1,2)}{\norm{\nabla f(1,2)}_2}
+        = \frac{1}{\sqrt{20}}(2,4)^\top = \frac{1}{\sqrt5}(1,2)^\top.
+    \end{align}
+    The directional derivative in this direction is
+    $\norm{\nabla f(1,2)}_2=\sqrt{20}$, which is the largest value of
+    $D_{\mathbf{u}}f(1,2)$ over all unit vectors $\mathbf{u}$ by the
+    Cauchy--Schwarz inequality.
+\end{example}
+
+
+
+\section{Jacobian and chain rule}
+
+If $\mathbf{g} : \R^n \to \R^m$ is differentiable, its \emph{Jacobian}\index{Jacobian} is the $m \times n$ matrix $J_{\mathbf{g}}(\mathbf{x})$ with entries
+\begin{align}
+    (J_{\mathbf{g}})_{ij} = \frac{\partial g_i}{\partial x_j}.
+\end{align}
+\begin{example}[Jacobian of a vector-valued function]
+    Define the map
+    \begin{align}
+        \mathbf{g}(x,y) = (x^2y,\ \sin x,\ x+y).
+    \end{align}
+    Its Jacobian is
+    \begin{align}
+        J_{\mathbf{g}}(x,y) =
+        \begin{bmatrix}
+            2xy & x^2\\
+            \cos x & 0\\
+            1 & 1
+        \end{bmatrix}.
+    \end{align}
+    The first row is the gradient of the first component, the second row is the
+    gradient of the second component, and so on.
+\end{example}
+
+\begin{example}[Jacobian of polar coordinates]
+    The map from polar to Cartesian coordinates is
+    \begin{align}
+        \mathbf{g}(r,\theta) = (r\cos\theta,\ r\sin\theta),
+    \end{align}
+    with Jacobian
+    \begin{align}
+        J_{\mathbf{g}}(r,\theta) =
+        \begin{bmatrix}
+            \cos\theta & -r\sin\theta\\
+            \sin\theta & r\cos\theta
+        \end{bmatrix}.
+    \end{align}
+    Its determinant is $r$, which is the area-scaling factor used when changing from
+    Cartesian to polar coordinates in integrals.
+\end{example}
+
+\begin{proposition}\label{prop:nabla-jacob}
+    For $h(\mathbf{x}) = f(\mathbf{g}(\mathbf{x}))$ with $f : \R^m \to \R$,
+\begin{align}
+    \nabla h(\mathbf{x}) = J_{\mathbf{g}}(\mathbf{x})^\top \nabla f(\mathbf{g}(\mathbf{x})).
+\end{align}
+\end{proposition}
+\begin{proof}
+    Write $\mathbf{y}=\mathbf{g}(\mathbf{x})$ and $y_i=g_i(\mathbf{x})$. By the
+    multivariate chain rule,
+    \begin{align}
+        \frac{\partial h}{\partial x_j}(\mathbf{x})
+        = \sum_{i=1}^m
+          \frac{\partial f}{\partial y_i}(\mathbf{g}(\mathbf{x}))
+          \frac{\partial g_i}{\partial x_j}(\mathbf{x})
+        = \sum_{i=1}^m
+          (J_{\mathbf{g}})_{ij}(\mathbf{x})\,
+          \frac{\partial f}{\partial y_i}(\mathbf{g}(\mathbf{x})).
+    \end{align}
+    The final expression is exactly the $j$-th entry of
+    $J_{\mathbf{g}}(\mathbf{x})^\top\nabla f(\mathbf{g}(\mathbf{x}))$.
+\end{proof}
+This proposition \ref{prop:nabla-jacob} is the engine behind backpropagation in neural networks
+(Chapter~\ref{ch:nn}).
+\begin{example}[Chain rule with a linear map]
+    Let $f(u,v)=u^2+v^2$ and $\mathbf{g}(x,y)=(x+y,\ x-y)$. Then
+    \begin{align}
+        h(x,y) = f(\mathbf{g}(x,y)) = (x+y)^2+(x-y)^2 = 2x^2+2y^2,
+    \end{align}
+    so $\nabla h(x,y)=(4x,4y)^\top$. Checking the proposition,
+    \begin{align}
+        J_{\mathbf{g}} = \begin{bmatrix}1&1\\1&-1\end{bmatrix},
+        \qquad
+        \nabla f(\mathbf{g}(x,y)) = \begin{bmatrix}2(x+y)\\2(x-y)\end{bmatrix},
+        \qquad
+        J_{\mathbf{g}}^\top\nabla f = \begin{bmatrix}4x\\4y\end{bmatrix}.
+    \end{align}
+\end{example}
+
+
+\section{Hessian}
+
+\begin{definition}
+    The \emph{Hessian}\index{Hessian} of a twice differentiable function
+    $f : \R^d \to \R$ is the $d \times d$ matrix of second partial derivatives
+    \begin{align}
+        H_f(\mathbf{x}) =
+        \begin{bmatrix}
+            \dfrac{\partial^2 f}{\partial x_1^2}(\mathbf{x}) &
+            \cdots &
+            \dfrac{\partial^2 f}{\partial x_1\partial x_d}(\mathbf{x})\\
+            \vdots & \ddots & \vdots\\
+            \dfrac{\partial^2 f}{\partial x_d\partial x_1}(\mathbf{x}) &
+            \cdots &
+            \dfrac{\partial^2 f}{\partial x_d^2}(\mathbf{x})
+        \end{bmatrix}.
+    \end{align}
+\end{definition}
+When the second partial derivatives are continuous, Schwarz's theorem implies that
+the Hessian is symmetric. The Hessian collects the second-order local information
+about $f$: its eigenvalues describe the curvature in the directions of its
+eigenvectors. Positive eigenvalues mean upward curvature, negative eigenvalues mean
+downward curvature, and a mixture of signs indicates a saddle.
+
+\begin{example}[Hessian of a quadratic]
+    For $f(x,y)=x^2+3xy+2y^2$,
+    \begin{align}
+        \nabla f(x,y) = \begin{bmatrix}2x+3y\\3x+4y\end{bmatrix},
+        \qquad
+        H_f(x,y) = \begin{bmatrix}2&3\\3&4\end{bmatrix}.
+    \end{align}
+    The Hessian is constant. Its eigenvalues are $3\pm\sqrt{10}$, one positive and
+    one negative, so the quadratic is indefinite and has a saddle at the origin.
+\end{example}
+
+\begin{example}[Hessian of least squares]
+    For $f(\mathbf{x})=\frac12\norm{\mathbf{A}\mathbf{x}-\mathbf{b}}_2^2$,
+    \begin{align}
+        H_f(\mathbf{x}) = \mathbf{A}^\top\mathbf{A}.
+    \end{align}
+    This matrix is always PSD, and it is positive definite when $\mathbf{A}$ has full
+    column rank. The least-squares objective is therefore convex, and its unique
+    minimizer (when it exists) solves the normal equations.
+\end{example}
+
+\section{Taylor approximation and curvature}
+
+
+\begin{proposition}
+    For a twice-differentiable $f$, the second-order Taylor expansion about
+$\mathbf{x}_0$ is
+\begin{align}
+    f(\mathbf{x}) \approx f(\mathbf{x}_0)
+    + \nabla f(\mathbf{x}_0)^\top (\mathbf{x} - \mathbf{x}_0)
+    + \frac{1}{2} (\mathbf{x} - \mathbf{x}_0)^\top H_f(\mathbf{x}_0) (\mathbf{x} - \mathbf{x}_0),
+\end{align}
+where $H_f$ is the \emph{Hessian} matrix of second partial derivatives.
+\end{proposition}
+\begin{proof}
+    Let $\mathbf{d}=\mathbf{x}-\mathbf{x}_0$ and define
+    $\varphi(t)=f(\mathbf{x}_0+t\mathbf{d})$ for $t\in[0,1]$. By the
+    one-dimensional Taylor theorem,
+    \begin{align}
+        \varphi(1) = \varphi(0) + \varphi'(0) + \frac12\varphi''(\xi)
+    \end{align}
+    for some $\xi\in(0,1)$. The chain rule gives
+    \begin{align}
+        \varphi'(t) = \nabla f(\mathbf{x}_0+t\mathbf{d})^\top\mathbf{d},
+        \qquad
+        \varphi''(t) = \mathbf{d}^\top H_f(\mathbf{x}_0+t\mathbf{d})\,\mathbf{d}.
+    \end{align}
+    Substituting $t=0$ and dropping the remainder term
+    $\frac12\varphi''(\xi)-\frac12\varphi''(0)$, which is $o(\norm{\mathbf{d}}^2)$
+    for twice continuously differentiable $f$, yields the stated expansion.
+\end{proof}
+The Hessian governs local curvature and hence the stability of gradient-based optimisation. A large ratio between the largest and smallest Hessian eigenvalues (a large \emph{condition number}) makes the loss surface look like a narrow valley and slows first-order methods down.
+
+\begin{example}[Second-order Taylor expansion of the exponential]
+    For $f(x)=e^x$ about $x_0=0$, $f(0)=f'(0)=f''(0)=1$, so
+    \begin{align}
+        e^x \approx 1+x+\frac{x^2}{2}.
+    \end{align}
+    The approximation is accurate for small $x$ and degrades as $|x|$ grows. Adding
+    higher-order terms gives the usual Taylor series.
+\end{example}
+
+\begin{example}[Second-order Taylor expansion of a product]
+    For $f(x,y)=xy$ about $(1,1)$,
+    \begin{align}
+        \nabla f(1,1) = (1,1)^\top,
+        \qquad
+        H_f(1,1) = \begin{bmatrix}0&1\\1&0\end{bmatrix}.
+    \end{align}
+    Therefore
+    \begin{align}
+        xy \approx 1 + (x-1) + (y-1) + (x-1)(y-1).
+    \end{align}
+    In fact this expansion is exact, because $f$ is a quadratic polynomial and all
+    higher derivatives vanish.
+\end{example}
+
+\section{Convexity and optimality}
+
+\begin{definition}
+    A set $X$ is \emph{convex}\index{convex set} if the segment between any two points in $X$ stays in $X$. A function $f$ is \emph{convex}\index{convex function} if
+\begin{align}
+    f(\lambda \mathbf{x} + (1-\lambda)\mathbf{y})
+    \leq \lambda f(\mathbf{x}) + (1-\lambda) f(\mathbf{y}),
+    \qquad \lambda \in [0,1].
+\end{align}
+\end{definition}
+
+\begin{example}[Convex and non-convex functions]
+    The functions $f(x)=x^2$, $f(x)=|x|$, and $f(x)=e^x$ are convex on $\R$. The
+    function $f(x)=x^3$ is not convex on $\R$, because its second derivative $6x$ is
+    negative for $x<0$; it is convex only on $[0,\infty)$. The function $f(x)=-x^2$
+    is concave, not convex.
+\end{example}
+
+\begin{example}[Convex sets]
+    Balls $\{\mathbf{x}:\norm{\mathbf{x}}_2\leq r\}$, half-spaces
+    $\{\mathbf{x}:\mathbf{a}^\top\mathbf{x}\leq b\}$, and the positive orthant
+    $\R^d_+$ are convex. The annulus
+    $\{\mathbf{x}\in\R^2:1\leq\norm{\mathbf{x}}_2\leq2\}$ is not convex: the segment
+    between two points on opposite sides passes through the hole.
+\end{example}
+
+\begin{proposition}
+    For differentiable $f$, convexity is equivalent to $f(\mathbf{y}) \geq f(\mathbf{x}) + \nabla f(\mathbf{x})^\top(\mathbf{y}-\mathbf{x})$; for twice-differentiable $f$, it is equivalent to $H_f(\mathbf{x}) \succeq 0$ for all $\mathbf{x}$.
+\end{proposition}
+\begin{proof}
+    Suppose first that $f$ is convex and let
+    $\mathbf{z}_\lambda=\mathbf{x}+\lambda(\mathbf{y}-\mathbf{x})$ for
+    $\lambda\in(0,1)$. Convexity gives
+    \begin{align}
+        f(\mathbf{z}_\lambda)
+        \leq (1-\lambda)f(\mathbf{x})+\lambda f(\mathbf{y}).
+    \end{align}
+    Rearranging and dividing by $\lambda$,
+    \begin{align}
+        \frac{f(\mathbf{x}+\lambda(\mathbf{y}-\mathbf{x}))-f(\mathbf{x})}{\lambda}
+        \leq f(\mathbf{y})-f(\mathbf{x}).
+    \end{align}
+    Letting $\lambda\to0^+$ gives
+    $\nabla f(\mathbf{x})^\top(\mathbf{y}-\mathbf{x})\leq f(\mathbf{y})-f(\mathbf{x})$.
+
+    Conversely, assume the first-order inequality. For
+    $\mathbf{z}=\lambda\mathbf{x}+(1-\lambda)\mathbf{y}$, applying the inequality
+    from $\mathbf{z}$ to both $\mathbf{x}$ and $\mathbf{y}$ gives
+    \begin{align}
+        f(\mathbf{x}) &\geq f(\mathbf{z})+\nabla f(\mathbf{z})^\top(\mathbf{x}-\mathbf{z}),\\
+        f(\mathbf{y}) &\geq f(\mathbf{z})+\nabla f(\mathbf{z})^\top(\mathbf{y}-\mathbf{z}).
+    \end{align}
+    Multiplying the first inequality by $\lambda$, the second by $1-\lambda$, and
+    adding yields
+    $\lambda f(\mathbf{x})+(1-\lambda)f(\mathbf{y})\geq f(\mathbf{z})$, which is
+    convexity.
+
+    For the second-order condition, restrict $f$ to the line
+    $t\mapsto f(\mathbf{x}+t\mathbf{d})$. This one-dimensional function is convex
+    exactly when its second derivative is non-negative:
+    \begin{align}
+        \frac{d^2}{dt^2}f(\mathbf{x}+t\mathbf{d})
+        = \mathbf{d}^\top H_f(\mathbf{x}+t\mathbf{d})\,\mathbf{d}\geq0.
+    \end{align}
+    Since this must hold for every direction $\mathbf{d}$ and every point, it is
+    equivalent to $H_f(\mathbf{x})\succeq0$ for all $\mathbf{x}$.
+\end{proof}
+
+\begin{example}[Checking convexity with the Hessian]
+    For $f(x,y)=x^2+xy+y^2$,
+    \begin{align}
+        H_f = \begin{bmatrix}2&1\\1&2\end{bmatrix},
+    \end{align}
+    whose eigenvalues are $1$ and $3$. The Hessian is positive definite everywhere,
+    so $f$ is strictly convex and has a unique global minimum.
+\end{example}
+
+\begin{example}[A convex function with a flat Hessian]
+    The function $f(x)=x^4$ has $f''(x)=12x^2\geq0$ for all $x$, so it is convex.
+    At $x=0$ the Hessian is zero, so the second-order condition is satisfied but does
+    not certify strict convexity. Nevertheless the origin is the unique global
+    minimum, because $x^4>0$ for every $x\neq0$.
+\end{example}
+
+\begin{proposition}
+    Let $f$ be twice differentiable. If $\mathbf{x}^\star$ is a local minimum, then
+    $\nabla f(\mathbf{x}^\star)=\mathbf{0}$ and $H_f(\mathbf{x}^\star)$ is PSD.
+    Conversely, if $\nabla f(\mathbf{x}^\star)=\mathbf{0}$ and
+    $H_f(\mathbf{x}^\star)$ is positive definite, then $\mathbf{x}^\star$ is a strict
+    local minimum. For a convex $f$, every stationary point is a global minimum.
+\end{proposition}
+\begin{proof}
+    The necessary conditions follow from Fermat's theorem and the preceding Hessian
+    theorem. For the sufficient condition, the second-order Taylor expansion about
+    $\mathbf{x}^\star$ with $\nabla f(\mathbf{x}^\star)=\mathbf{0}$ gives
+    \begin{align}
+        f(\mathbf{x}^\star+\mathbf{d})
+        = f(\mathbf{x}^\star)
+        + \frac12\mathbf{d}^\top H_f(\mathbf{x}^\star)\mathbf{d}
+        + o(\norm{\mathbf{d}}^2).
+    \end{align}
+    If $H_f(\mathbf{x}^\star)$ is positive definite with smallest eigenvalue
+    $\lambda_{\min}>0$, then for sufficiently small $\norm{\mathbf{d}}$ the quadratic
+    term dominates the remainder, so $f(\mathbf{x}^\star+\mathbf{d})>f(\mathbf{x}^\star)$
+    for all $\mathbf{d}\neq\mathbf{0}$. Finally, if $f$ is convex and
+    $\nabla f(\mathbf{x}^\star)=\mathbf{0}$, the first-order condition gives
+    \begin{align}
+        f(\mathbf{y}) \geq f(\mathbf{x}^\star)
+        + \nabla f(\mathbf{x}^\star)^\top(\mathbf{y}-\mathbf{x}^\star)
+        = f(\mathbf{x}^\star)
+    \end{align}
+    for every $\mathbf{y}$, so $\mathbf{x}^\star$ is a global minimum.
+\end{proof}
+
+\begin{definition}
+    A function is $\mu$-strongly convex and $L$-smooth if
+    \begin{align}
+        \mu \mathbf{I} \preceq H_f(\mathbf{x}) \preceq L \mathbf{I}
+    \end{align}
+for all $\mathbf{x}$. The ratio
+ \begin{align}
+    \kappa &\defn \frac{L}{\mu}
+ \end{align}
+is the condition number.
+\end{definition}
+
+\begin{example}[A perfectly conditioned quadratic]
+    For $f(x)=x^2$, the Hessian is $f''(x)=2$ everywhere, so the function is
+    $2$-strongly convex and $2$-smooth, and $\kappa=2/2=1$. Gradient descent
+    with step size $\eta=1/2$ gives
+    \begin{align}
+        x_{t+1} = x_t - \frac{1}{2}\,(2x_t) = 0,
+    \end{align}
+    so it reaches the minimizer in a single step from any starting point. A
+    condition number of one means the level sets are circles and the error
+    contracts to zero immediately.
+\end{example}
+
+\begin{example}[Convex but neither smooth nor strongly convex]
+    The function $f(x)=x^4$ is convex because $f''(x)=12x^2\geq0$, but it is not
+    $L$-smooth on $\R$: its second derivative is unbounded, so no constant $L$
+    bounds $f''$ everywhere. It is also not $\mu$-strongly convex for any
+    $\mu>0$, because $f''(0)=0$. On the restricted interval $[-1,1]$ it is
+    $12$-smooth, but it remains only convex there. This shows that convexity
+    alone does not guarantee the constants required by the convergence
+    proposition below.
+\end{example}
+
+\begin{proposition}
+    Let $f$ be $L$-smooth and $\mu$-strongly convex, and let
+    $\mathbf{x}^\star$ be its minimizer. Gradient descent with step size
+    $\eta=1/L$ satisfies
+    \begin{align}
+        f(\mathbf{x}_{t+1})-f(\mathbf{x}^\star)
+        \leq \left(1-\frac{\mu}{L}\right)
+        \big(f(\mathbf{x}_t)-f(\mathbf{x}^\star)\big).
+    \end{align}
+    Hence the error contracts at rate $1-1/\kappa$, where $\kappa=L/\mu$.
+\end{proposition}
+\begin{proof}
+    Write $\mathbf{g}_t=\nabla f(\mathbf{x}_t)$. By $L$-smoothness,
+    \begin{align}
+        f(\mathbf{x}_{t+1})
+        = f\left(\mathbf{x}_t-\frac1L\mathbf{g}_t\right)
+        \leq f(\mathbf{x}_t)-\frac{1}{2L}\norm{\mathbf{g}_t}_2^2.
+    \end{align}
+    By $\mu$-strong convexity, the function gap is bounded by the gradient norm:
+    \begin{align}
+        f(\mathbf{x}_t)-f(\mathbf{x}^\star)
+        \leq \frac{1}{2\mu}\norm{\mathbf{g}_t}_2^2.
+    \end{align}
+    Equivalently, $\norm{\mathbf{g}_t}_2^2\geq
+    2\mu\big(f(\mathbf{x}_t)-f(\mathbf{x}^\star)\big)$. Substituting this into the
+    previous inequality and subtracting $f(\mathbf{x}^\star)$ gives
+    \begin{align}
+        f(\mathbf{x}_{t+1})-f(\mathbf{x}^\star)
+        \leq \left(1-\frac{\mu}{L}\right)
+        \big(f(\mathbf{x}_t)-f(\mathbf{x}^\star)\big).
+    \end{align}
+    Unrolling the recursion yields the claimed contraction rate.
+\end{proof}
+
+\begin{example}[Condition number of a quadratic]
+    For $f(x_1,x_2)=\frac12(100x_1^2+x_2^2)$, the Hessian is
+    $\operatorname{diag}(100,1)$, so $\mu=1$, $L=100$, and $\kappa=100$. With step
+    size $\eta=0.01$, the error contracts by a factor of approximately
+    $1-1/100=0.99$ per iteration; after $100$ iterations the gap is still about
+    $0.99^{100}\approx0.366$ of its initial value. This slow convergence is caused by
+    the ill-conditioning, not by a poor choice of step size.
+\end{example}
+
+\begin{example}[Feature scaling improves conditioning]
+    If one feature is measured in thousands and another in fractions, the curvature
+    of the loss in the two coordinate directions can differ by many orders of
+    magnitude, making $\kappa$ enormous. Standardising each feature to zero mean and
+    unit variance removes this artificial scale difference and often reduces the
+    condition number dramatically, allowing gradient descent to converge in far fewer
+    iterations.
+\end{example}
+
+\section{Useful matrix identities}
+
+For invertible matrices and vectors of compatible dimensions,
+\begin{align}
+    \nabla_{\mathbf{x}} (\mathbf{a}^\top \mathbf{x}) &= \mathbf{a}, &
+    \nabla_{\mathbf{x}} (\mathbf{x}^\top \mathbf{A}\mathbf{x}) &= (\mathbf{A}+\mathbf{A}^\top)\mathbf{x},\\
+    \nabla_{\mathbf{X}} \norm{\mathbf{X}}_F^2 &= 2\mathbf{X}, &
+    \nabla_{\mathbf{X}} \tr(\mathbf{A}\mathbf{X}) &= \mathbf{A}^\top.
+\end{align}
+If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\mathbf{x}
+= 2\mathbf{A}\mathbf{x}$.
+
+\chapter{Probability Review}
+\label{ch:prob}
+
+\section{Random variables and distributions}
+
+A random variable $X$ maps outcomes to values. A discrete variable has a \emph{probability mass function}
+\begin{align}
+    p_X(x) &\defn \Pr(X=x)
+\end{align}
+a continuous variable has a density $p_X(x)$ with
+\begin{align}
+    \Pr(a \leq X \leq b) &\defn \int_a^b p_X(x)\,dx
+\end{align}
+The \emph{cumulative distribution function} is 
+\begin{align}
+    F_X(x) &\defn \Pr(X \leq x)    
+\end{align}
+\begin{example}[A fair coin]
+    Let $X=1$ for heads and $X=0$ for tails, with
+    $\Pr(X=1)=\Pr(X=0)=1/2$. Its mass function is $p_X(0)=p_X(1)=1/2$, and its
+    distribution function is
+    \begin{align}
+        F_X(x) =
+        \begin{cases}
+            0, & x < 0,\\
+            1/2, & 0 \leq x < 1,\\
+            1, & x \geq 1.
+        \end{cases}
+    \end{align}
+    The CDF is a step function that jumps by $p_X(x)$ at each value in the
+    support.
+\end{example}
+
+\begin{example}[A uniform random variable]
+    If $X$ is uniform on $[0,1]$, its density is $p_X(x)=1$ for $0\leq x\leq1$
+    and zero otherwise. Hence
+    \begin{align}
+        \Pr(0.2 \leq X \leq 0.5) = \int_{0.2}^{0.5} 1\,dx = 0.3,
+    \end{align}
+    and its CDF is $F_X(x)=0$ for $x<0$, $F_X(x)=x$ for $0\leq x\leq1$, and
+    $F_X(x)=1$ for $x>1$. The density is the derivative of the CDF wherever the
+    latter is differentiable.
+\end{example}
+
+
+\section{Expectation, variance, and covariance}
+
+\begin{definition}
+    The \emph{expected value} of a discrete random variable is
+\begin{align}
+    \mathrm{E}[X] &\defn \sum_x x \, \Pr(X = x),
+\end{align}
+and for a continuous random variable with density $p_X$,
+\begin{align}
+    \mathrm{E}[X] = \int x \, p_X(x) \, dx.
+\end{align}
+\end{definition}
+\begin{example}[Expectation of a die roll]
+    For a fair six-sided die, $X\in\{1,\ldots,6\}$ with $\Pr(X=k)=1/6$. Thus
+    \begin{align}
+        \mathrm{E}[X] = \sum_{k=1}^6 k\cdot\frac16
+        = \frac{1+2+3+4+5+6}{6} = \frac{21}{6} = 3.5.
+    \end{align}
+    The mean need not be a value that the variable can actually take.
+\end{example}
+
+\begin{example}[Expectation of an exponential variable]
+    For $X\sim\mathrm{Exp}(\lambda)$ with density
+    $p_X(x)=\lambda e^{-\lambda x}$ on $x\geq0$,
+    \begin{align}
+        \mathrm{E}[X] = \int_0^\infty x\,\lambda e^{-\lambda x}\,dx
+        = \frac{1}{\lambda},
+    \end{align}
+    which follows by integrating by parts. A larger $\lambda$ means a shorter
+    typical waiting time.
+\end{example}
+
+\begin{proposition}
+    Linearity of expectation holds regardless of independence:
+    \begin{align}
+        \mathrm{E}[aX + bY] = a\mathrm{E}[X] + b\mathrm{E}[Y].
+    \end{align}
+\end{proposition}
+\begin{proof}
+    Consider the discrete case and write $p(x,y)=\Pr(X=x,Y=y)$. Then
+    \begin{align}
+        \mathrm{E}[aX+bY]
+        &= \sum_x\sum_y (ax+by)\,p(x,y)\\
+        &= a\sum_x x\sum_y p(x,y) + b\sum_y y\sum_x p(x,y)\\
+        &= a\sum_x x\,\Pr(X=x) + b\sum_y y\,\Pr(Y=y)\\
+        &= a\,\mathrm{E}[X] + b\,\mathrm{E}[Y].
+    \end{align}
+    The first equality uses the joint mass function, the second rearranges the
+    finite sums, and the third uses the marginalisation identities
+    $\sum_y p(x,y)=\Pr(X=x)$ and $\sum_x p(x,y)=\Pr(Y=y)$. The continuous case is
+    identical with sums replaced by integrals. Independence is never used, so the
+    result holds for any pair of random variables with finite expectations.
+\end{proof}
+\begin{example}[Sum of two dice]
+    Let $X_1$ and $X_2$ be the outcomes of two fair dice. Linearity gives
+    \begin{align}
+        \mathrm{E}[X_1+X_2] = \mathrm{E}[X_1]+\mathrm{E}[X_2]
+        = 3.5+3.5 = 7.
+    \end{align}
+    We do not need to enumerate the $36$ equally likely pairs, and the result
+    does not rely on the dice being independent.
+\end{example}
+
+\begin{example}[Expectation of a binomial variable]
+    If $X\sim\mathrm{Binomial}(n,p)$, write $X=\sum_{i=1}^n X_i$ where $X_i$ is
+    the indicator that trial $i$ succeeds. Each $X_i$ is Bernoulli with mean $p$,
+    so linearity gives
+    \begin{align}
+        \mathrm{E}[X] = \sum_{i=1}^n \mathrm{E}[X_i] = np.
+    \end{align}
+    This is much simpler than summing $k\binom{n}{k}p^k(1-p)^{n-k}$ over all $k$.
+\end{example}
+
+\begin{example}[The sample mean is unbiased]
+    For independent observations $X_1,\ldots,X_n$ with common mean $\mu$, the
+    sample mean $\bar X = \frac1n\sum_{i=1}^n X_i$ satisfies
+    \begin{align}
+        \mathrm{E}[\bar X]
+        = \frac1n\sum_{i=1}^n \mathrm{E}[X_i]
+        = \frac1n\cdot n\mu = \mu.
+    \end{align}
+    Linearity is the only property needed for unbiasedness; independence is not
+    required here, although it is needed to compute the variance of $\bar X$.
+\end{example}
+
+\begin{definition}
+    The \emph{variance} measures spread about the mean:
+\begin{align}
+    \Var(X) = \mathrm{E}[(X - \mathrm{E}[X])^2] = \mathrm{E}[X^2] - \mathrm{E}[X]^2.
+\end{align}
+The \emph{covariance} measures joint variation:
+\begin{align}
+    \Cov(X,Y) = \mathrm{E}[(X-\mathrm{E}[X])(Y-\mathrm{E}[Y])] = \mathrm{E}[XY] - \mathrm{E}[X]\mathrm{E}[Y],
+\end{align}
+and the correlation is 
+\begin{align}
+    \rho_{XY} = \Cov(X,Y)/\sqrt{\Var(X)\Var(Y)} \in [-1,1].
+\end{align}
+\end{definition}
+\begin{example}[Variance of a Bernoulli variable]
+    For $X\sim\mathrm{Bernoulli}(p)$, $X^2=X$ because $X$ takes only the values
+    $0$ and $1$. Hence $\mathrm{E}[X^2]=p$ and
+    \begin{align}
+        \Var(X) = \mathrm{E}[X^2]-\mathrm{E}[X]^2 = p-p^2 = p(1-p).
+    \end{align}
+    The variance is largest at $p=1/2$ and vanishes at $p=0$ and $p=1$.
+\end{example}
+
+\begin{example}[Affine transformations and sums]
+    For constants $a,b$,
+    \begin{align}
+        \Var(aX+b) &= a^2\Var(X),\\
+        \Var(X+Y) &= \Var(X)+\Var(Y)+2\Cov(X,Y).
+    \end{align}
+    Adding a constant does not change the spread, multiplying by $a$ scales the
+    variance by $a^2$, and variances add exactly when $\Cov(X,Y)=0$. Independent
+    variables have zero covariance, but the converse is false in general.
+\end{example}
+
+\begin{example}[Computing a correlation]
+    Let $X$ and $Y$ be binary with joint probabilities
+    $\Pr(0,0)=0.4$, $\Pr(0,1)=0.1$, $\Pr(1,0)=0.1$, and $\Pr(1,1)=0.4$. Then
+    $\mathrm{E}[X]=\mathrm{E}[Y]=0.5$ and $\mathrm{E}[XY]=\Pr(1,1)=0.4$, so
+    \begin{align}
+        \Cov(X,Y) &= 0.4-0.5\cdot0.5 = 0.15,\\
+        \Var(X)=\Var(Y) &= 0.5-0.25 = 0.25.
+    \end{align}
+    Therefore $\rho_{XY}=0.15/0.25=0.6$: the variables are positively but not
+    perfectly correlated.
+\end{example}
+
+
+\begin{definition}
+    For a random vector $\mathbf{X}$, the covariance matrix is
+\begin{align}
+    \boldsymbol{\Sigma} = \mathrm{E}[(\mathbf{X}-\boldsymbol{\mu})(\mathbf{X}-\boldsymbol{\mu})^\top].
+\end{align}
+\end{definition}
+\begin{example}[From covariance matrix to correlation matrix]
+    Suppose $\Var(X_1)=4$, $\Var(X_2)=9$, and $\Cov(X_1,X_2)=3$. The covariance
+    matrix is
+    \begin{align}
+        \boldsymbol{\Sigma} =
+        \begin{bmatrix}4&3\\3&9\end{bmatrix},
+    \end{align}
+    and the correlation is $\rho=3/\sqrt{4\cdot9}=3/6=0.5$. Dividing each entry
+    by the corresponding standard deviations gives the correlation matrix
+    \begin{align}
+        \mathbf{R} =
+        \begin{bmatrix}1&0.5\\0.5&1\end{bmatrix}.
+    \end{align}
+    The diagonal of $\boldsymbol{\Sigma}$ carries the scales, while $\mathbf{R}$
+    removes them.
+\end{example}
+
+\begin{example}[Covariance under a linear transformation]
+    If $\mathbf{Y}=\mathbf{A}\mathbf{X}+\mathbf{b}$, then
+    \begin{align}
+        \boldsymbol{\Sigma}_{\mathbf{Y}}
+        = \mathbf{A}\,\boldsymbol{\Sigma}_{\mathbf{X}}\,\mathbf{A}^\top.
+    \end{align}
+    For example, with
+    $\boldsymbol{\Sigma}_{\mathbf{X}}=\begin{bmatrix}2&1\\1&2\end{bmatrix}$
+    and $\mathbf{A}=\begin{bmatrix}1&1\\1&-1\end{bmatrix}$,
+    \begin{align}
+        \mathbf{A}\boldsymbol{\Sigma}_{\mathbf{X}}\mathbf{A}^\top
+        = \begin{bmatrix}6&0\\0&2\end{bmatrix}.
+    \end{align}
+    The transformed coordinates are uncorrelated even though the original ones
+    were not.
+\end{example}
+
+\begin{example}[A singular covariance matrix]
+    Let $X_1$ and $X_2$ be independent with unit variance, and let
+    $X_3=X_1+X_2$. Then
+    \begin{align}
+        \Cov(X_1,X_3)=\Cov(X_1,X_1)+\Cov(X_1,X_2)=1,
+    \end{align}
+    and similarly $\Cov(X_2,X_3)=1$, while
+    $\Var(X_3)=\Var(X_1)+\Var(X_2)=2$. Hence
+    \begin{align}
+        \boldsymbol{\Sigma} =
+        \begin{bmatrix}1&0&1\\0&1&1\\1&1&2\end{bmatrix},
+    \end{align}
+    which has rank two: the vector $(1,1,-1)^\top$ lies in its null space because
+    $X_3-X_1-X_2=0$. Singular covariance matrices signal an exact linear
+    dependence among the features.
+\end{example}
+
+
+
+
+\section{Joint, marginal, and conditional distributions}
+
+The \emph{joint distribution} of two random variables $X, Y$ is
+$\Pr(X = x, Y = y)$. The \emph{marginal} is obtained by summing (or integrating) out
+the other variable:
+\begin{align}
+    \Pr(X = x) = \sum_y \Pr(X = x, Y = y).
+\end{align}
+The \emph{conditional distribution} is
+\begin{align}
+    \Pr(Y = y \mid X = x) = \frac{\Pr(X = x, Y = y)}{\Pr(X = x)},
+    \qquad \Pr(X=x) > 0.
+\end{align}
+
+\textbf{Bayes' rule:}
+\begin{align}
+    \Pr(Y = y \mid X = x)
+    = \frac{\Pr(X = x \mid Y = y) \, \Pr(Y = y)}{\Pr(X = x)}.
+\end{align}
+The denominator is a normalising constant:
+$\Pr(X=x) = \sum_{y'} \Pr(X=x \mid Y=y')\Pr(Y=y')$. In Bayesian terminology,
+$\Pr(Y=y)$ is the \emph{prior}, $\Pr(X=x\mid Y=y)$ the \emph{likelihood}, and
+$\Pr(Y=y\mid X=x)$ the \emph{posterior}.
+
+$X$ and $Y$ are \emph{independent} if
+$\Pr(X=x, Y=y) = \Pr(X=x)\Pr(Y=y)$ for all $x, y$, equivalently
+$\Pr(Y=y \mid X=x) = \Pr(Y=y)$. They are \emph{conditionally independent} given $Z$
+if $\Pr(X,Y\mid Z) = \Pr(X\mid Z)\Pr(Y\mid Z)$.
+
+\section{Common distributions}
+
+\textbf{Bernoulli:} $X \in \{0,1\}$ with $\Pr(X=1) = p$, $\E[X]=p$,
+$\Var(X)=p(1-p)$.
+
+\textbf{Categorical:} $X \in \{1,\ldots,K\}$ with probabilities
+$p_1,\ldots,p_K$ summing to one.
+
+\textbf{Gaussian (Normal):} $X \sim \mathcal{N}(\mu, \sigma^2)$ with density
+\begin{align}
+    p(x) = \frac{1}{\sqrt{2\pi\sigma^2}}
+    \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right).
+\end{align}
+
+\textbf{Multivariate Gaussian:} $\mathbf{X} \sim \mathcal{N}(\boldsymbol{\mu},
+\boldsymbol{\Sigma})$ with density
+\begin{align}
+    p(\mathbf{x}) = \frac{1}{(2\pi)^{d/2}|\boldsymbol{\Sigma}|^{1/2}}
+    \exp\!\left(-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^\top
+    \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})\right).
+\end{align}
+
+\textbf{Exponential family:} many distributions (Bernoulli, Gaussian, Poisson,
+categorical) can be written as
+\begin{align}
+    p(x\mid\boldsymbol{\theta}) = h(x)\exp\!\left(\boldsymbol{\theta}^\top
+    \mathbf{t}(x) - A(\boldsymbol{\theta})\right),
+\end{align}
+where $\mathbf{t}(x)$ is the sufficient statistic and $A$ the log-partition function.
+This form underlies generalised linear models (Chapter~\ref{ch:logistic}).
+
+\section{Limits and estimation}
+
+The \emph{law of large numbers} says that the sample mean converges to the expectation,
+which is why empirical risk is a sensible proxy for expected risk. The
+\emph{central limit theorem} says that, under mild conditions, the normalised sample
+mean is approximately Gaussian:
+\begin{align}
+    \frac{1}{\sqrt{n}}\sum_{i=1}^n (X_i - \mu)
+    \xrightarrow{d} \mathcal{N}(0,\sigma^2).
+\end{align}
+
+Given data $\mathbf{x}^{(1)},\ldots,\mathbf{x}^{(n)}$ from $p(\cdot\mid\theta)$, the
+\emph{maximum-likelihood estimate} (MLE) is
+\begin{align}
+    \hat{\theta}_{\mathrm{MLE}}
+    = \arg\max_{\theta} \sum_{i=1}^n \log p(\mathbf{x}^{(i)}\mid\theta).
+\end{align}
+The \emph{maximum a posteriori} (MAP) estimate adds a prior:
+\begin{align}
+    \hat{\theta}_{\mathrm{MAP}}
+    = \arg\max_{\theta} \left\{
+    \sum_{i=1}^n \log p(\mathbf{x}^{(i)}\mid\theta) + \log p(\theta)
+    \right\}.
+\end{align}
+An estimator is \emph{unbiased} if $\E[\hat{\theta}] = \theta$, and its
+\emph{mean squared error} decomposes as
+$\E[(\hat{\theta}-\theta)^2] = \mathrm{Bias}(\hat{\theta})^2 +
+\Var(\hat{\theta})$. Regularisation is often a MAP estimate with a particular prior:
+an $\ell_2$ penalty corresponds to a Gaussian prior, and an $\ell_1$ penalty to a
+Laplace prior.
+
+\section{Information theory}
+
+The \emph{entropy} of a discrete distribution is
+\begin{align}
+    H(p) = -\sum_x p(x)\log p(x),
+\end{align}
+a measure of uncertainty. The \emph{KL divergence}
+\begin{align}
+    D_{\mathrm{KL}}(p\,\|\,q) = \sum_x p(x)\log\frac{p(x)}{q(x)}
+\end{align}
+measures how much $q$ differs from $p$; it is non-negative and zero iff $p=q$, but it
+is not symmetric. The \emph{cross-entropy} is
+\begin{align}
+    H(p,q) = -\sum_x p(x)\log q(x) = H(p) + D_{\mathrm{KL}}(p\,\|\,q).
+\end{align}
+Minimising cross-entropy over $q$ is equivalent to minimising
+$D_{\mathrm{KL}}(p\,\|\,q)$ because $H(p)$ does not depend on $q$. This is why
+cross-entropy is the standard classification loss.
 
 \chapter{Introduction}
+\label{ch:intro}
 
-What is learning? 
+
+
+
+
+
+What does it mean to learn? The dictionary definition is the activity or process of
+gaining knowledge or skill by studying, practicing, being taught, or experiencing
+something. The operational definition used in this course is Mitchell's:
 
 \begin{epigraph}
 {
-The activity or process of gaining knowledge or skill by studying, practicing, being taught, or experiencing something
-}{Merriam Webster dictionary}
-\end{epigraph}
-
-\begin{epigraph}
-{
-A computer program is said to learn from experience E with respect to some class of tasks T and performance measure P, if its performance at tasks in T, as measured by P, improves with experience E
+A computer program is said to learn from experience $E$ with respect to some class of
+tasks $T$ and performance measure $P$, if its performance at tasks in $T$, as
+measured by $P$, improves with experience $E$.
 }{Tom Mitchell}
 \end{epigraph}
 
-\emph{Machine learning approach}: program an algorithm to automatically learn from data, or from experience.
+The \emph{machine-learning approach} is therefore to program an algorithm that automatically improves from data or experience, rather than to hand-code the desired behaviour. Learning problems are commonly classified along four axes.
+
+
+\section{History}
+
 \begin{enumerate}
-    \item \emph{Supervised learning}: Builds a statistical model to predict an output from inputs. It further has two types:
+    \item 1957 — Perceptron algorithm (implemented as a circuit!)
+    \item 1959 — Arthur Samuel wrote a learning-based checkers program that could defeat him.
+    \item 1969 — Minsky and Papert’s book Perceptrons (limitations of linear models)
+    \item 1980s — Some foundational ideas
+    \item Connectionist psychologists explored neural models of cognition
+    \item 1984 — Leslie Valiant formalized the problem of learning as PAC learning.
+    \item 1988 — Backpropagation (re-)discovered by Geoffrey Hinton and colleagues.
+    \item 1988 — Judea Pearl’s book Probabilistic Reasoning in Intelligent Systems introduced Bayesian networks.
+    \item 1990s — the “AI Winter”, a time of pessimism and low funding.
+    \item But looking back, the ’90s were also sort of a golden age for ML research: Markov chain Monte Carlo, variational inference, kernels and support vector machines, boosting, convolutional networks.
+    \item 2000s — applied AI fields (vision, NLP, etc.) adopted ML.
+    \item 2010s — deep learning.
+    \item 2010–2012 — neural nets smashed previous records in speech-to-text and object recognition
+    \item increasing adoption by the tech industry
+    \item 2016 — AlphaGo defeated the human Go champion
+\end{enumerate}
+
+
+
+
+
+
+
+\section{ML workflow}
+ML workflow sketch:
+\begin{enumerate}
+    \item  Should I use ML on this problem?
+    \item \begin{enumerate}
+        \item Is there a pattern to detect?
+        \item Can I solve it analytically?
+        \item Do I have data?
+    \end{enumerate}
+    \item Gather and organize data.
+    \item Preprocessing, cleaning, visualizing.
+    \item Establishing a baseline.
+    \item Choosing a model, loss, regularization, ...
+    \item Optimization (could be simple, could be a Phd...).
+    \item Hyperparameter search.
+    \item Analyze performance and mistakes, and iterate back to step 5
+\end{enumerate}
+
+\section{Supervised versus unsupervised}
+
+\begin{enumerate}
+    \item \emph{Supervised learning}: build a model that predicts an output from
+    inputs using labelled examples.
     \begin{enumerate}
-        \item \emph{Classification}: Output is qualitative (categorical).
+        \item \emph{Classification}: the output is qualitative (categorical).
         \begin{example}
-            Predict whether a credit card transaction is fraudulent.
+            Predict whether a credit-card transaction is fraudulent.
         \end{example}
-        \item \emph{Regression}: Output is quantitative (continuous or ordered).
+        \item \emph{Regression}: the output is quantitative (continuous or ordered).
         \begin{example}
             Predict the value of a stock tomorrow.
         \end{example}
     \end{enumerate}
-    \item \emph{Unsupervised learning}: Learns structure from data without supervising output. It further has two types:
+    \item \emph{Unsupervised learning}: learn structure from data without a supervised
+    output signal.
     \begin{enumerate}
-        \item \emph{Clustering}: Partition data into subsets that share common characteristics.
-        \item \emph{Dimensionality reduction}: Create new features from original inputs that retain important information.
+        \item \emph{Clustering}: partition observations into groups that share common
+        characteristics.
+        \item \emph{Dimensionality reduction}: construct new features from the original
+        inputs that retain important information.
+        \item \emph{Density estimation}: model the probability distribution of the data.
     \end{enumerate}
-    \item \emph{Reinforcement learning}: Learns a policy for selecting actions based on rewards received from the environment.
+    \item \emph{Reinforcement learning}: learn a policy for selecting actions based on
+    rewards received from an environment.
 \end{enumerate}
 
+Two important intermediate settings are \emph{semi-supervised learning} (a small
+labelled set together with a large unlabelled set) and \emph{self-supervised learning}
+(labels are generated from the data itself, as in masked-language modelling).
 
-Let $\EuScript{X}$ be the input variables (predictors, independent variables, features) and $\EuScript{Y}$ be the output variable (response, dependent variable). Machine learning aims to estimate a function $f$ that describes the relationship between the predictors and the response:
+\section{Active versus passive learners}
+
+A \emph{passive} learner receives data without influencing which examples are
+collected. An \emph{active} learner can request labels for particular examples, which
+is valuable when labelling is expensive. The central question is which query is most
+informative.
+
+\section{Online versus batch learning}
+
+In \emph{batch} learning the entire training set is available before training starts.
+In \emph{online} learning examples arrive sequentially and the model is updated after
+each one. Online methods are natural when the data distribution changes over time,
+but they require care with learning rates, stability, and catastrophic forgetting.
+
+\section{Helpfulness of the teacher}
+
+The teacher may provide only labels, or may additionally provide explanations,
+demonstrations, constraints, or rewards. The more helpful the teacher, the less data
+and computation are usually required, but the harder it is to specify the teaching
+signal.
+
+\section{Inductive bias and the no-free-lunch theorem}
+
+Every learner must make assumptions that go beyond the training data; these
+assumptions are its \emph{inductive bias}. A convolutional network assumes that
+nearby pixels are related and that patterns are translation-equivariant. A decision
+tree assumes that axis-aligned splits are useful. The no-free-lunch theorem makes
+this unavoidable:
+
+\begin{theorem}[No free lunch, Wolpert 1996]
+Averaged over all possible target functions, every learning algorithm has the same
+expected off-training-set performance.
+\end{theorem}
+
+The theorem does not say that all algorithms are equally good in practice. Real
+problems are not uniformly distributed, and a good inductive bias matches the
+structure of the problem. Model choice is therefore the art of choosing assumptions
+that are appropriate for the data at hand.
+
+\chapter{Supervised Learning: Foundations}
+\label{ch:supervised}
+
+\section{The supervised-learning problem}
+
+Let $\EuScript{X}$ be the input space (predictors, independent variables, features) and $\EuScript{Y}$ the output space (response, dependent variable). We observe
+labelled pairs
 \begin{align}
-     \EuScript{Y} = f(\EuScript{X}) + \varepsilon 
+    (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n),
 \end{align}
-
-
-\begin{innote}{Prediction vs Inference:}{
-    Predict response $\EuScript{Y}$ given inputs $\EuScript{X}$. \emph{Inference}: Understand the relationship between $\EuScript{Y}$ and individual predictors $\EuScript{X}_i$. Do not want a black-box model.
-}
-\end{innote}
-
-
-\section{Supervised Learning}
-Learning a function
+drawn from an unknown joint distribution $\mathcal{D}$ over $\EuScript{X} \times \EuScript{Y}$. The goal is to learn a function
+$f : \EuScript{X} \to \EuScript{Y}$ that predicts $y$ from $\mathbf{x}$ and
+generalises to new observations. The classical statistical model is
 \begin{align}
-    f: I \longrightarrow \Omega
+    y = f(\mathbf{x}) + \varepsilon,
 \end{align}
-given example input-output pairs 
-\begin{align}
-    (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n) \in f
-\end{align}
-Given a set of labelled examples (called the \emph{training data}\index{training data}), determine or predict the labels of the set of unlabelled examples (called the \emph{test data}\index{test data}).
+where $f$ is the systematic part and $\varepsilon$ is irreducible noise with
+$\E[\varepsilon]=0$. Even with a perfect estimate of $f$, the noise limits how
+accurate any prediction can be.
+
+In supervised learning, the input is represented by a vector
+$\mathbf{x} \in \R^d$. Each coordinate $x_i$ is a \emph{feature}, a numerical value
+describing a characteristic of the input. Images, text, audio, and waveforms can all
+be represented this way (images as pixel vectors, text as token counts or embeddings,
+audio as frames). Vector representations are convenient because we can apply linear
+algebra. The output is represented by a number $t \in \R$ in regression, or by an
+element of a discrete set in classification.
+
+\innote{Prediction versus inference}{%
+Predicting the response $y$ given inputs $\mathbf{x}$ is \emph{prediction}.
+Understanding how the response depends on individual predictors $x_i$ is
+\emph{inference}. Inference often requires an interpretable model rather than a
+black box.}
+
+\section{Examples of supervised learning}
 
 \begin{example}[\emph{Age prediction}]
-    Age prediction given a headshot. Here the input is an image of a person's face and the output is their age.
+Given a headshot, predict the person's age. Input: an image; output: a real number.
 \end{example}
 
 \begin{example}[\emph{Image captioning}]
-    Image captioning given an image. Here the input is an image and the output is a description of the image.
+Given an image, produce a description. Input: an image; output: a sequence of words.
 \end{example}
 
 \begin{example}[\emph{Exam grade}]
-    Predicting exam grades given student performance data in assignments. Here the input is student performance information in assignments and the output is their exam grade.
+Given assignment and participation records, predict the final exam grade.
 \end{example}
 
 \begin{example}[\emph{Email spam detection}]
-    Email spam detection given an email. Here the input is an email and the output is whether it is spam or not.
+Given an email, predict whether it is spam. Input: text and metadata; output:
+spam/not-spam.
 \end{example}
 
 \begin{example}[\emph{Iris classification}]
-    Classifying iris flowers into species based on measurements of their petals and sepals. Here the input is a set of measurements and the output is the species of the flower.
+Classify iris flowers into species from petal and sepal measurements.
 \end{example}
 
 \begin{example}[\emph{Sentiment analysis}]
-    Sentiment analysis given a piece of text. Here the input is a piece of text and the output is the sentiment (positive, negative, or neutral).
+Given a piece of text, predict positive, negative, or neutral sentiment.
 \end{example}
-
 
 \begin{example}[\emph{Handwritten digits}]
-    Recognizing handwritten digits given an image of a digit. Here the input is an image of a digit and the output is the digit itself.
+Given an image of a digit, predict which digit it is.
 \end{example}
 
-In supervised learning, the input is represented via a vector $\mathbf{v} \in \mathbb{R}^d$. Each coordinate $x_i$ of the vector $\mathbf{x}$ is a \emph{feature}, a numerical value describing a characteristic of the input. We can represent any type of data this way, for example, images, text, audio, waveforms etc. Vectore are a great representation since we can do linear algebra. Out is represented using a number, say $t \in \mathbb{R}$. In a regression problem, $t$ is a real number (for example stock price). In classification problem, $t$ is an element of discrete set.
+\section{Loss functions, risk, and empirical risk}
 
-In supervised learning, we have some labelled \emph{training data}
+To say what a \emph{good} prediction is, we need a loss $\ell(y,\hat{y})$. Common
+choices are squared error for regression, $\ell(y,\hat{y})=(y-\hat{y})^2$, and the
+zero-one loss for classification, $\ell(y,\hat{y})=\mathbf{1}\{y \neq \hat{y}\}$.
+The \emph{risk} is the expected loss under the data distribution:
 \begin{align}
-    (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n)
+    \risk(f) = \E_{(\mathbf{x},y)\sim\mathcal{D}}[\ell(y,f(\mathbf{x}))].
 \end{align}
+Because $\mathcal{D}$ is unknown, we minimise the \emph{empirical risk}
+\begin{align}
+    \hat{\risk}_n(f) = \frac{1}{n}\sum_{i=1}^n \ell(y_i, f(\mathbf{x}^{(i)})).
+\end{align}
+This is the \emph{empirical risk minimisation} (ERM) principle. Much of learning
+theory (Chapter~\ref{ch:slt}) studies when small empirical risk implies small true
+risk.
+
+\section{\texorpdfstring{$k$}{k}-nearest neighbours}
+
+The $k$-nearest-neighbour ($k$-NN) classifier is one of the simplest learners. It stores the training data and, for a new point $\mathbf{x}$, finds the $k$ closest training points and predicts the most common label among them (for regression, the average target). Many classifiers build an explicit model of 
+\begin{align}
+    \Pr(Y|X)
+\end{align}
+$k$-NN does not. It is a \emph{non-parametric}, \emph{instance-based} method. Three practical issues dominate:
+\begin{enumerate}
+    \item \textbf{Distance metric.} Euclidean distance is standard, but features must be scaled first. For high-dimensional data, cosine or learned distances may be better.
+    \item \textbf{Choice of $k$.} Small $k$ gives a flexible, low-bias, high-variance classifier; large $k$ gives a smooth, high-bias, low-variance classifier.
+    \item \textbf{Computational cost.} Prediction requires comparing the query with all stored examples unless a spatial index is used.
+\end{enumerate}
+The bias-variance trade-off in $k$ is a concrete illustration of the general
+trade-off discussed below.
 
 
-\section{KNN classifier}
+\begin{problem}
+   Let $X$ be the data space,, where we can think of $X$ as a set of points in Euclidean space\footnote{or with any other metric space}, along with a labelling function $f: X \longrightarrow I$, where $I$ is the set of labels. We are given some training data $\hat{f} \subseteq f$, where each point $(\mathbf{x}, t) \in f$ informs us that the point $\mathbf{x}$ has label $t$. Given a point $\mathbf{x} \in X$, we want to (predict its label i.e.) find the closest point $\hat{\mathbf{x}} \in \hat{X}$ such that the distance $d(\mathbf{x}, \hat{\mathbf{x}})$ is minimised. That is, find 
+   \begin{align}
+        \hat{\mathbf{x}} = \arg\min_{\hat{\mathbf{x}} \in \hat{X}} d(\mathbf{x}, \hat{\mathbf{x}})
+   \end{align}
+   and output $\hat{t} = f(\hat{\mathbf{x}})$.
+\end{problem}
+
+The problem can be visualized using a Voronoi diagram. The \emph{decision boundary} is the boundary between regions of input space assigned to different categories. 
+
+\begin{problem}
+    Find $k$-closest point
+    \begin{align}
+        \hat{\mathbf{x}}_1 &= \arg\min_{\hat{\mathbf{x}} \in \hat{X}} d(\mathbf{x}, \hat{\mathbf{x}}) \\
+    \hat{\mathbf{x}}_2 &= \arg\min_{\hat{\mathbf{x}} \in \hat{X} \backslash \{\hat{\mathbf{x}}_1\}} d(\mathbf{x}, \hat{\mathbf{x}}) \\
+                \vdots \\
+    \hat{\mathbf{x}}_k &= \arg\min_{\hat{\mathbf{x}} \in \hat{X} \backslash \{\hat{\mathbf{x}}_1, \ldots, \hat{\mathbf{x}}_{k-1}\}} d(\mathbf{x}, \hat{\mathbf{x}})
+   \end{align}
+   and then let $\hat{t}_i = f(\hat{\mathbf{x}}_i)$ for $i = 1, \ldots, k$. Let $\hat{t}$ be the mode of these values.
+\end{problem}
 
 
-\emph{KNN classifier}: A classification algorithm that labels observations based on “nearby” examples with known labels. Many classifiers build a model of $\mathrm{Prob}(Y|X)$. KNN classifier predicts that the class for observation $X$ is the class most common among its $k$ nearest neighbors in the training set.
 
-\section{No free lunch theorem}
+\begin{example}[Image Classification Datasets: MNIST]
+    10 classes: Digits 0 to 9
+28x28 grayscale images
+50k training images
+10k test images
+\end{example}
 
-Wolpert (1996): All algorithms perform equally when averaged over all possible problems.
+\begin{example}[Image Classification Datasets: ImageNet]
+    1000 classes
+~1.3M training images (~1.3K per class)
+50K validation images (50 per class)
+100K test images (100 per class)
+\end{example}
+
+\begin{example}[iris]
+
+\end{example}
 
 
-\section{Trade-off and decisions}
+
+
+
+
+\section{Assessing model performance}
+
+We want to know how well predictions will work on previously unseen data. The ability
+to generalise is what makes a learned model useful. The available data are usually
+split into three parts:
+\begin{enumerate}
+    \item \emph{Training data}: used to fit the model parameters.
+    \item \emph{Validation data}: used to tune hyperparameters and select the best
+    model.
+    \item \emph{Test data}: used once, at the end, to evaluate the final model. It is
+    not available to the algorithm during any part of the learning process.
+\end{enumerate}
+The test set must never influence training or hyperparameter choices; otherwise the
+reported error is biased downward. Chapter~\ref{ch:cv} develops cross-validation and
+nested procedures for using data efficiently.
+
+\section{Model flexibility, underfitting, and overfitting}
+
+As model flexibility increases, training error generally decreases: a flexible model
+can fit more of the variance in the training set. Some of that variance may be noise.
+Therefore test error may decrease at first and then increase. If the test error is
+much larger than the training error, the model is \emph{overfitting}. If both errors
+are large, the model is \emph{underfitting} and needs more capacity or better
+features.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.78\textwidth, height=6.2cm,
+    xlabel={Model flexibility}, ylabel={Error},
+    xtick=\empty, ytick=\empty, axis lines=left,
+    legend pos=north east, legend cell align=left,
+    domain=0.05:1.0, samples=120, ymajorgrids=false
+]
+\addplot[thick, blue] {0.62*exp(-3.2*x)+0.02};
+\addlegendentry{Training error}
+\addplot[thick, red] {0.07+0.55*(x-0.58)^2};
+\addlegendentry{Test error}
+\addplot[thick, green!55!black, dashed] {0.07+0.55*(x-0.58)^2-0.5*exp(-3.2*x)};
+\addlegendentry{Bayes error + approximation}
+\end{axis}
+\end{tikzpicture}
+\caption{The classic U-shaped test-error curve. Increasing flexibility reduces bias
+but increases variance; the best model balances the two.}
+\label{fig:bias-variance}
+\end{figure}
+
+\section{Bias--variance decomposition}
+
+Bias is the error caused by simplifying assumptions built into the model. Variance is
+how much the learned function changes if it is trained on a different training set.
+For squared loss, with $y = f(\mathbf{x}) + \varepsilon$,
+$\E[\varepsilon]=0$, $\Var(\varepsilon)=\sigma^2$, the expected test error at a point
+$\mathbf{x}$ decomposes as
+\begin{align}
+    \E\big[(y - \hat{f}(\mathbf{x}))^2\big]
+    = \underbrace{\big(\E[\hat{f}(\mathbf{x})] - f(\mathbf{x})\big)^2}_{\text{bias}^2}
+    + \underbrace{\Var\big(\hat{f}(\mathbf{x})\big)}_{\text{variance}}
+    + \underbrace{\sigma^2}_{\text{irreducible noise}}.
+\end{align}
+The expectation is over the randomness of the training set and the noise.
+
+Generally, more flexible methods have more variance and less bias; less flexible
+methods have more bias and less variance. The best method for a task balances the two
+to achieve the lowest test error (Figure~\ref{fig:bias-variance}). This is why
+regularisation (Chapter~\ref{ch:reg}) and cross-validation
+(Chapter~\ref{ch:cv}) are central tools.
+
+\section{The curse of dimensionality}
+
+As dimensionality increases, data become sparse: to maintain a given density of
+samples, the number of observations must grow exponentially with the number of
+dimensions. Distance-based methods such as k-NN deteriorate because nearest
+neighbours are no longer meaningfully ``near''. The curse of dimensionality motivates
+dimensionality reduction, feature selection, strong inductive biases, and models that
+share parameters across dimensions.
+
+\section{Common trade-offs}
 
 \begin{enumerate}
-    \item Bias vs. variance
-    \item Accuracy vs. interpretability
-    \item Accuracy vs. scalability
-    \item Domain-knowledge vs. data-driven
-    \item More data vs. better algorithm
-    \item Accuracy vs. fairness
+    \item Bias versus variance.
+    \item Accuracy versus interpretability.
+    \item Accuracy versus scalability.
+    \item Domain knowledge versus data-driven learning.
+    \item More data versus a better algorithm.
+    \item Accuracy versus fairness, privacy, and robustness.
 \end{enumerate}
+There is no universally best point on these axes. The right choice depends on the
+deployment context, the cost of different errors, and the available data.
 
-\section{Assessing Model Performance}
+\chapter{Linear Regression}
+\label{ch:linear}
 
-We want to know how good predictions are when we apply our method to previously unseen data. Why? The ability to generalize to unseen data is what makes these methods useful.
+Linear regression is a simple supervised-learning method for predicting quantitative
+outputs. Many machine-learning methods are generalisations of it, and it illustrates
+key concepts---least squares, overfitting, regularisation, and inference---while
+remaining interpretable.
 
-\section{Data sets}
+\section{Simple linear regression}
 
-\begin{enumerate}
-    \item \emph{Training data}: Data used to train the model.
-    \item \emph{Validation data}: Data used to tune hyperparameters\index{hyperparameters} and select the best model. Observations used to estimate error for parameter-tuning or model selection
-    \item \emph{Test data}: Data used to evaluate the final performance of the selected model. Not available to the algorithm during any part of the learning process
-\end{enumerate}
-
-
-\section{Model Flexibility}
-
-As model flexibility increases, training error will decrease. The model can fit more and more of the variance in the training set. Some of this variance, however, may be noise. Therefore the test error may or may not decrease. If training error is much larger than test error, the model is overfitting.  
-
-
-\section{Bias vs Variance}
-
-Bias is the error caused by simplifying assumptions built into the model. Variance is how much the learned function will change if trained on a different training set.
-
+Simple linear regression predicts a quantitative response $Y$ from a single predictor
+$X$, assuming an approximately linear relationship:
 \begin{align}
-    \mathrm{E}[(y - \hat{y})^2] = \mathrm{Bias}[\hat{f}(x)]^2 + \mathrm{Var}[\hat{f}(x)] + \sigma^2
+    Y = \beta_0 + \beta_1 X + \epsilon.
 \end{align}
-
-
-\section{Bias-Variance Trade-off}
- Generally, more flexible methods have more variance and less bias. Less flexible methods have more bias and less variance. The best method for a task will balance the two types of error to achieve the lowest test error.
-
-
-\section{Curse of dimensionality}
-Curse of Dimensionality refers to the phenomenon where the efficiency and effectiveness of algorithms deteriorate as the dimensionality of the data increases exponentially.
-
-
-
-
-\chapter{Linear and Logistic Regression}
-Linear regression is a simple supervised learning method, used to predict quantitative output values. Many machine learning methods are generalizations of linear regression. It illustrates key concepts in supervised learning while maintaining interpretability.
-
-
-\section{Simple Linear Regression}
-
-Predict a quantitative response $Y$ on the basis of a single predictor variable $X$. Assumes there is an approximately linear relationship between $X$ and $Y$.
+Here $\beta_0$ is the intercept and $\beta_1$ the slope; together they are the
+\emph{coefficients} or \emph{parameters} of the model. We estimate them from training
+data
 \begin{align}
-    Y &= \beta_0 + \beta_1 X + \epsilon
-\end{align} 
-where $\beta_0, \beta_1$ are the \emph{coefficients} or \emph{parameters} of the linear model. In this case they represent the intercept and slope terms of a line. We estimate the parameters $\beta_0, \beta_1$ using the training data.
-\begin{align}
-    (\mathbf{x}^{(i)}, y^{(i)})
+    (x^{(1)}, y^{(1)}), \ldots, (x^{(n)}, y^{(n)}).
 \end{align}
-Once $\beta$'s are estimated, we denote them using $\hat{\beta}$. For a particular realization of $X$, say $X = x$, the predicted output is denoted $\hat{y}$:
+Estimated parameters are denoted $\hat{\beta}_0, \hat{\beta}_1$. For a realisation
+$X=x$, the prediction is
 \begin{align}
-    \hat{y} &= \hat{\beta}_0 + \hat{\beta}_1 x  
-\end{align} 
-Our goal is to pick, such that the model is a good fit to the training data.
-\begin{align}
-    y^{(i)} \approx \hat{\beta}_0 + \hat{\beta}_1 x^{(i)}
+    \hat{y} = \hat{\beta}_0 + \hat{\beta}_1 x.
 \end{align}
-for $i = 1, \ldots, n$. How do we estimate the coefficients? that is, \emph{fit the model}. What is a \emph{good fit} to the data?
+The goal is to choose the coefficients so that
+$y^{(i)} \approx \hat{\beta}_0 + \hat{\beta}_1 x^{(i)}$ for all $i$. Two questions
+remain: how do we estimate the coefficients (\emph{fit} the model), and what counts
+as a \emph{good fit}?
+
+The usual assumptions are: linearity in the parameters, independent errors,
+constant error variance (homoscedasticity), and---for exact inference---normally
+distributed errors. The predictor may be transformed (logs, polynomials) while the
+model remains linear in $\beta$.
 
 \section{Least squares}
-Typically, how well a linear model is fit to the data is measured using least squares:
-\begin{definition}
-    The \emph{residual} for the $i$-th observation is defined as:
-    \begin{align}
-        \epsilon^{(i)} = y^{(i)} - \hat{y}^{(i)}
-    \end{align}
-    The \emph{Residual sum of squares (RSS)} \index{Residual sum of squares} is defined as:
-    \begin{align}
-        \mathrm{RSS} &= \sum_{i=1}^n (\epsilon^{(i)})^2\\
-        &= \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2
-    \end{align}
-\end{definition}
 
-
-
-\begin{definition}
-    The model fit using least squares finds the coefficients $\hat{\beta}_0, \hat{\beta}_1$ that minimize the RSS. That is,
-    \begin{align}
-        \hat{\beta}_0 &\defn \mathrm{argmin}_{\beta_0} \sum_{i=1}^n (y^{(i)} - \beta_0 - \beta_1 x^{(i)})^2\\
-        \hat{\beta}_1 &\defn \mathrm{argmin}_{\beta_1} \sum_{i=1}^n (y^{(i)} - \hat{\beta}_0 - \beta_1 x^{(i)})^2
-    \end{align}
-\end{definition}
-Recall that the extrema of a function can be found by setting its derivative to zero, and verified to be minima via the second derivative.
+\begin{definition}[Residuals and RSS]
+The \emph{residual} for the $i$-th observation is
 \begin{align}
-    \hat{\beta}_1 &= \frac{\sum_{i=1}^n (x^{(i)} - \overline{x})(y^{(i)} - \overline{y})}{\sum_{i=1}^n (x^{(i)} - \overline{x})^2},
-    \hat{\beta}_0 &= \overline{y} - \hat{\beta}_1 x
+    e^{(i)} = y^{(i)} - \hat{y}^{(i)}.
 \end{align}
+The \emph{residual sum of squares} (RSS) is
+\begin{align}
+    \mathrm{RSS}
+    = \sum_{i=1}^n (e^{(i)})^2
+    = \sum_{i=1}^n \big(y^{(i)} - \hat{y}^{(i)}\big)^2.
+\end{align}
+\end{definition}
 
-Linear regression is typically assessed using two related metrics: 
+\begin{definition}[Least-squares estimator]
+The least-squares estimates jointly minimise the RSS:
+\begin{align}
+    (\hat{\beta}_0, \hat{\beta}_1)
+    = \arg\min_{\beta_0,\beta_1}
+    \sum_{i=1}^n \big(y^{(i)} - \beta_0 - \beta_1 x^{(i)}\big)^2.
+\end{align}
+\end{definition}
+
+Setting the partial derivatives to zero gives the normal equations. For simple
+linear regression their solution is
+\begin{align}
+    \hat{\beta}_1
+    &= \frac{\sum_{i=1}^n (x^{(i)} - \bar{x})(y^{(i)} - \bar{y})}
+              {\sum_{i=1}^n (x^{(i)} - \bar{x})^2}
+    = \frac{\Cov(x,y)}{\Var(x)},\\
+    \hat{\beta}_0 &= \bar{y} - \hat{\beta}_1 \bar{x}.
+\end{align}
+The fitted line always passes through $(\bar{x},\bar{y})$. The second derivative of
+the RSS with respect to $\beta_1$ is $2\sum_i (x^{(i)}-\bar{x})^2 > 0$, so the
+stationary point is a minimum.
+
+\section{Multiple linear regression}
+
+With $p$ predictors, write each observation as a row of a design matrix
+$\mathbf{X} \in \R^{n \times p}$ and the targets as
+$\mathbf{y} \in \R^n$. Including a column of ones for the intercept,
+\begin{align}
+    \mathbf{y} = \mathbf{X}\boldsymbol{\beta} + \boldsymbol{\epsilon},
+    \qquad
+    \mathrm{RSS}(\boldsymbol{\beta})
+    = (\mathbf{y} - \mathbf{X}\boldsymbol{\beta})^\top
+      (\mathbf{y} - \mathbf{X}\boldsymbol{\beta}).
+\end{align}
+Differentiating with respect to $\boldsymbol{\beta}$ and setting the result to zero
+gives the \emph{normal equations}
+\begin{align}
+    \mathbf{X}^\top\mathbf{X}\boldsymbol{\beta}
+    = \mathbf{X}^\top\mathbf{y},
+\end{align}
+so, when $\mathbf{X}^\top\mathbf{X}$ is invertible,
+\begin{align}
+    \hat{\boldsymbol{\beta}}
+    = (\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top\mathbf{y}.
+\end{align}
+The fitted values are $\hat{\mathbf{y}} = \mathbf{H}\mathbf{y}$ with the \emph{hat
+matrix} $\mathbf{H} = \mathbf{X}(\mathbf{X}^\top\mathbf{X})^{-1}\mathbf{X}^\top$.
+The hat matrix is symmetric and idempotent, $\mathbf{H}^2=\mathbf{H}$, and projects
+$\mathbf{y}$ onto the column space of $\mathbf{X}$.
+
+If $\mathbf{X}^\top\mathbf{X}$ is singular or nearly singular (collinearity, more
+features than observations), the inverse is unstable or does not exist. Ridge
+regression (Chapter~\ref{ch:reg}) fixes this by adding $\lambda\mathbf{I}$.
+
+\section{Coefficient interpretation and inference}
+
+In multiple regression, $\beta_j$ is the expected change in $Y$ associated with a
+one-unit increase in $X_j$, \emph{holding all other predictors fixed}. This
+``holding fixed'' clause is essential; with correlated predictors the coefficients can
+change substantially when predictors are added or removed.
+
+Under the classical assumptions, the least-squares estimator is unbiased,
+$\E[\hat{\boldsymbol{\beta}}]=\boldsymbol{\beta}$, with covariance
+\begin{align}
+    \Var(\hat{\boldsymbol{\beta}})
+    = \sigma^2(\mathbf{X}^\top\mathbf{X})^{-1}.
+\end{align}
+Replacing $\sigma^2$ by its estimate
+$\hat{\sigma}^2 = \mathrm{RSS}/(n-p-1)$ gives standard errors. A $t$-statistic
+$\hat{\beta}_j/\mathrm{SE}(\hat{\beta}_j)$ tests whether a single coefficient is
+zero; an $F$-test compares a full model with a nested model. These tests are valid
+only if the model assumptions are reasonable.
+
+Two summary measures are common:
 \begin{enumerate}
-    \item Residual standard error (RSE) 
+    \item \emph{Residual standard error} (RSE):
     \begin{align}
-        \mathrm{RSE} &= \sqrt{\frac{1}{n-2}} \mathrm{RSS}\\
-        &=\sqrt{\frac{1}{n-2} \sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}
+        \mathrm{RSE}
+        = \sqrt{\frac{\mathrm{RSS}}{n-p-1}}
+        = \sqrt{\frac{1}{n-p-1}\sum_{i=1}^n (y^{(i)} - \hat{y}^{(i)})^2}.
     \end{align}
-    higher RSE means worse fit.
-    \item $R^2$ statistic:
+    A higher RSE means a worse fit on the scale of $Y$.
+    \item \emph{Coefficient of determination} $R^2$:
     \begin{align}
-        R^2 &= \frac{\mathrm{TSS} - \mathrm{RSS}}{\mathrm{TSS}} \\
-        &= 1 - \frac{\mathrm{RSS}}{\mathrm{TSS}}
+        R^2 = \frac{\mathrm{TSS} - \mathrm{RSS}}{\mathrm{TSS}}
+        = 1 - \frac{\mathrm{RSS}}{\mathrm{TSS}},
+        \qquad
+        \mathrm{TSS} = \sum_{i=1}^n (y^{(i)} - \bar{y})^2.
     \end{align}
-    $R^2$ measures the proportion of variability in $Y$ explained by $X$.
+    $R^2$ is the proportion of variability in $Y$ explained by the model. It always
+    increases when predictors are added, so the \emph{adjusted} $R^2$ penalises model
+    size:
+    \begin{align}
+        R^2_{\mathrm{adj}}
+        = 1 - (1-R^2)\frac{n-1}{n-p-1}.
+    \end{align}
 \end{enumerate}
 
+\section{Diagnostics and extensions}
 
+Residual plots reveal violations of the assumptions. A funnel shape suggests
+heteroscedasticity; curvature suggests a missing nonlinear term; a few large residuals
+suggest outliers or high-leverage points. Diagnostic plots are more informative than
+$R^2$ alone.
+
+Linear regression can be extended without leaving the linear-in-parameters
+framework:
+\begin{itemize}
+    \item \textbf{Polynomial and spline terms}: add $x^2, x^3, \ldots$ or spline basis
+    functions.
+    \item \textbf{Interactions}: add products $x_j x_k$ to model non-additive effects.
+    \item \textbf{Qualitative predictors}: encode categories with dummy variables
+    (one-hot encoding), dropping one level to avoid collinearity.
+    \item \textbf{Generalised linear models}: replace the Gaussian likelihood and
+    identity link; logistic regression is the Bernoulli case
+    (Chapter~\ref{ch:logistic}).
+\end{itemize}
+
+\section{Strengths and limitations}
+
+Linear regression is fast, interpretable, and a strong baseline. It is easy to
+regularise and has well-understood statistical theory. Its main limitation is the
+linearity assumption: it cannot capture complex interactions unless they are
+engineered explicitly. It is also sensitive to outliers and to collinearity, and it
+can overfit when $p$ is large relative to $n$.
+
+\coderef{Code/linear_regression.py}
+\coderef{Code/linear_regression.ipynb}
+
+\chapter{Logistic Regression and Classification}
+\label{ch:logistic}
+
+\section{Classification setup}
+
+In binary classification the target is $y \in \{0,1\}$. A linear model
+$\hat{y} = \mathbf{w}^\top\mathbf{x} + b$ can take any real value, so it is not a
+probability. Applying a threshold gives a classifier, but the resulting decision
+boundary is still linear and the model is sensitive to the scale of the scores. We
+want a model that outputs a probability in $(0,1)$ and a loss that is appropriate for
+labels.
+
+\section{The logistic model}
+
+The logistic (sigmoid) function is
+\begin{align}
+    \sigma(z) = \frac{1}{1+e^{-z}}.
+\end{align}
+It is increasing, maps $\R$ to $(0,1)$, and satisfies
+$\sigma'(z)=\sigma(z)(1-\sigma(z))$. Logistic regression models
+\begin{align}
+    \Pr(Y=1\mid\mathbf{x}) = \sigma(\mathbf{w}^\top\mathbf{x} + b)
+    = \frac{1}{1+e^{-(\mathbf{w}^\top\mathbf{x}+b)}}.
+\end{align}
+The \emph{log-odds} (logit) are linear:
+\begin{align}
+    \log\frac{\Pr(Y=1\mid\mathbf{x})}{\Pr(Y=0\mid\mathbf{x})}
+    = \mathbf{w}^\top\mathbf{x} + b.
+\end{align}
+A one-unit increase in $x_j$ multiplies the odds by $e^{w_j}$, holding the other
+features fixed. This is a useful interpretation that linear regression does not
+provide for probabilities.
+
+The decision boundary is the set where $\Pr(Y=1\mid\mathbf{x})=1/2$, i.e.
+$\mathbf{w}^\top\mathbf{x}+b=0$, which is a hyperplane. Logistic regression is
+therefore a \emph{linear classifier}, but a probabilistic one.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.72\textwidth, height=5cm,
+    xlabel={$z$}, ylabel={$\sigma(z)$},
+    domain=-6:6, samples=120, ymin=-0.02, ymax=1.02,
+    axis lines=left, legend pos=south east
+]
+\addplot[thick, blue] {1/(1+exp(-x))};
+\addlegendentry{$\sigma(z)$}
+\addplot[thick, red, dashed] {0.5};
+\end{axis}
+\end{tikzpicture}
+\caption{The logistic sigmoid. The decision threshold $0.5$ corresponds to $z=0$.}
+\label{fig:sigmoid}
+\end{figure}
+
+\section{Maximum likelihood and cross-entropy}
+
+For a dataset $\{(\mathbf{x}^{(i)},y_i)\}_{i=1}^n$, the likelihood is
+\begin{align}
+    L(\mathbf{w},b)
+    = \prod_{i=1}^n p_i^{y_i}(1-p_i)^{1-y_i},
+    \qquad p_i = \sigma(\mathbf{w}^\top\mathbf{x}^{(i)}+b).
+\end{align}
+Maximising the log-likelihood is equivalent to minimising the negative
+log-likelihood, which is the \emph{binary cross-entropy}:
+\begin{align}
+    \ell(\mathbf{w},b)
+    = -\sum_{i=1}^n \left[
+      y_i \log p_i + (1-y_i)\log(1-p_i)
+    \right].
+\end{align}
+The gradient has the clean form
+\begin{align}
+    \nabla_{\mathbf{w}} \ell
+    = \sum_{i=1}^n (p_i - y_i)\,\mathbf{x}^{(i)},
+    \qquad
+    \frac{\partial \ell}{\partial b}
+    = \sum_{i=1}^n (p_i - y_i).
+\end{align}
+Unlike linear regression, there is no closed-form solution; we use gradient descent,
+Newton's method, or a specialised solver such as L-BFGS. The negative log-likelihood
+is convex in $(\mathbf{w},b)$, so a local minimum is global.
+
+Regularised logistic regression adds $\lambda\norm{\mathbf{w}}_2^2$ or
+$\lambda\norm{\mathbf{w}}_1$ to the objective. The intercept is normally not
+penalised. Regularisation is important when the classes are separable, because the
+unregularised maximum-likelihood solution can have infinite weights.
+
+\section{Multiclass logistic regression}
+
+For $K$ classes, use the \emph{softmax} function:
+\begin{align}
+    \Pr(Y=k\mid\mathbf{x})
+    = \frac{e^{\mathbf{w}_k^\top\mathbf{x}+b_k}}
+           {\sum_{j=1}^K e^{\mathbf{w}_j^\top\mathbf{x}+b_j}}.
+\end{align}
+The loss is the categorical cross-entropy
+\begin{align}
+    \ell = -\sum_{i=1}^n \log \Pr(Y=y_i\mid\mathbf{x}^{(i)}).
+\end{align}
+Softmax regression has one parameter vector per class; the parameters are
+identifiable only up to a common additive constant unless a reference class or a
+regulariser is used.
+
+\section{Evaluating classifiers}
+
+Accuracy is the fraction of correct predictions, but it can be misleading when classes
+are imbalanced. For binary classification, define
+\begin{align}
+    \mathrm{precision} &= \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}, &
+    \mathrm{recall} &= \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}},\\
+    F_1 &= \frac{2\,\mathrm{precision}\cdot\mathrm{recall}}
+                {\mathrm{precision}+\mathrm{recall}}, &
+    \mathrm{specificity} &= \frac{\mathrm{TN}}{\mathrm{TN}+\mathrm{FP}}.
+\end{align}
+The \emph{confusion matrix} tabulates true and predicted labels and is often more
+informative than a single number.
+
+A probabilistic classifier outputs scores; varying the threshold traces a
+\emph{receiver operating characteristic} (ROC) curve of true-positive rate against
+false-positive rate. The area under this curve (AUC) is a threshold-independent
+summary. For heavily imbalanced data, the precision--recall curve is often more
+informative than ROC. \emph{Calibration} asks whether predicted probabilities match
+observed frequencies; a model can rank well yet be badly calibrated.
+
+\section{Class imbalance and practical issues}
+
+When one class is rare, a classifier that always predicts the majority class can have
+high accuracy but be useless. Remedies include resampling, class weights, threshold
+tuning, and choosing a loss that reflects the relative cost of errors. Always report
+metrics beyond accuracy, and always evaluate on a held-out set with the same class
+distribution as deployment.
+
+\coderef{Code/logistic_regression.py}
+\coderef{Code/mnist_supervised.py}
 
 \chapter{Regularization and Sparsity}
-\todo{Regularization and sparsity: ridge, LASSO, elastic net, L1/L2 penalties}
+\label{ch:reg}
 
+Regularisation penalises model complexity to reduce variance and combat overfitting.
+We add a penalty $P(\boldsymbol{\beta})$ to the training objective:
+\begin{align}
+    \hat{\boldsymbol{\beta}}
+    = \arg\min_{\boldsymbol{\beta}}
+      \left\{ \mathrm{RSS}(\boldsymbol{\beta})
+      + \lambda\,P(\boldsymbol{\beta}) \right\},
+\end{align}
+where $\lambda \geq 0$ controls the strength of regularisation. Equivalently, for a
+given budget $t$,
+\begin{align}
+    \min_{\boldsymbol{\beta}} \mathrm{RSS}(\boldsymbol{\beta})
+    \quad \text{subject to} \quad P(\boldsymbol{\beta}) \leq t.
+\end{align}
+This is the Lagrangian form of a constrained optimisation problem. Larger $\lambda$
+means a smaller feasible region and stronger shrinkage.
 
-\chapter{Cross-validation and Imputation}
-\todo{Cross-validation: k-fold, LOOCV, nested CV; imputation: mean/median, MICE, KNN}
+\section{Ridge regression ($\ell_2$)}
 
+Ridge regression uses
+\begin{align}
+    P(\boldsymbol{\beta}) = \sum_{j=1}^p \beta_j^2 = \norm{\boldsymbol{\beta}}_2^2.
+\end{align}
+The objective is
+\begin{align}
+    \mathrm{RSS}(\boldsymbol{\beta}) + \lambda\norm{\boldsymbol{\beta}}_2^2,
+\end{align}
+with closed-form solution
+\begin{align}
+    \hat{\boldsymbol{\beta}}_{\mathrm{ridge}}
+    = (\mathbf{X}^\top\mathbf{X} + \lambda\mathbf{I})^{-1}\mathbf{X}^\top\mathbf{y}
+\end{align}
+when the intercept is handled separately. The added $\lambda\mathbf{I}$ makes the
+matrix invertible even when $\mathbf{X}^\top\mathbf{X}$ is singular. Ridge shrinks
+coefficients toward zero but rarely sets them exactly to zero. It is effective when
+many predictors have small, non-zero effects, and it handles correlated predictors
+gracefully by distributing weight among them.
+
+Ridge has a Bayesian interpretation: it is the MAP estimate under a Gaussian prior
+$\beta_j \sim \mathcal{N}(0,\tau^2)$ with $\lambda = \sigma^2/\tau^2$.
+
+\section{LASSO ($\ell_1$)}
+
+The LASSO (least absolute shrinkage and selection operator) uses
+\begin{align}
+    P(\boldsymbol{\beta}) = \sum_{j=1}^p |\beta_j| = \norm{\boldsymbol{\beta}}_1.
+\end{align}
+Unlike ridge, LASSO can set coefficients exactly to zero, performing automatic
+\emph{feature selection}. The solution is \emph{sparse}: only a subset of predictors
+retain non-zero coefficients. This is valuable for interpretation and for
+high-dimensional problems, but LASSO can behave erratically when predictors are
+highly correlated: it tends to select one and ignore the others.
+
+LASSO is the MAP estimate under a Laplace prior,
+$p(\beta_j) \propto e^{-|\beta_j|/b}$. The Laplace density has a sharp peak at zero,
+which is the probabilistic counterpart of the geometric corner argument below.
+
+\section{Elastic net}
+
+Elastic net combines both penalties:
+\begin{align}
+    P(\boldsymbol{\beta})
+    = \alpha\norm{\boldsymbol{\beta}}_1 + (1-\alpha)\norm{\boldsymbol{\beta}}_2^2,
+\end{align}
+interpolating between LASSO ($\alpha=1$) and ridge ($\alpha=0$). It handles
+correlated predictors better than LASSO alone, because the $\ell_2$ term encourages
+groups of correlated variables to enter or leave together, while the $\ell_1$ term
+still produces sparsity.
+
+\section{Why the $\ell_1$ penalty yields sparsity}
+
+The $\ell_1$ ball $\{\boldsymbol{\beta}: \norm{\boldsymbol{\beta}}_1 \leq t\}$ has
+corners on the coordinate axes; the contours of the unpenalised loss tend to touch
+these corners, forcing some coefficients to zero. The $\ell_2$ ball is round, so
+contact typically occurs with all coefficients non-zero. In two dimensions, the
+picture is:
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.0]
+\draw[->] (-0.3,0) -- (5.2,0) node[right] {$\beta_1$};
+\draw[->] (0,-0.3) -- (0,3.8) node[above] {$\beta_2$};
+\draw[thick, blue] (0,0) ellipse (2.6 and 1.6);
+\draw[thick, blue] (0,0) ellipse (3.5 and 2.3);
+\draw[thick, red, fill=red!10, fill opacity=0.4]
+  (1.9,0) -- (2.8,1.1) -- (3.7,0) -- (2.8,-1.1) -- cycle;
+\node[red] at (3.9,1.1) {$\ell_1$ ball};
+\draw[thick, green!55!black] (4.2,0) circle (0.85);
+\node[green!45!black] at (4.2,-1.1) {$\ell_2$ ball};
+\fill (2.8,1.1) circle (1.5pt);
+\node[above right] at (2.8,1.1) {corner solution};
+\end{tikzpicture}
+\caption{Schematic of the constrained view of regularisation. The elliptical
+contours are level sets of the loss; the feasible region is the penalty ball. The
+$\ell_1$ ball has corners, making sparse solutions likely.}
+\label{fig:l1-l2}
+\end{figure}
+
+\section{Practical considerations}
+
+\begin{itemize}
+    \item \textbf{Standardise features.} Penalties are not scale-invariant. A feature
+    measured in thousands will be penalised differently from one measured in
+    fractions. Centre and scale before regularising (but do not penalise the
+    intercept).
+    \item \textbf{Choose $\lambda$ by cross-validation.} The regularisation path is
+    usually computed over a grid of $\lambda$ values, and the value with the best
+    validation error is selected (Chapter~\ref{ch:cv}).
+    \item \textbf{Use the right solver.} Coordinate descent is standard for LASSO;
+    `saga` handles elastic net and large sparse problems.
+    \item \textbf{Do not interpret selected features as causal.} Selection is
+    sensitive to the data and to correlated predictors.
+\end{itemize}
+
+\coderef{Code/regularization.py}
+\coderef{Code/linear_regression.py}
+
+\chapter{Model Assessment: Cross-Validation and Imputation}
+\label{ch:cv}
+
+\section{Why validate?}
+
+Training error optimistically estimates generalisation error, especially for flexible
+models. We need held-out data to estimate how well a model performs on unseen
+observations. A \emph{validation} set is used for model selection and hyperparameter
+tuning; a \emph{test} set is used once, at the end, to report final performance.
+
+\section{Train / validation / test split}
+
+\begin{itemize}
+    \item \textbf{Training data}: used to fit model parameters.
+    \item \textbf{Validation data}: used to tune hyperparameters and select models.
+    \item \textbf{Test data}: used once, at the end, to report final generalisation
+    error.
+\end{itemize}
+The test set must never influence training or hyperparameter choices; otherwise the
+reported error is biased downward. When data are scarce, a single validation split is
+wasteful, which motivates cross-validation.
+
+\section{k-fold cross-validation}
+
+Partition the data into $k$ roughly equal folds. For each fold $i$:
+\begin{enumerate}
+    \item Train on the other $k-1$ folds.
+    \item Evaluate on fold $i$.
+\end{enumerate}
+Average the $k$ validation errors to obtain the cross-validation estimate:
+\begin{align}
+    \mathrm{CV}_{(k)}
+    = \frac{1}{k}\sum_{i=1}^k \hat{\risk}_i.
+\end{align}
+Common choices are $k=5$ or $k=10$; $k=5$ is cheaper, $k=10$ has slightly lower bias.
+The folds should be stratified for classification so that each fold preserves the
+class proportions, grouped when observations are not independent (for example,
+multiple images of the same patient), and ordered when the data are a time series.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.9]
+\foreach \i in {1,...,5} {
+  \foreach \j in {1,...,5} {
+    \pgfmathsetmacro{\shade}{(\i==\j) ? 1 : 0}
+    \ifnum\shade=1
+      \fill[red!45] (\j-1,-\i) rectangle ++(1,0.8);
+    \else
+      \fill[blue!12] (\j-1,-\i) rectangle ++(1,0.8);
+    \fi
+    \draw[gray] (\j-1,-\i) rectangle ++(1,0.8);
+  }
+  \node[left] at (0,-\i+0.4) {Fold \i};
+}
+\node[above] at (2.5,0.1) {Data divided into five folds};
+\node[below] at (2.5,-5.3) {red = validation, blue = training};
+\end{tikzpicture}
+\caption{Five-fold cross-validation. Each fold serves once as the validation set.}
+\label{fig:kfold}
+\end{figure}
+
+\section{Leave-one-out cross-validation}
+
+With $k=n$, each observation serves once as the validation set:
+\begin{align}
+    \mathrm{LOOCV} = \frac{1}{n}\sum_{i=1}^n \ell\big(y_i, \hat{f}^{(-i)}(\mathbf{x}^{(i)})\big).
+\end{align}
+LOOCV is approximately unbiased but can have high variance because the $n$ training
+sets are almost identical. It is computationally expensive ($n$ model fits), although
+for ordinary least squares there is a closed-form shortcut using the hat matrix:
+\begin{align}
+    \mathrm{LOOCV} = \frac{1}{n}\sum_{i=1}^n
+    \left(\frac{y_i-\hat{y}_i}{1-h_{ii}}\right)^2,
+\end{align}
+where $h_{ii}$ is the $i$-th diagonal entry of the hat matrix.
+
+\section{Nested cross-validation}
+
+When both model selection and hyperparameter tuning are needed, use two loops. An
+outer loop estimates generalisation error; an inner loop performs cross-validation
+for tuning. For each outer fold, the inner loop selects hyperparameters using only
+the outer training data. Nested CV prevents information leakage from the tuning step
+into the error estimate. It is more expensive but often necessary when comparing many
+models.
+
+\section{Data leakage}
+
+Leakage occurs when information from outside the training data influences the model.
+Common sources are:
+\begin{itemize}
+    \item Scaling, imputing, or selecting features before splitting the data.
+    \item Using the test set to choose hyperparameters.
+    \item Duplicated or near-duplicated observations split across train and test.
+    \item Target leakage: a feature that is a proxy for the label or is measured after
+    the outcome.
+\end{itemize}
+The cure is to put every preprocessing step inside a pipeline and fit the pipeline
+only on training folds.
+
+\section{Imputation}
+
+Missing data are common. Strategies include:
+\begin{itemize}
+    \item \textbf{Mean/median imputation}: replace missing values with the feature mean
+    or median. Simple but distorts variance and correlations.
+    \item \textbf{Mode imputation}: for categorical features, use the most frequent
+    category.
+    \item \textbf{KNN imputation}: impute from the values of the $k$ nearest complete
+    observations.
+    \item \textbf{MICE} (multiple imputation by chained equations): model each feature
+    with missingness as a function of the others, iterating through features multiple
+    times to generate several imputed datasets.
+\end{itemize}
+Always fit the imputer on training data only, then apply the same transformation to
+validation and test data. If the missingness itself is informative, add a
+\emph{missing-indicator} feature.
+
+\coderef{Code/cross_validation.py}
 
 \chapter{Support Vector Machines}
-\todo{Support vector machines: hard/soft margin, kernel trick, dual formulation}
+\label{ch:svm}
 
+\section{Maximum-margin classification}
+
+For linearly separable binary data with labels $y_i \in \{-1,+1\}$, a hyperplane
+$\mathbf{w}^\top\mathbf{x}+b=0$ classifies correctly if
+$y_i(\mathbf{w}^\top\mathbf{x}^{(i)}+b) > 0$ for all $i$. Among all separating
+hyperplanes, the support vector machine chooses the one with the largest \emph{margin}:
+the distance from the hyperplane to the closest training points. The geometric margin
+is $2/\norm{\mathbf{w}}$, so maximising the margin is equivalent to minimising
+$\norm{\mathbf{w}}$.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.0]
+\draw[->] (0,0) -- (5.5,0) node[right] {$x_1$};
+\draw[->] (0,0) -- (0,3.8) node[above] {$x_2$};
+\draw[thick] (0.2,2.0) -- (5.2,2.0);
+\draw[dashed] (0.2,1.35) -- (5.2,1.35);
+\draw[dashed] (0.2,2.65) -- (5.2,2.65);
+\foreach \p in {(1.2,2.9),(2.0,3.2),(3.1,2.75),(3.9,3.1)}
+  \fill[blue] \p circle (2.5pt);
+\foreach \p in {(1.0,0.7),(2.2,1.0),(3.3,0.55),(4.2,0.95)}
+  \fill[red] \p circle (2.5pt);
+\fill[blue] (2.6,2.65) circle (4pt);
+\fill[red] (2.9,1.35) circle (4pt);
+\node[right] at (5.25,2.0) {$\mathbf{w}^\top\mathbf{x}+b=0$};
+\node[right] at (5.25,2.7) {margin};
+\draw[<->] (4.7,1.35) -- (4.7,2.65);
+\end{tikzpicture}
+\caption{Schematic of a maximum-margin classifier. The circled points are support
+vectors; they alone determine the boundary.}
+\label{fig:svm}
+\end{figure}
+
+\section{Hard-margin primal problem}
+
+The hard-margin SVM solves
+\begin{align}
+    \min_{\mathbf{w},b}\ \frac{1}{2}\norm{\mathbf{w}}^2
+    \quad \text{subject to} \quad
+    y_i(\mathbf{w}^\top\mathbf{x}^{(i)}+b) \geq 1, \quad i=1,\ldots,n.
+\end{align}
+The constraints say that every point is on the correct side and at least at unit
+distance from the boundary in the scaled coordinates. The objective is strictly convex
+and the constraints are linear, so the problem has a unique solution when the data are
+separable.
+
+Introducing Lagrange multipliers $\alpha_i \geq 0$, the Lagrangian is
+\begin{align}
+    \mathcal{L}(\mathbf{w},b,\boldsymbol{\alpha})
+    = \frac{1}{2}\norm{\mathbf{w}}^2
+    - \sum_{i=1}^n \alpha_i\big[y_i(\mathbf{w}^\top\mathbf{x}^{(i)}+b)-1\big].
+\end{align}
+Setting derivatives to zero gives
+\begin{align}
+    \mathbf{w} = \sum_{i=1}^n \alpha_i y_i \mathbf{x}^{(i)},
+    \qquad
+    \sum_{i=1}^n \alpha_i y_i = 0.
+\end{align}
+Substituting back yields the \emph{dual}
+\begin{align}
+    \max_{\boldsymbol{\alpha}}\
+    \sum_{i=1}^n \alpha_i
+    - \frac{1}{2}\sum_{i,j=1}^n \alpha_i\alpha_j y_i y_j
+      {\mathbf{x}^{(i)}}^\top\mathbf{x}^{(j)}
+    \quad \text{subject to} \quad
+    \alpha_i \geq 0,\ \sum_i \alpha_i y_i = 0.
+\end{align}
+The Karush--Kuhn--Tucker conditions imply
+$\alpha_i\big[y_i(\mathbf{w}^\top\mathbf{x}^{(i)}+b)-1\big]=0$. Points with
+$\alpha_i>0$ lie exactly on the margin and are the \emph{support vectors}; all other
+points have $\alpha_i=0$ and do not affect the solution.
+
+\section{Soft margin and hinge loss}
+
+Real data are rarely separable. The soft-margin SVM introduces slack variables
+$\xi_i \geq 0$:
+\begin{align}
+    \min_{\mathbf{w},b,\boldsymbol{\xi}}\
+    \frac{1}{2}\norm{\mathbf{w}}^2 + C\sum_{i=1}^n \xi_i
+    \quad \text{subject to} \quad
+    y_i(\mathbf{w}^\top\mathbf{x}^{(i)}+b) \geq 1-\xi_i,\ \xi_i \geq 0.
+\end{align}
+The parameter $C>0$ controls the trade-off between margin size and training errors.
+Equivalently, the SVM minimises the regularised \emph{hinge loss}
+\begin{align}
+    \frac{1}{2}\norm{\mathbf{w}}^2
+    + C\sum_{i=1}^n \max\big(0, 1-y_i(\mathbf{w}^\top\mathbf{x}^{(i)}+b)\big).
+\end{align}
+A large $C$ penalises violations strongly and tends to overfit; a small $C$ allows
+more violations and produces a wider margin. The dual is the same as above but with
+the box constraint $0 \leq \alpha_i \leq C$.
+
+\section{The kernel trick}
+
+The dual depends on the data only through inner products
+${\mathbf{x}^{(i)}}^\top\mathbf{x}^{(j)}$. Replace the inner product by a kernel
+$K(\mathbf{x},\mathbf{z})$ and the algorithm operates implicitly in a richer feature
+space without ever computing the mapping. By Mercer's theorem, a symmetric positive
+semidefinite kernel corresponds to an inner product in some feature space.
+
+Common kernels:
+\begin{align}
+    \text{linear: } & K(\mathbf{x},\mathbf{z}) = \mathbf{x}^\top\mathbf{z},\\
+    \text{polynomial: } & K(\mathbf{x},\mathbf{z}) = (\gamma\,\mathbf{x}^\top\mathbf{z}+r)^d,\\
+    \text{RBF/Gaussian: } & K(\mathbf{x},\mathbf{z}) =
+      \exp\!\left(-\gamma\norm{\mathbf{x}-\mathbf{z}}^2\right).
+\end{align}
+The RBF kernel corresponds to an infinite-dimensional feature space and is a strong
+default when no problem-specific kernel is available. Its bandwidth $\gamma$ controls
+the locality of the similarity: large $\gamma$ means each point influences only a
+small neighbourhood.
+
+The prediction for a new point is
+\begin{align}
+    \hat{f}(\mathbf{x})
+    = \sum_{i \in \mathrm{SV}} \alpha_i y_i K(\mathbf{x}^{(i)},\mathbf{x}) + b,
+\end{align}
+so only support vectors are needed at test time.
+
+\section{Multi-class problems, regression, and practice}
+
+SVMs are inherently binary. Common multiclass reductions are one-vs-rest (train $K$
+classifiers) and one-vs-one (train $K(K-1)/2$ classifiers and vote). Support vector
+regression uses an $\epsilon$-insensitive tube around the predictions.
+
+Practical notes:
+\begin{itemize}
+    \item Standardise features before using RBF kernels.
+    \item Tune $C$ and $\gamma$ together on a logarithmic grid with cross-validation.
+    \item Kernel SVMs scale roughly quadratically in the number of training examples;
+    for large data, linear SVMs or approximate kernels are preferable.
+    \item The decision function is not a calibrated probability; use Platt scaling or
+    cross-validated calibration if probabilities are needed.
+\end{itemize}
+
+\coderef{Code/svm.py}
 
 \chapter{Classification and Regression Trees}
-\todo{Classification and regression trees: CART, splitting criteria, pruning}
+\label{ch:trees}
 
+\section{Tree models}
 
-\chapter{Gradient Descent}
-\todo{Gradient descent: batch, stochastic, mini-batch, learning rate, momentum}
+A decision tree partitions the feature space into axis-aligned rectangles and fits a
+simple prediction in each rectangle. It is built by \emph{recursive binary
+splitting}: starting from the root, choose a feature and a threshold that split the
+data, then recurse on the two children until a stopping rule is met. Prediction
+follows the path from root to leaf.
 
+Trees are interpretable, handle mixed feature types, require little preprocessing,
+and capture interactions automatically. They are also unstable: small changes in the
+data can produce a very different tree.
 
-\chapter{Unsupervised Methods}
-\todo{Unsupervised methods: clustering, dimensionality reduction, PCA, t-SNE}
+\section{Splitting criteria}
 
+For classification, let $p_{mk}$ be the proportion of class $k$ in node $m$. Common
+impurity measures are:
+\begin{align}
+    \text{Gini: } & G_m = \sum_{k=1}^K p_{mk}(1-p_{mk}),\\
+    \text{entropy: } & H_m = -\sum_{k=1}^K p_{mk}\log p_{mk},\\
+    \text{missclassification: } & E_m = 1-\max_k p_{mk}.
+\end{align}
+Gini and entropy are smooth and generally preferred; they are more sensitive to
+changes in class probabilities than the misclassification rate.
+
+A split is chosen to maximise the impurity decrease (equivalently, the information
+gain):
+\begin{align}
+    \Delta I
+    = I_m - \frac{n_L}{n_m}I_L - \frac{n_R}{n_m}I_R,
+\end{align}
+where $I_L$ and $I_R$ are the impurities of the left and right children. The search
+over all features and thresholds is greedy: the best split at the current node is
+chosen without regard to later splits.
+
+For regression, use the sum of squared errors in a node,
+\begin{align}
+    \mathrm{SSE}_m = \sum_{i \in R_m} (y_i - \bar{y}_m)^2,
+\end{align}
+and choose splits that maximise the reduction in SSE. The leaf prediction is the mean
+target in that leaf.
+
+\section{Stopping, pruning, and cost-complexity}
+
+A fully grown tree can fit the training data perfectly, which is severe overfitting.
+Ways to control tree size include:
+\begin{itemize}
+    \item stopping rules: maximum depth, minimum samples per leaf, minimum impurity
+    decrease;
+    \item \emph{cost-complexity pruning}: grow a large tree, then minimise
+    \begin{align}
+        \mathrm{RSS}(T) + \alpha|T|,
+    \end{align}
+    where $|T|$ is the number of leaves and $\alpha \geq 0$ controls the penalty;
+    \item cross-validation to choose $\alpha$, depth, or leaf size.
+\end{itemize}
+
+\section{Bagging and random forests}
+
+Trees have low bias but high variance. \emph{Bagging} (bootstrap aggregating) fits
+many trees on bootstrap samples and averages their predictions. Averaging reduces
+variance without increasing bias much. Random forests add a second source of
+randomness: at each split, only a random subset of features is considered. This
+decorrelates the trees and makes the average more effective. The out-of-bag samples
+for each tree provide a convenient internal estimate of error.
+
+Random forests are strong, robust defaults for tabular data. They give a measure of
+feature importance, can handle nonlinearity and interactions, and require relatively
+little tuning. They are less interpretable than a single tree and can be large and
+slow at prediction time if the forest is big.
+
+\section{Boosting and gradient boosting}
+
+Boosting fits models sequentially, each new model focusing on the errors of the
+ensemble so far. \emph{AdaBoost} reweights misclassified examples and combines weak
+learners with weights. \emph{Gradient boosting} views boosting as functional gradient
+descent: at each iteration, fit a weak learner to the negative gradient of the loss
+(the pseudo-residuals) and add it to the ensemble with a learning rate
+$\nu$:
+\begin{align}
+    F_m(\mathbf{x}) = F_{m-1}(\mathbf{x}) + \nu\, h_m(\mathbf{x}).
+\end{align}
+For squared error the pseudo-residuals are ordinary residuals; for logistic loss they
+are $y_i-p_i$. Modern implementations such as XGBoost, LightGBM, and CatBoost add
+regularisation, second-order information, and efficient split finding.
+
+Boosting usually achieves lower bias than bagging and often wins on tabular
+benchmarks, but it is more sensitive to noisy labels and to hyperparameters. It also
+can overfit if the number of rounds is too large, so early stopping on a validation
+set is standard.
+
+\section{Feature importance and interpretation}
+
+Impurity-based importance sums the impurity decrease attributable to each feature
+across all splits. It is cheap but biased toward high-cardinality features.
+Permutation importance measures the drop in validation performance when a feature's
+values are randomly shuffled; it is more directly tied to predictive usefulness but
+can be misleading when features are correlated. Partial dependence plots show the
+marginal effect of a feature after averaging over the others. None of these methods
+establishes causality.
+
+\section{Strengths and limitations}
+
+Trees and ensembles are excellent for tabular data with nonlinear relationships and
+interactions. They are invariant to monotone transformations of individual features
+and can handle missing values with some implementations. Their weaknesses are
+instability of single trees, limited extrapolation (a tree cannot predict outside the
+range of the training targets), and difficulty representing smooth linear
+relationships without many splits.
+
+\coderef{Code/trees.py}
+
+\chapter{Gradient Descent and Optimization}
+\label{ch:gd}
+
+\section{The optimisation problem}
+
+Most machine-learning training problems can be written as
+\begin{align}
+    \min_{\boldsymbol{\theta}}\
+    J(\boldsymbol{\theta})
+    = \frac{1}{n}\sum_{i=1}^n \ell\big(y_i, f(\mathbf{x}^{(i)};\boldsymbol{\theta})\big)
+    + \lambda\,\Omega(\boldsymbol{\theta}),
+\end{align}
+where $\boldsymbol{\theta}$ collects all parameters, $\ell$ is a per-example loss, and
+$\Omega$ is a regulariser. For linear and logistic regression, $J$ is convex. For
+neural networks, it is non-convex and the goal is to find a good local minimum.
+
+\section{Batch gradient descent}
+
+Gradient descent updates the parameters in the direction of steepest descent:
+\begin{align}
+    \boldsymbol{\theta}_{t+1}
+    = \boldsymbol{\theta}_t - \eta_t \nabla J(\boldsymbol{\theta}_t),
+\end{align}
+where $\eta_t>0$ is the learning rate. For an $L$-smooth function, a constant step
+size $\eta \leq 1/L$ guarantees descent. If $\eta$ is too small, convergence is slow;
+if it is too large, the iterates can oscillate or diverge. For strongly convex
+quadratic objectives, the error contracts at rate
+$(1-\mu/L)^t$, so ill-conditioning (small $\mu/L$) is the main obstacle.
+
+\section{Stochastic and mini-batch gradient descent}
+
+Computing $\nabla J$ over all $n$ examples is expensive for large datasets. Stochastic
+gradient descent (SGD) uses one example at a time:
+\begin{align}
+    \boldsymbol{\theta}_{t+1}
+    = \boldsymbol{\theta}_t - \eta_t \nabla \ell\big(y_{i_t}, f(\mathbf{x}^{(i_t)};\boldsymbol{\theta}_t)\big).
+\end{align}
+The gradient is noisy but unbiased (for uniformly sampled examples), and the noise can
+help escape shallow local minima. Mini-batch SGD averages a small batch:
+\begin{align}
+    \boldsymbol{\theta}_{t+1}
+    = \boldsymbol{\theta}_t
+    - \eta_t \frac{1}{B}\sum_{i \in \mathcal{B}_t}
+      \nabla \ell\big(y_i, f(\mathbf{x}^{(i)};\boldsymbol{\theta}_t)\big).
+\end{align}
+Mini-batches exploit vectorised hardware and give a better estimate of the gradient
+than a single example. The batch size trades off gradient variance against
+computation per update.
+
+For SGD to converge, the learning rate must typically decay, for example
+$\eta_t = \eta_0/(1+\gamma t)$ or a step schedule. In practice, constant rates with
+warmup and cosine decay are common for deep networks.
+
+\section{Momentum and acceleration}
+
+Momentum accumulates a velocity that smooths out noisy gradient directions:
+\begin{align}
+    \mathbf{v}_{t+1} &= \beta\mathbf{v}_t - \eta\nabla J(\boldsymbol{\theta}_t),\\
+    \boldsymbol{\theta}_{t+1} &= \boldsymbol{\theta}_t + \mathbf{v}_{t+1}.
+\end{align}
+It damps oscillations across narrow valleys and accelerates along consistent
+directions. Nesterov momentum evaluates the gradient at the look-ahead point
+$\boldsymbol{\theta}_t + \beta\mathbf{v}_t$, which often improves convergence.
+
+\section{Adaptive methods}
+
+AdaGrad scales each coordinate by the inverse square root of accumulated squared
+gradients, which helps with sparse features. RMSProp uses an exponentially decaying
+average of squared gradients. Adam combines momentum with RMSProp:
+\begin{align}
+    \mathbf{m}_t &= \beta_1\mathbf{m}_{t-1} + (1-\beta_1)\mathbf{g}_t,\\
+    \mathbf{v}_t &= \beta_2\mathbf{v}_{t-1} + (1-\beta_2)\mathbf{g}_t^2,\\
+    \hat{\mathbf{m}}_t &= \frac{\mathbf{m}_t}{1-\beta_1^t}, \qquad
+    \hat{\mathbf{v}}_t = \frac{\mathbf{v}_t}{1-\beta_2^t},\\
+    \boldsymbol{\theta}_{t+1} &= \boldsymbol{\theta}_t
+    - \eta\frac{\hat{\mathbf{m}}_t}{\sqrt{\hat{\mathbf{v}}_t}+\epsilon}.
+\end{align}
+Adam is a robust default for deep networks but can generalise slightly worse than
+well-tuned SGD with momentum on some vision tasks. The choice depends on the problem,
+the batch size, and the budget for tuning.
+
+\section{Practical guidance}
+
+\begin{itemize}
+    \item \textbf{Scale features.} Gradient descent is not scale-invariant; standardise
+    inputs (and consider normalising targets).
+    \item \textbf{Monitor both training and validation loss.} Training loss alone can
+    decrease while the model overfits.
+    \item \textbf{Use early stopping.} Stop when validation loss has not improved for a
+    fixed number of epochs.
+    \item \textbf{Clip gradients} when training recurrent or very deep networks.
+    \item \textbf{Check the learning rate.} A quick sweep over a logarithmic grid is
+    often the highest-value hyperparameter search.
+    \item \textbf{Shuffle the data} each epoch so that mini-batches are representative.
+\end{itemize}
+
+\coderef{Code/gradient_descent.py}
+
+\chapter{Unsupervised Learning}
+\label{ch:unsupervised}
+
+Unsupervised learning seeks structure in unlabelled data. The two dominant tasks are
+\emph{clustering} (grouping similar observations) and \emph{dimensionality reduction}
+(representing data with fewer coordinates while preserving important structure).
+
+\section{K-means clustering}
+
+K-means partitions $n$ observations into $K$ clusters by minimising the within-cluster
+sum of squares:
+\begin{align}
+    \min_{\{C_k\},\{\boldsymbol{\mu}_k\}}
+    \sum_{k=1}^K \sum_{\mathbf{x}^{(i)} \in C_k}
+    \norm{\mathbf{x}^{(i)} - \boldsymbol{\mu}_k}^2,
+\end{align}
+where $\boldsymbol{\mu}_k$ is the centroid of cluster $k$. Lloyd's algorithm
+alternates two steps:
+\begin{enumerate}
+    \item \textbf{Assignment}: assign each point to the nearest centroid.
+    \item \textbf{Update}: set each centroid to the mean of its assigned points.
+\end{enumerate}
+Each step decreases the objective, so the algorithm converges to a local minimum. The
+result depends on initialisation; k-means++ chooses initial centroids that are spread
+out and is the standard default.
+
+K-means assumes roughly spherical clusters of similar size and is sensitive to
+feature scaling and outliers. The number of clusters can be chosen with the elbow
+method (plot the objective against $K$) or the silhouette score:
+\begin{align}
+    s(i) = \frac{b(i)-a(i)}{\max\{a(i),b(i)\}},
+\end{align}
+where $a(i)$ is the mean distance to points in the same cluster and $b(i)$ the mean
+distance to points in the nearest other cluster.
+
+\section{Hierarchical clustering}
+
+Agglomerative hierarchical clustering starts with each point as its own cluster and
+repeatedly merges the two closest clusters. The result is a dendrogram that records
+the merge order. Linkage determines cluster distance:
+\begin{itemize}
+    \item \textbf{single}: minimum pairwise distance (can chain);
+    \item \textbf{complete}: maximum pairwise distance (compact clusters);
+    \item \textbf{average}: average pairwise distance;
+    \item \textbf{Ward}: merge that increases within-cluster variance the least.
+\end{itemize}
+Hierarchical clustering is deterministic and provides a multi-scale view, but it is
+$O(n^2)$ in memory and time for the standard algorithm and sensitive to the linkage
+choice.
+
+\section{DBSCAN}
+
+DBSCAN defines clusters as dense regions separated by sparse regions. It requires two
+parameters: a radius $\epsilon$ and a minimum number of neighbours
+\texttt{min\_samples}. Points are \emph{core} points if their $\epsilon$-neighbourhood
+contains enough points; clusters are connected components of core points plus their
+neighbours. Points that are not reachable from any core point are labelled noise.
+DBSCAN finds arbitrarily shaped clusters and does not require $K$, but it struggles
+when clusters have very different densities.
+
+\section{Principal component analysis}
+
+PCA finds orthogonal directions of maximum variance. After centring the data, the
+first principal component is
+\begin{align}
+    \mathbf{v}_1 = \arg\max_{\norm{\mathbf{v}}=1} \Var(\mathbf{X}\mathbf{v})
+    = \arg\max_{\norm{\mathbf{v}}=1} \mathbf{v}^\top\boldsymbol{\Sigma}\mathbf{v},
+\end{align}
+where $\boldsymbol{\Sigma}$ is the sample covariance. The solution is the eigenvector
+of $\boldsymbol{\Sigma}$ with the largest eigenvalue; subsequent components are the
+leading eigenvectors orthogonal to the previous ones. Equivalently, compute the
+singular value decomposition
+\begin{align}
+    \mathbf{X}_c = \mathbf{U}\mathbf{S}\mathbf{V}^\top,
+\end{align}
+and use the columns of $\mathbf{V}$ as components. The variance explained by the
+$j$-th component is $s_j^2/(n-1)$.
+
+PCA is used for compression, denoising, visualisation, and as a preprocessing step
+before distance-based methods. It is linear and unsupervised: it may discard
+directions that are low-variance but highly predictive. Kernel PCA applies the same
+idea in a kernel-induced feature space.
+
+\section{Nonlinear embedding}
+
+t-SNE and UMAP aim to preserve neighbourhood relationships in a low-dimensional
+embedding. They are excellent for visualisation but not for general-purpose feature
+extraction: distances between well-separated clusters are not meaningful, and the
+embedding depends on hyperparameters and random seeds. For visualisation, run them
+with several seeds and be cautious about over-interpreting cluster sizes.
+
+\section{Evaluating unsupervised methods}
+
+Clustering can be evaluated with internal measures such as silhouette, Davies--Bouldin,
+and Calinski--Harabasz, or with external labels when available (adjusted Rand index,
+normalised mutual information). Dimensionality reduction can be evaluated by
+reconstruction error for PCA, or by downstream task performance.
+
+\coderef{Code/unsupervised.py}
 
 \chapter{Neural Networks}
+\label{ch:nn}
 
+\section{From the perceptron to multilayer networks}
 
-\section{Perceptron}
+The perceptron computes a weighted sum and applies a step function:
+\begin{align}
+    \hat{y} = \mathbf{1}\{\mathbf{w}^\top\mathbf{x}+b > 0\}.
+\end{align}
+It can only represent linearly separable functions; the XOR problem is the canonical
+counterexample. A multilayer perceptron (MLP) stacks layers of differentiable
+nonlinear units and can represent much richer functions.
 
-\section{Multilayer Perceptrons}
+An MLP with one hidden layer computes
+\begin{align}
+    \mathbf{h} &= \phi(\mathbf{W}_1\mathbf{x}+\mathbf{b}_1),\\
+    \hat{\mathbf{y}} &= \psi(\mathbf{W}_2\mathbf{h}+\mathbf{b}_2),
+\end{align}
+where $\phi$ is a hidden activation and $\psi$ is the output activation (identity for
+regression, sigmoid for binary classification, softmax for multiclass). Common hidden
+activations are
+\begin{align}
+    \mathrm{ReLU}(z) &= \max(0,z), &
+    \tanh(z) &= \frac{e^z-e^{-z}}{e^z+e^{-z}}, &
+    \sigma(z) &= \frac{1}{1+e^{-z}}.
+\end{align}
+ReLU is the default for deep networks because it is cheap and less prone to vanishing
+gradients. The \emph{universal approximation theorem} says that a sufficiently wide
+one-hidden-layer network can approximate any continuous function on a compact domain
+to arbitrary accuracy; depth is what makes approximation efficient.
 
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=1.2cm,
+    neuron/.style={circle, draw, minimum size=0.7cm, inner sep=0pt},
+    every edge/.style={draw, ->, shorten >=1pt}
+]
+\foreach \i in {1,2,3}
+  \node[neuron] (i\i) at (0,-\i) {};
+\foreach \j in {1,2,3,4}
+  \node[neuron] (h\j) at (2.5,-0.5-\j*0.8) {};
+\foreach \k in {1,2}
+  \node[neuron] (o\k) at (5,-1.2-\k*1.0) {};
+\foreach \i in {1,2,3}
+  \foreach \j in {1,2,3,4}
+    \draw[->, gray] (i\i) -- (h\j);
+\foreach \j in {1,2,3,4}
+  \foreach \k in {1,2}
+    \draw[->, gray] (h\j) -- (o\k);
+\node at (0,-0.2) {Input};
+\node at (2.5,-0.2) {Hidden};
+\node at (5,-0.2) {Output};
+\end{tikzpicture}
+\caption{A fully connected feedforward network with three inputs, one hidden layer,
+and two outputs.}
+\label{fig:mlp}
+\end{figure}
+
+\section{Forward propagation and loss}
+
+For a batch of examples, store activations as matrices with one example per row. The
+forward pass is a sequence of affine transformations and activations. The training
+objective is the average loss plus regularisation:
+\begin{align}
+    J = \frac{1}{n}\sum_{i=1}^n \ell(y_i,\hat{\mathbf{y}}_i)
+    + \lambda\sum_{l}\norm{\mathbf{W}_l}_F^2.
+\end{align}
+For regression, use squared error; for binary classification, binary cross-entropy;
+for multiclass, categorical cross-entropy. These choices are not arbitrary: they
+correspond to Gaussian, Bernoulli, and categorical likelihoods respectively.
+
+\section{Backpropagation}
+
+Backpropagation is the chain rule applied efficiently to a computation graph. For a
+single layer with pre-activation $\mathbf{z} = \mathbf{W}\mathbf{a}_{\mathrm{prev}}+
+\mathbf{b}$ and activation $\mathbf{a}=\phi(\mathbf{z})$, define the error signal
+$\boldsymbol{\delta} = \partial J/\partial \mathbf{z}$. Then
+\begin{align}
+    \frac{\partial J}{\partial \mathbf{W}}
+    &= \boldsymbol{\delta}\,\mathbf{a}_{\mathrm{prev}}^\top, &
+    \frac{\partial J}{\partial \mathbf{b}} &= \boldsymbol{\delta},\\
+    \boldsymbol{\delta}_{\mathrm{prev}}
+    &= \left(\mathbf{W}^\top\boldsymbol{\delta}\right)\odot
+       \phi'(\mathbf{z}_{\mathrm{prev}}),
+\end{align}
+where $\odot$ is elementwise multiplication. Starting from the output layer, these
+recursions propagate the error backward through the network. Automatic
+differentiation libraries implement the same idea for arbitrary computation graphs.
+
+\section{Training deep networks}
+
+\begin{itemize}
+    \item \textbf{Initialisation}: Xavier/Glorot initialisation for $\tanh$ and He
+    initialisation for ReLU keep activations and gradients well scaled.
+    \item \textbf{Normalisation}: batch normalisation or layer normalisation stabilises
+    training and allows larger learning rates.
+    \item \textbf{Regularisation}: weight decay, dropout, data augmentation, and early
+    stopping reduce overfitting.
+    \item \textbf{Optimisation}: Adam or SGD with momentum; learning-rate schedules
+    matter.
+    \item \textbf{Monitoring}: track training and validation loss, gradient norms, and
+    activation statistics.
+\end{itemize}
+
+\section{Generalisation}
+
+Deep networks have far more parameters than classical models, yet they generalise well
+in many settings. Classical bias--variance intuition is incomplete: very large
+networks can interpolate the training data and still perform well on test data, a
+phenomenon sometimes called \emph{double descent}. Explanations include implicit
+regularisation from SGD, architectural inductive biases, and the geometry of
+overparameterised loss landscapes. The practical lesson is that capacity alone does
+not determine generalisation; data, optimisation, and architecture interact.
+
+\coderef{Code/neural_networks.py}
 
 \chapter{Deep Learning}
-\todo{Deep Learning: CNNs, RNNs, transformers, autoencoders, generative models}
+\label{ch:deep}
 
+Deep learning uses neural networks with many layers and architectures tailored to the
+structure of the data.
+
+\section{Convolutional neural networks}
+
+A convolution layer applies a small learnable filter across spatial positions:
+\begin{align}
+    y_{i,j,k} = \sum_{a,b,c} W_{a,b,c,k}\,x_{i+a,j+b,c} + b_k.
+\end{align}
+Convolutions exploit locality and translation equivariance, and they share weights
+across positions, which drastically reduces the parameter count compared with a fully
+connected layer. A typical CNN alternates convolution, nonlinearity, and pooling
+(or strided convolution), then uses a global pooling or fully connected head.
+Landmark architectures include LeNet, AlexNet, VGG, GoogLeNet, and ResNet. Residual
+connections $\mathbf{y}=\mathbf{x}+F(\mathbf{x})$ make very deep networks trainable.
+
+\section{Sequence models}
+
+Recurrent networks process a sequence one step at a time and maintain a hidden state:
+\begin{align}
+    \mathbf{h}_t = \phi(\mathbf{W}_h\mathbf{h}_{t-1}+\mathbf{W}_x\mathbf{x}_t+\mathbf{b}).
+\end{align}
+Backpropagation through time is the chain rule unrolled over the sequence. Long
+dependencies suffer from vanishing or exploding gradients; gated architectures such as
+LSTM and GRU use gates to control information flow. For many sequence tasks,
+transformers have largely replaced recurrent models.
+
+\section{Attention and transformers}
+
+Scaled dot-product attention computes
+\begin{align}
+    \mathrm{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V})
+    = \mathrm{softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^\top}{\sqrt{d_k}}\right)\mathbf{V}.
+\end{align}
+Multi-head attention runs several attention operations in parallel and concatenates
+the results. A transformer block combines multi-head attention with a position-wise
+feedforward network, residual connections, and layer normalisation. Because attention
+is permutation-equivariant, positional encodings are added to inject order.
+Transformers underlie modern language models and have been adapted to vision, audio,
+and scientific data.
+
+\section{Generative models}
+
+Generative models learn a distribution over data. Important families include:
+\begin{itemize}
+    \item \textbf{Autoencoders}: learn a bottleneck representation by reconstructing
+    the input; denoising and variational autoencoders add noise or a probabilistic
+    latent variable.
+    \item \textbf{Variational autoencoders (VAEs)}: maximise the evidence lower bound
+    (ELBO), balancing reconstruction against a KL penalty on the latent distribution.
+    \item \textbf{Generative adversarial networks (GANs)}: train a generator and a
+    discriminator in a minimax game.
+    \item \textbf{Diffusion models}: learn to reverse a gradual noising process.
+\end{itemize}
+
+\section{Transfer learning and data efficiency}
+
+Large models are often pretrained on a broad dataset and then fine-tuned on a small
+target dataset. Fine-tuning can update all parameters or only a subset; linear probing
+trains only a new head. Data augmentation, self-supervised pretraining, and
+distillation are further tools for improving data efficiency. When applying deep
+learning, start with a pretrained model if the domain is close to a standard one, and
+only train from scratch when you have enough data and compute.
+
+\coderef{Code/deep_learning.py}
 
 \chapter{Probabilistic Models}
-\todo{Probabilistic models: Bayesian networks, HMMs, GMMs, variational inference}
+\label{ch:probmodels}
+
+\section{Graphical models}
+
+A Bayesian network represents a joint distribution as a directed acyclic graph:
+\begin{align}
+    p(\mathbf{x}) = \prod_{i=1}^d p\big(x_i \mid \mathrm{parents}(x_i)\big).
+\end{align}
+The graph encodes conditional independences, which can be read off with
+d-separation. Graphical models provide a compact language for complex joint
+distributions and a recipe for inference. Markov random fields use undirected graphs
+and factor potentials instead of conditional probabilities.
+
+\section{Mixture models and the EM algorithm}
+
+A Gaussian mixture model assumes
+\begin{align}
+    p(\mathbf{x}) = \sum_{k=1}^K \pi_k\,\mathcal{N}(\mathbf{x}\mid
+    \boldsymbol{\mu}_k,\boldsymbol{\Sigma}_k),
+    \qquad \sum_k \pi_k = 1.
+\end{align}
+Latent variables $z_i \in \{1,\ldots,K\}$ indicate the component that generated each
+observation. The log-likelihood is not concave because of the sum inside the log, so
+we use expectation--maximisation (EM). The E-step computes responsibilities
+\begin{align}
+    \gamma_{ik} = \frac{\pi_k\,\mathcal{N}(\mathbf{x}^{(i)}\mid\boldsymbol{\mu}_k,
+    \boldsymbol{\Sigma}_k)}{\sum_{j=1}^K \pi_j\,\mathcal{N}(\mathbf{x}^{(i)}\mid
+    \boldsymbol{\mu}_j,\boldsymbol{\Sigma}_j)},
+\end{align}
+and the M-step updates the parameters using the responsibilities as soft assignments.
+Each iteration increases the likelihood (or leaves it unchanged), but EM can converge
+to a local maximum.
+
+\section{Hidden Markov models}
+
+An HMM models a sequence of observations $\mathbf{x}_1,\ldots,\mathbf{x}_T$ generated
+by a latent Markov chain $z_1,\ldots,z_T$:
+\begin{align}
+    p(\mathbf{x}_{1:T},\mathbf{z}_{1:T})
+    = p(z_1)\prod_{t=2}^T p(z_t\mid z_{t-1})
+      \prod_{t=1}^T p(\mathbf{x}_t\mid z_t).
+\end{align}
+The forward--backward algorithm computes marginal posteriors in linear time; Viterbi
+finds the most likely state sequence; Baum--Welch is EM for HMMs. HMMs remain useful
+for speech, bioinformatics, and simple sequence labelling, although deep sequence
+models are now more common for large datasets.
+
+\section{Variational inference and MCMC}
+
+For complex models the posterior $p(\mathbf{z}\mid\mathbf{x})$ is intractable.
+\emph{Variational inference} chooses a tractable family $q_\phi(\mathbf{z})$ and
+maximises the evidence lower bound
+\begin{align}
+    \mathcal{L}(\phi)
+    = \E_{q_\phi(\mathbf{z})}\big[\log p(\mathbf{x},\mathbf{z})
+      - \log q_\phi(\mathbf{z})\big]
+    = \log p(\mathbf{x}) - D_{\mathrm{KL}}\big(q_\phi(\mathbf{z})\,\|\,
+      p(\mathbf{z}\mid\mathbf{x})\big).
+\end{align}
+Maximising the ELBO is equivalent to minimising the KL divergence to the true
+posterior. \emph{Markov chain Monte Carlo} (MCMC) instead draws samples from the
+posterior; it is asymptotically exact but can be slow. Variational methods are faster
+and scale better; MCMC is preferable when accuracy is critical and the model is
+moderate-sized.
+
+\coderef{Code/probabilistic_models.py}
 
 \chapter{Reinforcement Learning}
-\todo{Reinforcement Learning: MDPs, Q-learning, policy gradients, actor-critic}
+\label{ch:rl}
 
+\section{Markov decision processes}
 
-\chapter{Statistical Learning Theory }
-\todo{Statistical Learning Theory: PAC learning, VC dimension, generalization bounds}
+A Markov decision process (MDP) is a tuple
+$(\mathcal{S},\mathcal{A},P,R,\gamma)$: states, actions, transition probabilities
+$P(s'\mid s,a)$, rewards $R(s,a)$, and a discount factor $\gamma \in [0,1)$. At each
+step the agent observes state $s_t$, chooses action $a_t$, receives reward $r_t$, and
+transitions to $s_{t+1}$. A policy $\pi(a\mid s)$ specifies the action distribution.
+
+The \emph{return} is the discounted sum of rewards:
+\begin{align}
+    G_t = \sum_{k=0}^{\infty}\gamma^k r_{t+k}.
+\end{align}
+The \emph{state-value function} and \emph{action-value function} are
+\begin{align}
+    V^\pi(s) &= \E_\pi[G_t\mid s_t=s], &
+    Q^\pi(s,a) &= \E_\pi[G_t\mid s_t=s,a_t=a].
+\end{align}
+The optimal policy maximises these values; at least one deterministic optimal policy
+exists for finite MDPs.
+
+\section{Bellman equations}
+
+The Bellman expectation equations are
+\begin{align}
+    V^\pi(s) &= \sum_a \pi(a\mid s)\sum_{s'}P(s'\mid s,a)
+      \big[R(s,a)+\gamma V^\pi(s')\big],\\
+    Q^\pi(s,a) &= \sum_{s'}P(s'\mid s,a)
+      \big[R(s,a)+\gamma\sum_{a'}\pi(a'\mid s')Q^\pi(s',a')\big].
+\end{align}
+The Bellman optimality equations replace the policy average with a max:
+\begin{align}
+    V^\star(s) = \max_a \sum_{s'}P(s'\mid s,a)
+    \big[R(s,a)+\gamma V^\star(s')\big].
+\end{align}
+If the model is known, \emph{policy evaluation}, \emph{policy iteration}, and
+\emph{value iteration} solve the MDP exactly (up to numerical precision). Value
+iteration repeatedly applies the Bellman optimality operator; it converges because the
+operator is a $\gamma$-contraction in the sup norm.
+
+\section{Model-free learning}
+
+When the transition model is unknown, the agent learns from experience.
+\emph{Monte Carlo} methods average complete returns. \emph{Temporal-difference} (TD)
+methods bootstrap from current value estimates. TD(0) updates
+\begin{align}
+    V(s_t) \leftarrow V(s_t) + \alpha\big[r_t+\gamma V(s_{t+1})-V(s_t)\big].
+\end{align}
+SARSA is on-policy TD control:
+\begin{align}
+    Q(s_t,a_t) \leftarrow Q(s_t,a_t)
+    + \alpha\big[r_t+\gamma Q(s_{t+1},a_{t+1})-Q(s_t,a_t)\big].
+\end{align}
+Q-learning is off-policy:
+\begin{align}
+    Q(s_t,a_t) \leftarrow Q(s_t,a_t)
+    + \alpha\big[r_t+\gamma\max_{a'}Q(s_{t+1},a')-Q(s_t,a_t)\big].
+\end{align}
+Q-learning converges to $Q^\star$ under suitable conditions on the learning rate and
+exploration.
+
+\section{Exploration versus exploitation}
+
+An agent must balance trying actions that may be better (exploration) against using
+what it already knows (exploitation). $\epsilon$-greedy chooses a random action with
+probability $\epsilon$ and the greedy action otherwise. Softmax exploration, optimistic
+initialisation, and upper-confidence bounds are alternatives. In large state spaces,
+value functions are approximated by neural networks; deep Q-learning (DQN) stabilises
+this with experience replay and target networks.
+
+\section{Policy-gradient methods}
+
+Policy-gradient methods optimise the policy directly. The REINFORCE estimator is
+\begin{align}
+    \nabla_\theta J(\theta)
+    = \E_\pi\big[G_t\,\nabla_\theta\log\pi_\theta(a_t\mid s_t)\big].
+\end{align}
+It is unbiased but has high variance; subtracting a baseline $b(s_t)$ that does not
+depend on the action reduces variance without introducing bias:
+\begin{align}
+    \nabla_\theta J(\theta)
+    = \E_\pi\big[(G_t-b(s_t))\,
+      \nabla_\theta\log\pi_\theta(a_t\mid s_t)\big].
+\end{align}
+Actor--critic methods learn both a policy (actor) and a value function (critic); the
+critic supplies the baseline and the advantage estimate. Modern algorithms such as
+A2C, PPO, and SAC build on these ideas.
+
+\section{Practical considerations}
+
+Reinforcement learning is notoriously sample-inefficient and sensitive to reward
+design. Reward shaping can speed learning but may introduce unintended incentives.
+Environments can be non-stationary, and policies trained in simulation may not
+transfer to the real world. Evaluation requires multiple seeds and careful attention
+to variance.
+
+\coderef{Code/reinforcement_learning.py}
+
+\chapter{Statistical Learning Theory}
+\label{ch:slt}
+
+\section{Empirical risk minimisation}
+
+A learning algorithm chooses a hypothesis $h$ from a class $\mathcal{H}$ based on a
+training sample $S=((\mathbf{x}^{(1)},y_1),\ldots,(\mathbf{x}^{(n)},y_n))$. The
+empirical risk is
+\begin{align}
+    \hat{\risk}_S(h) = \frac{1}{n}\sum_{i=1}^n \ell(y_i,h(\mathbf{x}^{(i)})),
+\end{align}
+and ERM returns $\hat{h}=\arg\min_{h\in\mathcal{H}}\hat{\risk}_S(h)$. The central
+question is how close $\risk(\hat{h})$ is to $\risk(h^\star)$, where
+$h^\star=\arg\min_{h\in\mathcal{H}}\risk(h)$ is the best hypothesis in the class.
+
+\section{Error decomposition}
+
+The excess risk decomposes into \emph{approximation error} and \emph{estimation
+error}:
+\begin{align}
+    \risk(\hat{h}) - \risk(h^\star_{\mathcal{H}})
+    \leq \underbrace{\risk(h^\star_{\mathcal{H}}) -
+      \inf_{h}\risk(h)}_{\text{approximation}}
+    + \underbrace{\risk(\hat{h}) - \risk(h^\star_{\mathcal{H}})}_{\text{estimation}}.
+\end{align}
+A richer class reduces approximation error but increases estimation error. This is
+the learning-theoretic version of the bias--variance trade-off. Regularisation
+restricts the effective complexity of the class.
+
+\section{PAC learning}
+
+Probably approximately correct (PAC) learning asks for a hypothesis whose risk is
+within $\epsilon$ of the best in the class with probability at least $1-\delta$. For a
+finite hypothesis class, the union bound gives: if
+\begin{align}
+    n \geq \frac{1}{2\epsilon^2}
+    \log\frac{2|\mathcal{H}|}{\delta},
+\end{align}
+then with probability at least $1-\delta$, every $h\in\mathcal{H}$ satisfies
+$|\risk(h)-\hat{\risk}_S(h)| \leq \epsilon$. The sample complexity grows only
+logarithmically with the number of hypotheses. This bound is loose but illustrates why
+finite, simple model classes are easy to learn.
+
+\section{VC dimension}
+
+For binary classification, the VC dimension of $\mathcal{H}$ is the size of the
+largest set that $\mathcal{H}$ can \emph{shatter} (label in all possible ways). In
+$d$ dimensions, linear classifiers have VC dimension $d+1$; the class of all
+axis-aligned rectangles has VC dimension $4$; a one-nearest-neighbour classifier can
+shatter any finite set but has infinite VC dimension. Infinite VC dimension does not
+imply failure, but it means that uniform convergence guarantees cannot be obtained
+from VC theory alone.
+
+The fundamental theorem of statistical learning (for binary classification) states
+that a hypothesis class is PAC-learnable if and only if it has finite VC dimension.
+Generalisation bounds are typically of the form
+\begin{align}
+    \risk(h) \leq \hat{\risk}_S(h)
+    + O\!\left(\sqrt{\frac{\mathrm{VC}(\mathcal{H})}{n}}\right)
+\end{align}
+with logarithmic confidence terms. These bounds are worst-case and often pessimistic
+for modern overparameterised models.
+
+\section{Rademacher complexity and margin theory}
+
+Rademacher complexity measures how well a hypothesis class can fit random noise:
+\begin{align}
+    \mathfrak{R}_n(\mathcal{H})
+    = \E_{S,\boldsymbol{\sigma}}\left[
+      \sup_{h\in\mathcal{H}}\frac{1}{n}\sum_{i=1}^n \sigma_i h(\mathbf{x}^{(i)})
+    \right],
+\end{align}
+where $\sigma_i \in \{-1,+1\}$ are independent Rademacher variables. It yields
+data-dependent generalisation bounds. Margin-based analysis explains why large-margin
+classifiers can generalise even when their VC dimension is large: what matters is the
+margin distribution, not just the raw parameter count.
+
+\section{Double descent and modern practice}
+
+Classical theory predicts that models with more parameters than data should overfit
+badly. In practice, deep networks and other overparameterised models can interpolate
+the training data and still generalise. Test error often follows a \emph{double
+descent} curve: it decreases, peaks near the interpolation threshold, and then
+decreases again as capacity grows. This has motivated research on implicit
+regularisation, benign overfitting, and the geometry of overparameterised models.
+
+The practical implications are:
+\begin{itemize}
+    \item Do not choose model size solely from classical parameter-counting bounds.
+    \item Use validation data and learning curves rather than theoretical bounds alone.
+    \item Regularisation, data augmentation, and early stopping remain effective.
+    \item Theory is most useful for understanding \emph{why} and \emph{when} methods
+    work, not for predicting benchmark accuracy.
+\end{itemize}
+
+\coderef{Code/learning_theory.py}
 
 \chapter{Tools}
+\label{ch:tools}
 
-\section{PyTorch}
+The Python ecosystem is the default for applied machine learning. The table below
+summarises the main libraries used in these notes.
 
-\href{https://pytorch.org/}{\emph{PyTorch}}: an open-source machine learning library based on the Torch library.
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{}l>{\raggedright\arraybackslash}X@{}}
+\toprule
+Library & Role \\
+\midrule
+\texttt{NumPy} & N-dimensional arrays, linear algebra, random numbers. \\
+\texttt{pandas} & Tabular data manipulation, cleaning, and exploratory analysis. \\
+\texttt{matplotlib} & Plotting and visualisation. \\
+\texttt{scikit-learn} & Classical ML: regression, classification, clustering, model selection,
+preprocessing, pipelines, metrics. \\
+\texttt{XGBoost} & Gradient-boosted trees with regularisation and efficient split finding. \\
+\texttt{PyTorch} & Deep learning with dynamic computation graphs and automatic differentiation. \\
+\texttt{TensorFlow/Keras} & Deep learning with a high-level API and production deployment tools. \\
+\texttt{JAX} & Composable numerical computing and automatic differentiation. \\
+\bottomrule
+\end{tabularx}
+\end{center}
 
-\section{TensorFlow}
+\section{Installing the companion code}
 
-\href{https://www.tensorflow.org/}{\emph{TensorFlow}}: an open-source machine learning framework developed by Google.
+The minimal environment for the companion scripts is
+\begin{pycode}
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r Code/requirements.txt
+\end{pycode}
+The deep-learning script additionally requires PyTorch:
+\begin{pycode}
+pip install torch torchvision
+\end{pycode}
 
-\section{scikit-learn}
+\section{Reproducibility checklist}
 
-\href{https://scikit-learn.org/}{\emph{scikit-learn}}: a Python library for machine learning built on top of NumPy, SciPy, and matplotlib.
+\begin{enumerate}
+    \item Fix random seeds for data splitting, initialisation, and stochastic
+    optimisation.
+    \item Record library versions and hardware.
+    \item Separate training, validation, and test data; never tune on the test set.
+    \item Report mean and standard deviation over multiple runs when results are
+    stochastic.
+    \item Save the exact command, configuration, and data version used to produce each
+    result.
+\end{enumerate}
 
-\section{XGBoost}
+\section{A minimal workflow}
 
-\href{https://xgboost.readthedocs.io/}{\emph{XGBoost}}: an open-source gradient boosting library that implements machine learning algorithms in a more efficient and flexible way than traditional gradient boosting methods.
+A reliable baseline workflow is:
+\begin{enumerate}
+    \item Load and inspect the data; check missing values, class balance, and leakage.
+    \item Split into training and test sets before any preprocessing.
+    \item Build a simple baseline (mean predictor, logistic regression, or a small
+    tree).
+    \item Put preprocessing and the model in a pipeline.
+    \item Tune a small number of hyperparameters with cross-validation.
+    \item Evaluate once on the test set; inspect errors and calibration.
+    \item Only then move to more complex models or deep learning.
+\end{enumerate}
 
-
-
-\section{Keras}
-
-\section{NumPy}
-
-\section{Pandas}
-
-
-
-
-
-
-
-
+\backmatter
 \printindex
 \printbibliography
-
-
-
-
-
-
 
 \end{document}
