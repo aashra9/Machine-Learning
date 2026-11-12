@@ -7,4 +7,4 @@ $biber = 'biber %O %B';
 
 # Let \usepackage{course} find ../Files/Style/course.sty without abusing
 # \input@path (which makes LaTeX report the package under the wrong name).
-$ENV{'TEXINPUTS'} = '../Files/Style//:' . ($ENV{'TEXINPUTS'} // '');
+$ENV{'TEXINPUTS'} = '../Files/Style//:../Files/Diagrams//:' . ($ENV{'TEXINPUTS'} // '');

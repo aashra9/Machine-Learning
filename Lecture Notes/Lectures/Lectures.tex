@@ -1346,10 +1346,46 @@ trade-off discussed below.
    and output $\hat{t} = f(\hat{\mathbf{x}})$.
 \end{problem}
 
-The problem can be visualized using a Voronoi diagram. The \emph{decision boundary} is the boundary between regions of input space assigned to different categories. 
+The problem can be visualized using a \emph{Voronoi diagram}: each training point
+``owns'' the region of input space closer to it than to any other training point.
+The \emph{decision boundary} is the boundary between regions assigned to different
+categories; for $k=1$ it is exactly the subset of Voronoi edges that separate points
+of different classes.
 
-\begin{problem}
-    Find $k$-closest point
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.9\textwidth, height=7.5cm,
+    xlabel={$x_1$}, ylabel={$x_2$},
+    xmin=-0.8, xmax=6.8, ymin=-0.8, ymax=5.8,
+    xtick=\empty, ytick=\empty, axis lines=none,
+    clip=false,
+]
+% Voronoi cells (k=1): grid point coloured by its nearest training site's class.
+\addplot[only marks, scatter, mark=square*, mark size=1.1pt,
+    scatter/classes={0={blue!30},1={red!30}}]
+    table[x index=0, y index=1, meta index=2]
+    {../Files/Diagrams/voronoi_grid.dat};
+% Training sites, coloured by class.
+\addplot[only marks, scatter, mark=*, mark size=4pt,
+    scatter/classes={0={blue},1={red}}]
+    table[x index=0, y index=1, meta index=2]
+    {../Files/Diagrams/voronoi_points.dat};
+% Decision boundary: between-class Voronoi edges (k=1).
+\addplot[thick, black] table[x index=0, y index=1]
+    {../Files/Diagrams/voronoi_boundary.dat};
+\end{axis}
+\end{tikzpicture}
+\caption{Voronoi tessellation (shaded cells) for a two-class training set and the
+induced $k=1$ decision boundary (black line). Each shaded cell contains all points
+closer to its training site than to any other; the class of a query point is the
+class of the site whose cell contains it.}
+\label{fig:voronoi-knn}
+\end{figure}
+
+
+\begin{problem}[Finding the $k$ closest points]
     \begin{align}
         \hat{\mathbf{x}}_1 &= \arg\min_{\hat{\mathbf{x}} \in \hat{X}} d(\mathbf{x}, \hat{\mathbf{x}}) \\
     \hat{\mathbf{x}}_2 &= \arg\min_{\hat{\mathbf{x}} \in \hat{X} \backslash \{\hat{\mathbf{x}}_1\}} d(\mathbf{x}, \hat{\mathbf{x}}) \\
@@ -1358,7 +1394,6 @@ The problem can be visualized using a Voronoi diagram. The \emph{decision bounda
    \end{align}
    and then let $\hat{t}_i = f(\hat{\mathbf{x}}_i)$ for $i = 1, \ldots, k$. Let $\hat{t}$ be the mode of these values.
 \end{problem}
-
 
 
 \begin{example}[Image Classification Datasets: MNIST]
