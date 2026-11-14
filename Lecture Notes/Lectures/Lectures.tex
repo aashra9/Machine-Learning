@@ -122,9 +122,17 @@ $\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})$ & Gaussian distribution \\
 
 \begin{enumerate}
     \item \href{https://huggingface.co/}{Hugging Face}:
+    \item \href{https://alexsemendinger.github.io/transformers-gentle-introduction}{Transformers: A Gentle Introduction}.
+    \item \href{https://www.turing.ac.uk/about-us}{The Alan Turing Institute}.
 \end{enumerate}
 
-\section{Software documentation}
+\section{Conferences}
+
+\begin{enumerate}
+    \item \href{https://womeninaisafety.toronto.acm.org/}{Women in AI Safety}.
+\end{enumerate}
+
+\section{Technologies}
 
 \begin{enumerate}
     \item \href{https://numpy.org/doc/}{NumPy}.
@@ -132,6 +140,10 @@ $\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})$ & Gaussian distribution \\
     \item \href{https://pytorch.org/tutorials/}{PyTorch tutorials}.
     \item \href{https://www.tensorflow.org/tutorials}{TensorFlow tutorials}.
     \item \href{https://xgboost.readthedocs.io/}{XGBoost documentation}.
+    \item \href{https://github.com/crewAIInc/crewAI}{CrewAI}.
+    \item \href{https://github.com/OpenHands/OpenHands}{OpenHands}.
+    \item \href{https://octo.axiomatic-ai.com/search}{Octo}.
+    \item \href{https://marimo.io/}{marimo}.
 \end{enumerate}
 
 \section{Helpful websites}
@@ -1324,68 +1336,32 @@ risk.
 
 \section{\texorpdfstring{$k$}{k}-nearest neighbours}
 
-The $k$-nearest-neighbour ($k$-NN) classifier is one of the simplest learners. It stores the training data and, for a new point $\mathbf{x}$, finds the $k$ closest training points and predicts the most common label among them (for regression, the average target). Many classifiers build an explicit model of 
-\begin{align}
-    \Pr(Y|X)
-\end{align}
-$k$-NN does not. It is a \emph{non-parametric}, \emph{instance-based} method. Three practical issues dominate:
-\begin{enumerate}
-    \item \textbf{Distance metric.} Euclidean distance is standard, but features must be scaled first. For high-dimensional data, cosine or learned distances may be better.
-    \item \textbf{Choice of $k$.} Small $k$ gives a flexible, low-bias, high-variance classifier; large $k$ gives a smooth, high-bias, low-variance classifier.
-    \item \textbf{Computational cost.} Prediction requires comparing the query with all stored examples unless a spatial index is used.
-\end{enumerate}
-The bias-variance trade-off in $k$ is a concrete illustration of the general
-trade-off discussed below.
+The $k$-nearest-neighbour ($k$-NN) classifier is one of the simplest learners. It stores the training data and, for a new point $\mathbf{x}$, finds the $k$ closest training points and predicts the most common label among them (for regression, the average target). It is a \emph{non-parametric}, \emph{instance-based} method. 
+
+% Three practical issues dominate:
+% \begin{enumerate}
+%     \item \textbf{Distance metric.} Euclidean distance is standard, but features must be scaled first. For high-dimensional data, cosine or learned distances may be better.
+%     \item \textbf{Choice of $k$.} Small $k$ gives a flexible, low-bias, high-variance classifier; large $k$ gives a smooth, high-bias, low-variance classifier.
+%     \item \textbf{Computational cost.} Prediction requires comparing the query with all stored examples unless a spatial index is used.
+% \end{enumerate}
+% The bias-variance trade-off in $k$ is a concrete illustration of the general
+% trade-off discussed below.
 
 
 \begin{problem}
-   Let $X$ be the data space,, where we can think of $X$ as a set of points in Euclidean space\footnote{or with any other metric space}, along with a labelling function $f: X \longrightarrow I$, where $I$ is the set of labels. We are given some training data $\hat{f} \subseteq f$, where each point $(\mathbf{x}, t) \in f$ informs us that the point $\mathbf{x}$ has label $t$. Given a point $\mathbf{x} \in X$, we want to (predict its label i.e.) find the closest point $\hat{\mathbf{x}} \in \hat{X}$ such that the distance $d(\mathbf{x}, \hat{\mathbf{x}})$ is minimised. That is, find 
+   Let $X$ be the data space, where we can think of $X$ as a set of points in Euclidean space\footnote{or with any other metric space}, along with a labelling function $f: X \longrightarrow I$, where $I$ is the set of labels. We are given some training data $\hat{f} \subseteq f$, where each point $(\mathbf{x}, t) \in f$ informs us that the point $\mathbf{x}$ has label $t$. Given a point $\mathbf{x} \in X$, we want to (predict its label i.e.) find the closest point $\hat{\mathbf{x}} \in \hat{X}$ such that the distance $d(\mathbf{x}, \hat{\mathbf{x}})$ is minimised. That is, find 
    \begin{align}
         \hat{\mathbf{x}} = \arg\min_{\hat{\mathbf{x}} \in \hat{X}} d(\mathbf{x}, \hat{\mathbf{x}})
    \end{align}
    and output $\hat{t} = f(\hat{\mathbf{x}})$.
 \end{problem}
 
-The problem can be visualized using a \emph{Voronoi diagram}: each training point
-``owns'' the region of input space closer to it than to any other training point.
-The \emph{decision boundary} is the boundary between regions assigned to different
-categories; for $k=1$ it is exactly the subset of Voronoi edges that separate points
-of different classes.
-
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-    width=0.9\textwidth, height=7.5cm,
-    xlabel={$x_1$}, ylabel={$x_2$},
-    xmin=-0.8, xmax=6.8, ymin=-0.8, ymax=5.8,
-    xtick=\empty, ytick=\empty, axis lines=none,
-    clip=false,
-]
-% Voronoi cells (k=1): grid point coloured by its nearest training site's class.
-\addplot[only marks, scatter, mark=square*, mark size=1.1pt,
-    scatter/classes={0={blue!30},1={red!30}}]
-    table[x index=0, y index=1, meta index=2]
-    {../Files/Diagrams/voronoi_grid.dat};
-% Training sites, coloured by class.
-\addplot[only marks, scatter, mark=*, mark size=4pt,
-    scatter/classes={0={blue},1={red}}]
-    table[x index=0, y index=1, meta index=2]
-    {../Files/Diagrams/voronoi_points.dat};
-% Decision boundary: between-class Voronoi edges (k=1).
-\addplot[thick, black] table[x index=0, y index=1]
-    {../Files/Diagrams/voronoi_boundary.dat};
-\end{axis}
-\end{tikzpicture}
-\caption{Voronoi tessellation (shaded cells) for a two-class training set and the
-induced $k=1$ decision boundary (black line). Each shaded cell contains all points
-closer to its training site than to any other; the class of a query point is the
-class of the site whose cell contains it.}
-\label{fig:voronoi-knn}
-\end{figure}
+The problem can be visualized using a \emph{Voronoi diagram}: a partition of the input space into regions, one around each training point, such that every location in a given region is closer to its associated training point than to any other. The \emph{decision boundary} is the boundary between regions of input space assigned to different categories. 
 
 
-\begin{problem}[Finding the $k$ closest points]
+
+\begin{problem}
+    Find $k$-closest point
     \begin{align}
         \hat{\mathbf{x}}_1 &= \arg\min_{\hat{\mathbf{x}} \in \hat{X}} d(\mathbf{x}, \hat{\mathbf{x}}) \\
     \hat{\mathbf{x}}_2 &= \arg\min_{\hat{\mathbf{x}} \in \hat{X} \backslash \{\hat{\mathbf{x}}_1\}} d(\mathbf{x}, \hat{\mathbf{x}}) \\
@@ -1396,22 +1372,34 @@ class of the site whose cell contains it.}
 \end{problem}
 
 
+\begin{example}[Two moons]
+    The two-moons\index{two moons} dataset is a classic synthetic benchmark in machine learning and data science consisting of two interleaving half-circle shapes in a 2D plane. Each moon is one class: the points of one moon form a crescent that wraps around the other, so the two classes cannot be separated by a straight line. This makes it a good test for classifiers that can learn non-linear decision boundaries, such as kernel methods or neural networks.
+\end{example}
+
 \begin{example}[Image Classification Datasets: MNIST]
-    10 classes: Digits 0 to 9
-28x28 grayscale images
-50k training images
-10k test images
+    MNIST is a classic handwritten-digit dataset: 10 classes (digits 0 to 9), each
+    image is $28\times28$ grayscale, and the standard split is 50k training images
+    and 10k test images. Despite its small size by modern standards, MNIST remains
+    a common first benchmark because it is easy to load, quick to train on, and
+    illustrates the whole image-classification pipeline.
 \end{example}
 
 \begin{example}[Image Classification Datasets: ImageNet]
-    1000 classes
-~1.3M training images (~1.3K per class)
-50K validation images (50 per class)
-100K test images (100 per class)
+    ImageNet is a large-scale image-classification benchmark with 1000 classes. The
+    standard version (ILSVRC) contains roughly 1.3M training images (about 1.3K per
+    class), 50K validation images (50 per class), and 100K test images (100 per
+    class). Its size and diversity made it the key driver of the deep-learning
+    revolution in computer vision beginning around 2012.
 \end{example}
 
 \begin{example}[iris]
-
+    The iris dataset is one of the most famous small datasets in statistics and
+    machine learning. It contains 150 measurements of iris flowers: 50 from each of
+    three species (setosa, versicolor, virginica). For each flower it records four
+    features---sepal length, sepal width, petal length, and petal width---in
+    centimetres. It is often used to teach classification, clustering, and data
+    visualisation because it is small, easy to understand, and exhibits clear
+    structure.
 \end{example}
 
 
@@ -1444,28 +1432,28 @@ much larger than the training error, the model is \emph{overfitting}. If both er
 are large, the model is \emph{underfitting} and needs more capacity or better
 features.
 
-\begin{figure}[htbp]
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-    width=0.78\textwidth, height=6.2cm,
-    xlabel={Model flexibility}, ylabel={Error},
-    xtick=\empty, ytick=\empty, axis lines=left,
-    legend pos=north east, legend cell align=left,
-    domain=0.05:1.0, samples=120, ymajorgrids=false
-]
-\addplot[thick, blue] {0.62*exp(-3.2*x)+0.02};
-\addlegendentry{Training error}
-\addplot[thick, red] {0.07+0.55*(x-0.58)^2};
-\addlegendentry{Test error}
-\addplot[thick, green!55!black, dashed] {0.07+0.55*(x-0.58)^2-0.5*exp(-3.2*x)};
-\addlegendentry{Bayes error + approximation}
-\end{axis}
-\end{tikzpicture}
-\caption{The classic U-shaped test-error curve. Increasing flexibility reduces bias
-but increases variance; the best model balances the two.}
-\label{fig:bias-variance}
-\end{figure}
+% \begin{figure}[htbp]
+% \centering
+% \begin{tikzpicture}
+% \begin{axis}[
+%     width=0.78\textwidth, height=6.2cm,
+%     xlabel={Model flexibility}, ylabel={Error},
+%     xtick=\empty, ytick=\empty, axis lines=left,
+%     legend pos=north east, legend cell align=left,
+%     domain=0.05:1.0, samples=120, ymajorgrids=false
+% ]
+% \addplot[thick, blue] {0.62*exp(-3.2*x)+0.02};
+% \addlegendentry{Training error}
+% \addplot[thick, red] {0.07+0.55*(x-0.58)^2};
+% \addlegendentry{Test error}
+% \addplot[thick, green!55!black, dashed] {0.07+0.55*(x-0.58)^2-0.5*exp(-3.2*x)};
+% \addlegendentry{Bayes error + approximation}
+% \end{axis}
+% \end{tikzpicture}
+% \caption{The classic U-shaped test-error curve. Increasing flexibility reduces bias
+% but increases variance; the best model balances the two.}
+% \label{fig:bias-variance}
+% \end{figure}
 
 \section{Bias--variance decomposition}
 
