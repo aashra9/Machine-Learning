@@ -1,0 +1,124 @@
+\ProvidesPackage{ML-slides}
+%--- ML Lectures
+
+
+
+% Author: Ahmed Ashraf
+% Email: aashra9@gmail.com
+% Dated: October 19, 2025
+% Version: 1.0
+
+
+
+
+% Hide beamer navigation
+\setbeamertemplate{navigation symbols}{}
+\usefonttheme[onlymath]{serif}
+ \usepackage{stmaryrd}
+ \usepackage{upgreek}
+\usepackage{graphicx, pgf, tikz}
+%--- graphicx: for including and manipulating graphics eg. \includegraphics
+%--- pgf: "portable graphics format", included in tikz
+%--- tikz:
+%--- the manual for pgf and tikz can be found here: https://www.bu.edu/math/files/2013/08/tikzpgfmanual.pdf
+\usetikzlibrary{decorations, calc, matrix, cd, graphs, arrows, arrows.meta, quotes, positioning, automata}
+
+
+
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex,right]{date in head/foot}%
+      \usebeamerfont{date in head/foot}%
+      Version \version\hspace*{2em}
+      \insertframenumber{} of \inserttotalframenumber\hspace*{2ex}
+    \end{beamercolorbox}
+  }%
+  \vskip0pt%
+}
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\RestyleAlgo{ruled}
+
+
+\usepackage[english]{babel}
+\usepackage{color}
+\usefonttheme[onlymath]{serif}
+\usepackage{cancel}
+\newcommand{\st}{\hspace{2mm}{\supset}\kern-1em{-} \hspace{2mm}}
+\newcommand{\Var}{\mathrm{Var}} % set of variables of propositional logic
+\newcommand{\PL}{\mathsf{PL}} % propositional logic
+\newcommand{\RL}{\mathsf{RL}} % predicate logic
+\usepackage{mathrsfs} % for \mathscr
+
+\definecolor{bubbles}{rgb}{0.95,0.98, 1.0}
+\definecolor{backgroundcolor}{rgb}{0.15, 0.15, 0.15}
+\setbeamertemplate{background}[grid][color=bubbles]
+
+
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{changepage}
+
+ \usepackage{color}
+ \definecolor{bubbles}{rgb}{0.95,0.98, 1.0}
+ \definecolor{backgroundcolor}{rgb}{0.15, 0.15, 0.15}
+ \setbeamertemplate{background}[grid][color=bubbles]
+
+\setbeamertemplate{footline}[]
+
+
+\NewDocumentCommand{\setcoursetitle}{m m m}{%
+  \title{Machine Learning \\ Week~#1 \\ #2}
+  \author{Dr. Ahmed Ashraf \href{mailto:aashra90@gmail.com}{aashra90@gmail.com}}
+  % \institute{Department of Mathematical and Computational Sciences,\\
+  % University of Toronto, Mississauga}
+  \date{#3}
+}
+
+
+
+
+
+
+% have this if you'd like a recurring outline
+\AtBeginSection[] % "Beamer, do the following at the start of every section"
+{
+\begin{frame}<beamer> 
+\frametitle{Outline} % make a frame titled "Outline"
+\tableofcontents[currentsection] % show TOC and highlight current section
+\end{frame}
+}
+
+
+\usepackage[english]{babel}
+\usepackage{color}
+\usefonttheme[onlymath]{serif}
+\usepackage{cancel}
+\usepackage{mathrsfs} % for \mathscr
+
+
+%--- Commands
+
+%--- Different types of equalities 
+\newcommand{\defn}{\overset{\mathrm{def}}{=}}
+%--- should be read "_____defined by_____" or "______defined as______"
+\newcommand{\givn}{\overset{\text{by}}{=}} 
+%--- should be read "_____given by_______"
+\newcommand{\letn}{\overset{\text{be}}{=}} 
+%--- should be read "Let  ______ be __________"
+\newcommand{\setn}{\overset{\text{set}}{=}}
+%--- should be read "set _______ to be _______"
+\newcommand{\detn}{\overset{\text{den}}{=}} 
+%--- should be read "Let _______ denote _______"
+
+
+
+
+
+
+
+\definecolor{bubbles}{rgb}{0.95,0.98, 1.0}
+\definecolor{backgroundcolor}{rgb}{0.15, 0.15, 0.15}
+\setbeamertemplate{background}[grid][color=bubbles]
