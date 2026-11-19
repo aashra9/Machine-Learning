@@ -1,4 +1,5 @@
 \documentclass[a4paper, 12pt]{book}
+% \newcommand{\abs}[1]{\lvert #1 \rvert}
 
 \usepackage{course}
 %--- Fixed head height to satisfy scrlayer-scrpage's minimum.
@@ -75,84 +76,6 @@ $\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})$ & Gaussian distribution \\
 
 \mainmatter
 
-\chapter{Resources}
-\label{ch:resources}
-
-\section{People}
-
-\href{https://www.cs.toronto.edu/~rgrosse/}{Roger Grosse}, \href{https://www.cs.toronto.edu/~murat/}{Murat Erdogdu}, \href{https://www.cs.toronto.edu/~zemel/}{Richard Zemel}, \href{https://www.cs.toronto.edu/~juan/}{Juan Felipe Carrasquilla}, \href{https://www.cs.toronto.edu/~emad/}{Emad Andrews}, \href{https://www.cs.toronto.edu/~amir/}{Amir-massoud Farahmand}.
-
-\section{Courses}
-
-\begin{enumerate}
-    \item \href{https://web.stanford.edu/class/cme250/}{Stanford University --- CME 250:
-    Introduction to Machine Learning}.
-    \item \href{https://www.cs.toronto.edu/~rgrosse/courses/csc321_2018/}{University of
-    Toronto --- CSC 321: Intro to Neural Networks and Machine Learning}.
-    \item \href{https://www.d2l.ai/}{Dive into Deep Learning} --- an interactive,
-    open-access deep-learning book.
-\end{enumerate}
-
-\section{Books}
-
-\begin{enumerate}
-    \item \emph{An Introduction to Statistical Learning with Applications in R}
-    \cite{james2021introduction}. Accessible first text; strong on regression,
-    classification, resampling, and trees.
-    \item \emph{The Elements of Statistical Learning}
-    \cite{hastie2009elements}. The more theoretical companion to the previous book.
-    \item \emph{Pattern Recognition and Machine Learning}
-    \cite{theodoridis2006pattern}. Broad coverage with a probabilistic emphasis.
-    \item \emph{Information Theory, Inference, and Learning Algorithms}
-    \cite{mackay2003information}. Beautiful treatment of inference and learning.
-    \item \emph{Bayesian Reasoning and Machine Learning}
-    \cite{barber2012bayesian}. Graphical models and Bayesian methods.
-    \item \emph{Reinforcement Learning: An Introduction}
-    \cite{sutton1998reinforcement}. The standard reference for RL.
-    \item \emph{Mathematics for Machine Learning}
-    \cite{deisenroth2020mathematics}. Linear algebra, calculus, and probability for ML.
-    \item \emph{Understanding Machine Learning: From Theory to Algorithms}
-    \cite{shalev2014understanding}. Learning theory and algorithmic foundations.
-    \item \emph{Machine Learning: A Probabilistic Perspective}
-    \cite{murphy2012machine}. Comprehensive probabilistic treatment.
-\end{enumerate}
-
-
-\section{Online resources}
-
-\begin{enumerate}
-    \item \href{https://huggingface.co/}{Hugging Face}:
-    \item \href{https://alexsemendinger.github.io/transformers-gentle-introduction}{Transformers: A Gentle Introduction}.
-    \item \href{https://www.turing.ac.uk/about-us}{The Alan Turing Institute}.
-\end{enumerate}
-
-\section{Conferences}
-
-\begin{enumerate}
-    \item \href{https://womeninaisafety.toronto.acm.org/}{Women in AI Safety}.
-\end{enumerate}
-
-\section{Technologies}
-
-\begin{enumerate}
-    \item \href{https://numpy.org/doc/}{NumPy}.
-    \item \href{https://scikit-learn.org/stable/user_guide.html}{scikit-learn user guide}.
-    \item \href{https://pytorch.org/tutorials/}{PyTorch tutorials}.
-    \item \href{https://www.tensorflow.org/tutorials}{TensorFlow tutorials}.
-    \item \href{https://xgboost.readthedocs.io/}{XGBoost documentation}.
-    \item \href{https://github.com/crewAIInc/crewAI}{CrewAI}.
-    \item \href{https://github.com/OpenHands/OpenHands}{OpenHands}.
-    \item \href{https://octo.axiomatic-ai.com/search}{Octo}.
-    \item \href{https://marimo.io/}{marimo}.
-\end{enumerate}
-
-\section{Helpful websites}
-
-\begin{enumerate}
-    \item \href{https://stats.stackexchange.com/}{Cross Validated} --- a question and answer site for people interested in statistics.
-    \item \href{https://www.kaggle.com/}{Kaggle} --- a platform for data science competitions and datasets.
-    \item \href{https://arxiv.org/}{arXiv} --- a repository of electronic preprints of scientific papers in the fields of physics, mathematics, computer science, and quantitative biology.
-\end{enumerate}
 
 \chapter{Mathematical Background}
 \label{ch:calc}
@@ -187,33 +110,40 @@ for the Euclidean inner product. The most common norms are
 \end{example}
 
 \begin{definition}
-    A symmetric matrix $\mathbf{A}$ is \emph{positive semidefinite}\index{positive semidefinite} (PSD) if
+    A symmetric matrix ${A}$ is \emph{positive semidefinite}\index{positive semidefinite} (PSD)\index{PSD} if
     \begin{align}
-        \mathbf{x}^\top \mathbf{A}\mathbf{x} \geq 0
+        \mathbf{x}^\top {A}\mathbf{x} \geq 0
     \end{align}
     for all $\mathbf{x}$. We call it \emph{positive definite}\index{positive definite} if the inequality is strict for $\mathbf{x} \neq \mathbf{0}$.
 \end{definition}
 
 \begin{example}[Positive definite, semidefinite, and indefinite matrices]
     The matrix
-    $\mathbf{A} = \begin{bmatrix}2&1\\1&2\end{bmatrix}$
+    \begin{align}
+        {A} &= \begin{bmatrix}2&1\\1&2\end{bmatrix}
+    \end{align}
     has eigenvalues $1$ and $3$, so it is positive definite. The matrix
-    $\mathbf{B} = \begin{bmatrix}1&1\\1&1\end{bmatrix}$
+    \begin{align}
+        {B} &= \begin{bmatrix}1&1\\1&1\end{bmatrix}
+    \end{align}
     has eigenvalues $0$ and $2$: it is PSD but not positive definite, because
-    $\mathbf{v}=(1,-1)^\top$ gives $\mathbf{v}^\top\mathbf{B}\mathbf{v}=0$. The matrix
-    $\mathbf{C} = \begin{bmatrix}1&2\\2&1\end{bmatrix}$ has an eigenvalue $-1$, so it
+    $\mathbf{v}=(1,-1)^\top$ gives $\mathbf{v}^\top{B}\mathbf{v}=0$. The matrix
+    \begin{align}
+        C &= \begin{bmatrix}1&2\\2&1\end{bmatrix}    
+    \end{align}
+    has an eigenvalue $-1$, so it
     is neither PSD nor positive definite.
 \end{example}
 
 \begin{example}[Gram matrices are PSD]
-    For any real matrix $\mathbf{X} \in \R^{n \times d}$, the Gram matrix
-    $\mathbf{X}^\top\mathbf{X}$ is PSD because
+    For any real matrix $X \in \R^{n \times d}$, the Gram matrix
+    $X^\top X$ is PSD because
     \begin{align}
-        \mathbf{v}^\top \mathbf{X}^\top\mathbf{X}\mathbf{v}
-        = \norm{\mathbf{X}\mathbf{v}}_2^2 \geq 0.
+        \mathbf{v}^\top X^\top X\mathbf{v}
+        = (\norm{X\mathbf{v}}_2)^2 \geq 0.
     \end{align}
-    It is positive definite exactly when $\mathbf{X}$ has full column rank: if
-    $\mathbf{X}\mathbf{v}=\mathbf{0}$ for some $\mathbf{v}\neq\mathbf{0}$, then the
+    It is positive definite exactly when $X$ has full column rank: if
+    $X\mathbf{v}=\mathbf{0}$ for some $\mathbf{v}\neq\mathbf{0}$, then the
     quadratic form vanishes.
 \end{example}
 
@@ -221,38 +151,37 @@ for the Euclidean inner product. The most common norms are
     Every covariance matrix is positive semidefinite.
 \end{theorem}
 \begin{proof}
-    Let $\mathbf{X}$ be a random vector with mean $\boldsymbol{\mu}$. Its covariance
+    Let $X$ be a random vector with mean $\mu$. Its covariance
     matrix is
     \begin{align}
-        \boldsymbol{\Sigma}
-        = \E\big[(\mathbf{X}-\boldsymbol{\mu})(\mathbf{X}-\boldsymbol{\mu})^\top\big].
+        \Sigma
+        = \mathrm{E}\big[(X-\mu)(X-\mu)^\top\big].
     \end{align}
     For any vector $\mathbf{a}$,
     \begin{align}
-        \mathbf{a}^\top\boldsymbol{\Sigma}\mathbf{a}
-        = \E\big[\mathbf{a}^\top(\mathbf{X}-\boldsymbol{\mu})
-          (\mathbf{X}-\boldsymbol{\mu})^\top\mathbf{a}\big]
-        = \E\big[(\mathbf{a}^\top(\mathbf{X}-\boldsymbol{\mu}))^2\big] \geq 0.
+        \mathbf{a}^\top\Sigma\mathbf{a} &= \mathrm{E}\big[\mathbf{a}^\top(X-\mu)
+          (X-\mu)^\top\mathbf{a}\big]\\
+       & = \mathrm{E}\big[\mathbf{a}^\top(X-\mu)^2 \mathbf{a} \big] \geq 0.
     \end{align}
-    Hence $\boldsymbol{\Sigma}$ is PSD. It is positive definite unless some non-zero
-    linear combination of the coordinates of $\mathbf{X}$ is almost surely constant.
+    Hence $\Sigma$ is PSD. It is positive definite unless some non-zero
+    linear combination of the coordinates of $X$ is almost surely constant.
 \end{proof}
 
 \begin{example}[Covariance matrices for two features]
     Suppose two features have variances $1$ and $4$ and covariance $1$. Their
     covariance matrix is
     \begin{align}
-        \boldsymbol{\Sigma} = \begin{bmatrix}1&1\\1&4\end{bmatrix}.
+        {\Sigma} = \begin{bmatrix}1&1\\1&4\end{bmatrix}.
     \end{align}
     Its determinant is $1\cdot4-1\cdot1=3>0$ and its trace is $5>0$, so both
-    eigenvalues are positive and $\boldsymbol{\Sigma}$ is positive definite.
+    eigenvalues are positive and ${\Sigma}$ is positive definite.
 \end{example}
 
 \begin{example}[A rank-one covariance matrix]
     If two features are perfectly correlated, for example $X_2 = 2X_1$ with
     $\Var(X_1)=1$, then
     \begin{align}
-        \boldsymbol{\Sigma}
+        {\Sigma}
         = \begin{bmatrix}1&2\\2&4\end{bmatrix}
         = \begin{bmatrix}1\\2\end{bmatrix}\begin{bmatrix}1&2\end{bmatrix}.
     \end{align}
@@ -767,49 +696,588 @@ For invertible matrices and vectors of compatible dimensions,
 If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\mathbf{x}
 = 2\mathbf{A}\mathbf{x}$.
 
+\section{Metrics}
+
+
+\begin{definition}[Euclidean distance]
+    For $\mathbf{x},\mathbf{y}\in\mathbb{R}^d$, the Euclidean distance is the $\ell_2$ norm of their difference:
+    \begin{align}
+        d_2(\mathbf{x},\mathbf{y}) \defn \norm{\mathbf{x}-\mathbf{y}}_2
+        \defn \sqrt{\sum_{i=1}^d (x_i-y_i)^2}.
+    \end{align}
+\end{definition}
+
+
+\begin{example}[Two-dimensional point]
+    For $\mathbf{x}=(0,0)$ and $\mathbf{y}=(3,4)$,
+    \begin{align}
+        d_2(\mathbf{x},\mathbf{y})=\sqrt{3^2+4^2}=5.
+    \end{align}
+    This is the familiar straight-line length from Pythagoras' theorem.
+\end{example}
+
+\begin{example}[Three-dimensional point]
+    For $\mathbf{x}=(1,2,2)$ and $\mathbf{y}=(4,6,2)$,
+    \begin{align}
+        d_2(\mathbf{x},\mathbf{y})=\sqrt{3^2+4^2+0^2}=5.
+    \end{align}
+    The zero third coordinate contributes nothing because the points share that coordinate.
+\end{example}
+
+\begin{example}[Unit ball]
+    The set 
+    \begin{align}
+        S^1 &\defn \{\mathbf{x}:d_2(\mathbf{x},\mathbf{0})=1\}    
+    \end{align}
+    is the unit circle in $\mathbb{R}^2$. Euclidean distance is invariant under rotations and reflections, unlike coordinate-wise alternatives.
+\end{example}
+
+\begin{definition}[Manhattan distance]
+    The Manhattan (or city-block) distance\index{Manhattan distance} is the $\ell_1$ norm of the difference:
+    \begin{align}
+        d_1(\mathbf{x},\mathbf{y}) &\defn \norm{\mathbf{x}-\mathbf{y}}_1
+        \defn \sum_{i=1}^d \abs{x_i-y_i}.
+    \end{align}
+\end{definition}
+
+\begin{example}[Two-dimensional point]
+    For $\mathbf{x}=(0,0)$ and $\mathbf{y}=(3,4)$,
+    \begin{align}
+        d_1(\mathbf{x},\mathbf{y})=3+4=7,
+    \end{align}
+    which is the length of a shortest grid-aligned route rather than a straight line.
+\end{example}
+
+\begin{example}[Feature comparison]
+    For $\mathbf{x}=(1,2)$ and $\mathbf{y}=(4,6)$,
+    \begin{align}
+        d_1(\mathbf{x},\mathbf{y})=\abs{1-4}+\abs{2-6}=3+4=7.
+    \end{align}
+    The distance adds absolute differences in each feature.
+\end{example}
+
+\begin{example}[Unit ball]
+    The set 
+    \begin{align}
+        \lozenge_2 &\defn \{\mathbf{x}:d_1(\mathbf{x},\mathbf{0})\leq1\}    
+    \end{align}
+    is a diamond with vertices $(\pm1,0)$ and $(0,\pm1)$. Its corners lie on the coordinate axes because movement is only horizontal or vertical.
+\end{example}
+
+
+\begin{definition}[Chebyshev distance]
+    The Chebyshev distance is the $\ell_\infty$ norm of the difference:
+    \begin{align}
+        d_\infty(\mathbf{x},\mathbf{y}) = \norm{\mathbf{x}-\mathbf{y}}_\infty
+        = \max_{1\leq i\leq d}\abs{x_i-y_i}.
+    \end{align}
+\end{definition}
+
+\begin{example}[Two-dimensional point]
+    For $\mathbf{x}=(0,0)$ and $\mathbf{y}=(3,4)$,
+    \begin{align}
+        d_\infty(\mathbf{x},\mathbf{y})=\max(3,4)=4.
+    \end{align}
+    Only the largest coordinate difference matters.
+\end{example}
+
+\begin{example}[Chessboard interpretation]
+    A king moves one square in any direction, so the minimum number of moves from $(1,1)$ to $(4,6)$ is
+    \begin{align}
+        d_\infty((1,1),(4,6))=\max(3,5)=5.
+    \end{align}
+\end{example}
+
+\begin{example}[Unit ball]
+    The set 
+    \begin{align}
+        \square_2 &\defn \{\mathbf{x}:d_\infty(\mathbf{x},\mathbf{0})\leq1\}    
+    \end{align}
+    is the square $[-1,1]^2$. Unlike the Euclidean circle, all coordinates may change simultaneously up to the same bound.
+\end{example}
+
+
+\begin{definition}[Minkowski distance]
+    For $p\geq1$, the Minkowski (or $\ell_p$) distance is
+    \begin{align}
+        d_p(\mathbf{x},\mathbf{y}) = \left(\sum_{i=1}^d \abs{x_i-y_i}^p\right)^{1/p}.
+    \end{align}
+    The choices $p=1$, $p=2$, and $p\to\infty$ recover the Manhattan, Euclidean, and Chebyshev distances.
+\end{definition}
+
+\begin{example}[Intermediate order]
+    For $\mathbf{x}=(0,0)$ and $\mathbf{y}=(3,4)$ with $p=3$,
+    \begin{align}
+        d_3(\mathbf{x},\mathbf{y})=(3^3+4^3)^{1/3}=91^{1/3}\approx4.498.
+    \end{align}
+    This lies between the Chebyshev value $d_\infty=4$ and the Euclidean value $d_2=5$; larger $p$ emphasises the largest coordinate difference.
+\end{example}
+
+\begin{example}[Limiting cases]
+    Taking $p=1$ gives $d_1=7$, $p=2$ gives $d_2=5$, and $p\to\infty$ gives $d_\infty=4$ for the same pair $(0,0)$ and $(3,4)$.
+\end{example}
+
+\begin{example}[Why $p\geq1$ matters]
+    For $p<1$ the triangle inequality fails. With $\mathbf{x}=(1,0)$, $\mathbf{y}=(0,1)$, and $\mathbf{z}=(0,0)$, the $p=1/2$ expression gives $d_p(\mathbf{x},\mathbf{z})=d_p(\mathbf{z},\mathbf{y})=1$ but $d_p(\mathbf{x},\mathbf{y})=2$, so $d_p(\mathbf{x},\mathbf{y})>2$. Hence it is not a metric.
+\end{example}
+
+
+\begin{definition}[Hamming distance]
+    For two equal-length strings (or categorical vectors) $\mathbf{u},\mathbf{v}$ over an alphabet $\Sigma$,
+    \begin{align}
+        d_H(\mathbf{u},\mathbf{v}) = \#\Big\{\,i \in \mathbb{N}:u_i\neq v_i\,\Big\}.
+    \end{align}
+    It counts the number of positions at which the two strings differ.
+\end{definition}
+
+\begin{example}[Binary strings]
+    For $\mathbf{u}=10110$ and $\mathbf{v}=11110$, only the second bit differs, so $d_H(\mathbf{u},\mathbf{v})=1$.
+\end{example}
+
+\begin{example}[Complementary strings]
+    For $\mathbf{u}=101010$ and $\mathbf{v}=010101$, every position differs, so $d_H(\mathbf{u},\mathbf{v})=6$.
+\end{example}
+
+\begin{example}[One-hot labels]
+    The one-hot vectors $(1,0,0)$ and $(0,1,0)$ differ in two coordinates, so their Hamming distance is $2$. Equal-length inputs are essential; Hamming distance is undefined for strings of different lengths.
+\end{example}
+
+
+\begin{definition}[Jaccard similarity and distance]
+    For finite sets $A$ and $B$, the \emph{Jaccard similarity}\index{Jaccard similarity} is given by
+    \begin{align}
+        J(A,B) &\defn \frac{\abs{A\cap B}}{\abs{A\cup B}},
+    \end{align}
+    and the \emph{Jaccard distance}\index{Jaccard distance} is given by
+    \begin{align}
+        d_J(A,B) &\defn 1-J(A,B),
+    \end{align}
+    with the convention $J(\varnothing,\varnothing)=1$. It measures overlap relative to total support.
+\end{definition}
+
+\begin{example}[Partial overlap]
+    For $A=\{1,2,3\}$ and $B=\{2,3,4,5\}$, $\abs{A\cap B}=2$ and $\abs{A\cup B}=5$, so $J(A,B)=2/5=0.4$ and $d_J(A,B)=0.6$.
+\end{example}
+
+\begin{example}[Nested sets]
+    If $A=\{1\}$ and $B=\{1,2,3\}$, then $A\subset B$ gives $J(A,B)=1/3$ and $d_J(A,B)=2/3$. Identical sets give $J=1$ and distance $0$.
+\end{example}
+
+\begin{example}[Disjoint sets]
+    If $A=\{\text{cat},\text{dog}\}$ and $B=\{\text{car},\text{bus}\}$, then $A\cap B=\varnothing$, so $J(A,B)=0$ and $d_J(A,B)=1$, the maximum distance.
+\end{example}
+
+
+\begin{definition}[Hellinger distance]
+    For discrete distributions $p$ and $q$, the Hellinger distance is
+    \begin{align}
+        H(p,q) &= \frac{1}{\sqrt{2}}
+        \sqrt{\sum_i \left(\sqrt{p_i}-\sqrt{q_i}\right)^2}
+        = \sqrt{1-\sum_i\sqrt{p_i q_i}},
+    \end{align}
+     with the integral form $H(p,q)=\frac{1}{\sqrt2}\big(\int(\sqrt p-\sqrt q)^2\big)^{1/2}$
+    in the continuous case. It is a metric taking values in $[0,1]$.
+\end{definition}
+
+\begin{example}[Identical distributions]
+    If $p=q=(0.5,0.5)$, every square-root difference is zero, so $H(p,q)=0$. In general $H(p,q)=0$ if and only if $p=q$ almost everywhere.
+\end{example}
+
+\begin{example}[Disjoint support]
+    If $p=(1,0)$ and $q=(0,1)$, then
+    \begin{align}
+        H(p,q)=\frac{1}{\sqrt2}\sqrt{(1-0)^2+(0-1)^2}=1,
+    \end{align}
+    the largest possible value.
+\end{example}
+
+\begin{example}[Nearby Bernoulli laws]
+    For $p=(0.9,0.1)$ and $q=(0.8,0.2)$,
+    \begin{align}
+        H(p,q)=\frac{1}{\sqrt2}\sqrt{(\sqrt{0.9}-\sqrt{0.8})^2
+        +(\sqrt{0.1}-\sqrt{0.2})^2}\approx0.100.
+    \end{align}
+    The square-root transform amplifies small relative differences in the tails.
+\end{example}
+
+\begin{definition}[Wasserstein distance]
+    Let $\Gamma(\mu,\nu)$ be the set of joint distributions with marginals $\mu$ and $\nu$. For $p\geq1$, the $p$-Wasserstein distance is
+    \begin{align}
+        W_p(\mu,\nu) = \left(\inf_{\gamma\in\Gamma(\mu,\nu)}
+        \int \norm{x-y}^p\,d\gamma(x,y)\right)^{1/p}.
+    \end{align}
+    It is the minimum cost of moving mass from $\mu$ to $\nu$, and unlike the other distances here it uses the geometry of the underlying space. On $\mathbb{R}$, $W_1(\mu,\nu)=\int abs(F_\mu(x)-F_\nu(x))\,dx$ in terms of the CDFs.
+\end{definition}
+
+\begin{example}[Point masses]
+    For $\mu=\delta_0$ and $\nu=\delta_3$ on $\mathbb{R}$, the only coupling puts all mass at $(0,3)$, so $W_p(\mu,\nu)=3$ for every $p\geq1$. Wasserstein distance records how far the mass must travel.
+\end{example}
+
+\begin{example}[Uniform distributions]
+    For $\mu=\mathrm{U}(0,1)$ and $\nu=\mathrm{U}(0,2)$, the quantile functions are $u$ and $2u$, so
+    \begin{align}
+        W_1(\mu,\nu)=\int_0^1 \abs{u-2u}\,du=\frac12.
+    \end{align}
+    Equivalently, the area between their CDFs is $1/4+1/4=1/2$.
+\end{example}
+
+\begin{example}[Sensitivity to small shifts]
+    Let $\mu=\delta_0$ and $\nu=\delta_\epsilon$ with $0<\epsilon\ll1$. Then $W_1(\mu,\nu)=\epsilon$, which tends to zero as the atoms approach. By contrast the total variation distance is $1$ for every $\epsilon>0$, because the supports are disjoint.
+\end{example}
+
+
+\begin{definition}[Total variation distance]
+    For distributions $p$ and $q$, the total variation distance is
+    \begin{align}
+        \TV(p,q) &= \frac12\sum_i \abs{p_i-q_i}
+        = \sup_{A}\abs{p(A)-q(A)},
+    \end{align}
+    with the continuous form $\TV(p,q)=\frac12\int\abs{p(x)-q(x)}\,dx$. It is the largest difference in probability assigned to any event.
+\end{definition}
+
+\begin{example}[Identical distributions]
+    If $p=q$, every absolute difference is zero and $\TV(p,q)=0$. The maximum possible value is $1$, attained when the supports are disjoint.
+\end{example}
+
+\begin{example}[Disjoint support]
+    For $p=(1,0)$ and $q=(0,1)$,
+    \begin{align}
+        \TV(p,q)=\frac12(\abs{1-0}+\abs{0-1})=1.
+    \end{align}
+    The event $A=\{1\}$ separates the two laws perfectly.
+\end{example}
+
+\begin{example}[Nearby Bernoulli laws]
+    For $p=(0.6,0.4)$ and $q=(0.5,0.5)$,
+    \begin{align}
+        \TV(p,q)=\frac12(0.1+0.1)=0.1,
+    \end{align}
+    while the Hellinger distance is about $0.071$. Both are bounded metrics, but they weight tail differences differently.
+\end{example}
+
+
+\coderef{Code/probability_distances.ipynb}
+\coderef{Code/distance_metrics.ipynb}
+\coderef{Code/knn_tutorial.ipynb}
+
+
+
 \chapter{Probability Review}
 \label{ch:prob}
 
 \section{Random variables and distributions}
 
-A random variable $X$ maps outcomes to values. A discrete variable has a \emph{probability mass function}
-\begin{align}
-    p_X(x) &\defn \Pr(X=x)
-\end{align}
-a continuous variable has a density $p_X(x)$ with
-\begin{align}
-    \Pr(a \leq X \leq b) &\defn \int_a^b p_X(x)\,dx
-\end{align}
-The \emph{cumulative distribution function} is 
-\begin{align}
-    F_X(x) &\defn \Pr(X \leq x)    
-\end{align}
-\begin{example}[A fair coin]
-    Let $X=1$ for heads and $X=0$ for tails, with
-    $\Pr(X=1)=\Pr(X=0)=1/2$. Its mass function is $p_X(0)=p_X(1)=1/2$, and its
-    distribution function is
-    \begin{align}
-        F_X(x) =
-        \begin{cases}
-            0, & x < 0,\\
-            1/2, & 0 \leq x < 1,\\
-            1, & x \geq 1.
-        \end{cases}
-    \end{align}
-    The CDF is a step function that jumps by $p_X(x)$ at each value in the
-    support.
+\begin{epigraph}
+    {You can, for example, never foretell what any one man will do, but you can say with precision what an average number will be up to. Individuals vary, but percentages remain constant. So says the statisticians.}{Sherlock Holmes, The Sign of Four}
+\end{epigraph}
+
+This chapter delves into the critical role of statistics and probability in machine learning, starting with an overview of random experiments and variables. It progresses to cover essential topics such as set theory, probability, conditional probability, and key theorems such as the Bayes Theorem and the Central Limit Theorem (CLT). The discussion extends to distribution functions, the significance of expected values and variance,
+and the normal distribution, along with a variety of other distributions relevant to ML.The chapter also introduces Moment Generating Functions as vital tools in probability theory, providing a foundation for understanding the CLT's implications for data analysis and prediction in machine learn-
+ing. By exploring these statistical concepts, the chapter aims to equip readers with the necessary knowledge to effectively engage with machine learning models and understand the statistical underpinnings of algorithm performance and data analysis.
+
+\begin{definition}[Random Experiment, Outcome Space, Event]
+    Experiments for which the outcome cannot be predicted with certainty are called \emph{random experiments}\index{random experiments}. The collection of all possible outcomes of a random experiment is called the \emph{outcome space}\index{outcome space} and is indicated with $S$. An event $A$ is a subset of the outcome space $S$.
+\end{definition}
+
+\begin{example}[Coin toss]
+    Toss a fair coin once. The outcome space is $S=\{\mathrm{H},\mathrm{T}\}$. The set $A=\{\mathrm{H}\}$ (``heads'') is an event, and so are $\{\mathrm{T}\}$ and $S$ itself.
 \end{example}
 
-\begin{example}[A uniform random variable]
-    If $X$ is uniform on $[0,1]$, its density is $p_X(x)=1$ for $0\leq x\leq1$
-    and zero otherwise. Hence
-    \begin{align}
-        \Pr(0.2 \leq X \leq 0.5) = \int_{0.2}^{0.5} 1\,dx = 0.3,
-    \end{align}
-    and its CDF is $F_X(x)=0$ for $x<0$, $F_X(x)=x$ for $0\leq x\leq1$, and
-    $F_X(x)=1$ for $x>1$. The density is the derivative of the CDF wherever the
-    latter is differentiable.
+\begin{example}[Die roll]
+    Roll a six-sided die. Here $S=\{1,2,3,4,5,6\}$, and $A=\{2,4,6\}$ is the event ``the result is even''.
 \end{example}
+
+\begin{example}[Drawing a card]
+    Draw one card from a standard deck. The outcome space is the set of all $52$ cards, and the $13$ hearts form an event.
+\end{example}
+
+\begin{definition}[Random variable]
+    A \emph{random variable}\index{random variable} $X$ is a function from a sample space $S$ to the real numbers: $X : S \to \mathbb{R}$.
+\end{definition}
+
+\begin{example}[Bernoulli variable]
+    For the coin toss define $X(\mathrm{H})=1$ and $X(\mathrm{T})=0$. Then $X$ is a Bernoulli random variable encoding the number of heads.
+\end{example}
+
+\begin{example}[Indicator of parity]
+    For the die roll, $X(s)=s$ maps each face to its numerical value, while $Y(s)=\mathbf{1}_{\{s \text{ even}\}}$ indicates parity.
+\end{example}
+
+\begin{example}[Continuous measurement]
+    Measure the height of a uniformly chosen student from a class. The map from the student (the outcome) to a real number of centimetres is a random variable.
+\end{example}
+
+
+
+\begin{definition}[Mutually exclusive events]
+    Given an outcome space $S$, we call mutually exclusive events $A_i$ with $i=1,\ldots,k$ (we consider here only a finite set of
+events) when 
+\begin{align}
+    A_i \cap A_j = \varnothing
+\end{align}
+\end{definition}
+\begin{example}[Coin toss]
+    In a coin toss, $A_1=\{\mathrm{H}\}$ and $A_2=\{\mathrm{T}\}$ are mutually exclusive: $A_1\cap A_2=\varnothing$.
+\end{example}
+
+\begin{example}[Die roll]
+    In a die roll, $A_1=\{1,2\}$, $A_2=\{3,4\}$ and $A_3=\{5,6\}$ are pairwise disjoint.
+\end{example}
+
+\begin{example}[Drawing a card]
+    When drawing one card, the events ``heart'' and ``spade'' cannot occur simultaneously, so they are mutually exclusive.
+\end{example}
+
+
+\begin{definition}[Exhaustive events]
+    Given an outcome space $S$, we call exhaustive
+events $A_i$ with $i= 1,\ldots,k$ (we consider here only a finite set of events) when
+\begin{align}
+    \bigcup_{i=1}^k A_i = S
+\end{align}
+\end{definition}
+\begin{example}[Coin toss]
+    For the coin toss, $\{\mathrm{H}\}\cup\{\mathrm{T}\}=S$, so the two singleton events are exhaustive.
+\end{example}
+
+\begin{example}[Die roll]
+    For the die roll, $\{1,2,3\}\cup\{4,5,6\}=S$: the events ``low'' and ``high'' exhaust the space.
+\end{example}
+
+\begin{example}[Drawing a card]
+    The four suit events partition a deck of cards, so they are exhaustive (and mutually exclusive).
+\end{example}
+
+Suppose we repeat an experiment $n$ times and we count the number of times we observe event $A$ as output. We indicate this number with $m(A)$. Note that naturally, even if not explicitly indicated, $m(A)$ is dependent on $n$.
+
+\begin{definition}
+    The \emph{relative frequency} of event $A$ is defined as
+    \begin{align}
+        p_n(A) = \frac{m(A)}{n}
+    \end{align}
+    Note that this is rather rapidly varying numbers in practice, but that it tends to vary less as $n$ grows. We can define
+    \begin{align}
+         p(A) &\defn \lim_{n \rightarrow \infty} \frac{m(A)}{n}
+     \end{align}
+\end{definition}
+\begin{example}[Coin toss]
+    Toss a fair coin $n=1000$ times and observe $m(\mathrm{H})=497$. Then $p_n(\mathrm{H})=0.497$, close to the limiting probability $p(\mathrm{H})=0.5$.
+\end{example}
+
+\begin{example}[Die roll]
+    Roll a die $n$ times; the relative frequency $p_n(\{6\})$ converges to $\dfrac{1}{6}$ as $n\to\infty$, although it fluctuates noticeably for small $n$.
+\end{example}
+
+\begin{example}[Spam filtering]
+    If $23$ of the first $100$ emails are spam, $p_{100}(\text{spam})=0.23$; with more messages this estimate stabilises around the true spam rate.
+\end{example}
+
+
+\begin{definition}
+     A collection $\mathcal{Q}$ of subsets of $S$ is called a $\sigma$-algebra if it satisfies the following three properties:
+\begin{enumerate}
+    \item The empty set $\varnothing \in \mathcal{Q}$.
+    \item If $A \in \mathcal{Q}$, then $A^c \in \mathcal{Q}$.
+    \item If $A_1, A_2, \ldots \in \mathcal{Q}$, then 
+    \begin{align}
+        \bigcup_{i=1}^\infty A_i \in \mathcal{Q}    
+    \end{align}
+\end{enumerate}
+\end{definition}
+
+\begin{example}[Trivial $\sigma$-algebra]
+    The collection $\mathcal{Q}=\{\varnothing,S\}$ is a $\sigma$-algebra for any outcome space $S$.
+\end{example}
+
+\begin{example}[Power set]
+    For $S=\{\mathrm{H},\mathrm{T}\}$, the power set $\{\varnothing,\{\mathrm{H}\},\{\mathrm{T}\},S\}$ is a $\sigma$-algebra.
+\end{example}
+
+\begin{example}[A non-example]
+    For $S=\{1,2,3,4\}$, $\mathcal{Q}=\{\varnothing,\{1,2\},\{3,4\},S\}$ is a $\sigma$-algebra, while $\{\varnothing,\{1,2\},S\}$ is not: the complement of $\{1,2\}$ is missing.
+\end{example}
+
+\begin{definition}
+      Given a sample space $S$ and an associated $\sigma$-algebra $\mathcal{Q}$, a \emph{probability function}\index{probability function} $\Pr(A)$ with domain $\mathcal{Q}$ is a real-valued set function $\Pr: \mathcal{Q} \to \mathbb{R}$ such that
+     \begin{enumerate}
+         \item $\Pr(A) \geq 0$ for all $A \in \mathcal{Q}$,
+         \item $\Pr(S) = 1$,
+         \item if $A_i \in \mathcal{Q}$ and $A_i \cap A_j = \emptyset$ for $i \neq j$ (mutually exclusive events), then
+         $$\Pr\left(\bigcup_{i=1}^\infty A_i\right) = \sum_{i=1}^\infty \Pr(A_i).$$
+     \end{enumerate}
+\end{definition}
+Note that the three properties given in the definition are referred as the axioms of probability or the \emph{Kolmogorov axioms}\index{Kolmogorov axioms}. 
+\begin{example}[Fair coin]
+    For a fair coin, $\Pr(\{\mathrm{H}\})=\Pr(\{\mathrm{T}\})=1/2$ and $\Pr(S)=1$; the axioms give $\Pr(\varnothing)=0$.
+\end{example}
+
+\begin{example}[Fair die]
+    For a fair die, $\Pr(\{i\})=1/6$ for each $i$, hence $\Pr(\{2,4,6\})=1/2$ by additivity.
+\end{example}
+
+\begin{example}[Continuous uniform]
+    The uniform distribution on $[0,1]$ assigns $\Pr([a,b])=b-a$: length is non-negative, $\Pr([0,1])=1$, and disjoint intervals add.
+\end{example}
+
+
+\begin{definition}
+    Given two events $A$ and $B$, they are said to be independent if and only if
+    \begin{align}
+        \Pr(A \cap B) = \Pr(A)\Pr(B)
+    \end{align}
+\end{definition}
+
+\begin{example}[Two coin tosses]
+    Toss a fair coin twice. Let $A$ be ``heads first'' and $B$ ``heads second''. Then $\Pr(A\cap B)=1/4=\Pr(A)\Pr(B)$, so $A$ and $B$ are independent.
+\end{example}
+
+\begin{example}[Different experiments]
+    Roll a die and toss a coin. The event ``die shows $6$'' and the event ``coin shows heads'' are independent because the two experiments do not influence one another.
+\end{example}
+
+\begin{example}[With and without replacement]
+    Draw two cards \emph{with} replacement: their colours are independent. Without replacement they are dependent, since $\Pr(\text{second red}\mid\text{first red})=25/51\neq 1/2$.
+\end{example}
+
+
+
+\begin{theorem}
+    Let $S = \{s_1, \ldots, s_n\}$ be a finite set. Let $\mathcal{Q}$ be any $\sigma$-algebra of subsets of $S$. Let $p_1, \ldots, p_n$ be positive real numbers such that $\sum_{i=1}^n p_i = 1$. For any $A \in \mathcal{Q}$, define $\Pr(A)$ by
+    \begin{align}
+        \Pr(A) &\defn \sum_{s_i \in A} p_i
+    \end{align}
+    Then $\Pr$ is a probability function on $\mathcal{Q}$. This remains true if $S$ is a countable set.
+\end{theorem}
+\begin{proof}
+    Non-negativity is immediate: since $p_i>0$ for every $i$, $\Pr(A)=\sum_{s_i\in A}p_i\geq 0$ for all $A\in\mathcal{Q}$.
+    Normalisation follows from $\Pr(S)=\sum_{i=1}^n p_i=1$.
+    For countable additivity, let $A_1,A_2,\ldots\in\mathcal{Q}$ be pairwise disjoint. Because all terms are non-negative, the series may be rearranged:
+    \begin{align}
+        \Pr\left(\bigcup_{j=1}^\infty A_j\right)
+        &= \sum_{s_i \in \bigcup_j A_j} p_i\\
+        &= \sum_{j=1}^\infty\ \sum_{s_i \in A_j} p_i\\
+        &= \sum_{j=1}^\infty \Pr(A_j).
+    \end{align}
+    The rearrangement is legitimate because disjointness ensures each $s_i$ belongs to at most one $A_j$. The identical argument applies when $S$ is countable.
+\end{proof}
+
+\begin{example}[Weighted die]
+    For $S=\{1,\ldots,6\}$ with $p_i = \dfrac{i}{21}$ (these weights sum to $1$), the probability of an even face is 
+    \begin{align}
+        \Pr(\{2,4,6\}) &= \frac{2+4+6}{21} \\
+        &= \frac{12}{21} \\
+        &= \frac{4}{7}.
+    \end{align}
+\end{example}
+
+\begin{example}[Uniform finite choice]
+    Choosing a name uniformly from a list of $n$ students corresponds to
+    \begin{align}
+        p_i &= \frac{1}{n}
+    \end{align}
+    any subset $A$ of size $m$ then has probability $\dfrac{m}{n}$.
+\end{example}
+
+\begin{example}[Biased coin]
+    A biased coin with $p_{\mathrm{H}}=0.7$ and $p_{\mathrm{T}}=0.3$ is the finite model underlying a Bernoulli trial.
+\end{example}
+
+
+
+
+\begin{definition}
+    Given a vector $\mathbf{v} = (v_1, \ldots, v_n)$
+with $n$ some integer the softmax function is a function $\mathrm{SM}: \mathbb{R}^n \longrightarrow \mathbb{R}^n$ that gives as output for its $i$th component
+\begin{align}
+    \mathrm{SM}(\mathbf{v})_i &\defn  \frac{e^{v_i}}{\displaystyle  \sum_{j=1}^n e^{v_j}}
+\end{align}
+\end{definition}
+
+\begin{example}[Three logits]
+    For $\mathbf{v}=(1,2,3)$, $\mathrm{SM}(\mathbf{v})\approx(0.090,0.245,0.665)$. The largest logit receives the largest probability, and the components sum to $1$.
+\end{example}
+
+\begin{example}[Shift invariance]
+    Adding a constant to every logit leaves softmax unchanged: 
+    \begin{align}
+        \mathrm{SM}(\mathbf{v}+c\mathbf{1})=\mathrm{SM}(\mathbf{v})
+    \end{align}
+    Numerical implementations therefore subtract $\max_i v_i$ before exponentiating.
+\end{example}
+
+\begin{example}[Multiclass classification]
+    In multiclass logistic regression the model outputs logits $f_1(\mathbf{x}),\ldots,f_k(\mathbf{x})$ and predicts class $i$ with probability $\mathrm{SM}(\mathbf{f}(\mathbf{x}))_i$.
+\end{example}
+
+
+
+\begin{definition}[\emph{probability mass function}]
+    The probability massfunction (PMF) of a discrete random variable $X$ is defined by
+    \begin{align}
+        f_X(x) &\defn \Pr(X=x)
+    \end{align}
+    In this case it is easy to see that
+    \begin{align}
+        F_X(x) &\defn \Pr(X \leq x) = \sum_{x' \leq x} f_X(x')
+    \end{align}
+    assuming that the discrete random variable $X$ can only assume a finite set of $N$ values indicated by $x_k$ with $k=1,\ldots,N$, and given $A=\{k \mid x_k < x\}$.
+\end{definition}
+\begin{example}[Bernoulli PMF]
+    For $X\sim\mathrm{Bernoulli}(p)$ the mass function is $f_X(1)=p$, $f_X(0)=1-p$, and $f_X(x)=0$ otherwise. The CDF is the step function $F_X(x)=0$ for $x<0$, $1-p$ for $0\leq x<1$, and $1$ for $x\geq1$.
+\end{example}
+
+\begin{example}[Fair die]
+    For a fair die, $f_X(k)=1/6$ for $k=1,\ldots,6$. Hence $F_X(3.5)=\sum_{k=1}^3 1/6=1/2$, illustrating that the CDF is piecewise constant between the attainable values.
+\end{example}
+
+\begin{example}[Binomial PMF]
+    If $X\sim\mathrm{Binomial}(n,p)$ counts successes in $n$ independent trials, then $f_X(k)=\binom{n}{k}p^k(1-p)^{n-k}$ for $k=0,\ldots,n$, and these masses sum to $1$ by the binomial theorem.
+\end{example}
+
+\begin{definition}
+The probability density function (PDF) $f_X(x)$ of a continuous random variable $X$ is the function $f_X(x)$ that satisfy
+\begin{align}
+    F_X(x) = \int_{-\infty}^x f_X(t)\,dt
+\end{align}
+for all $x$.
+\end{definition}
+\begin{example}[Uniform density]
+    For $X\sim\mathrm{Unif}[0,1]$, $f_X(x)=1$ on $[0,1]$ and $0$ elsewhere. Then $F_X(x)=\int_0^x dt=x$ for $0\leq x\leq1$, with $F_X(x)=0$ below $0$ and $1$ above $1$.
+\end{example}
+
+\begin{example}[Exponential density]
+    If $f_X(x)=\lambda e^{-\lambda x}$ for $x\geq0$, then $F_X(x)=\int_0^x\lambda e^{-\lambda t}dt=1-e^{-\lambda x}$. This is the waiting time until the first event of a Poisson process.
+\end{example}
+
+\begin{example}[Standard normal density]
+    The standard normal density $\phi(x)=\frac{1}{\sqrt{2\pi}}e^{-x^2/2}$ integrates to $1$ (the Gaussian integral), so it is a valid PDF; its CDF $\Phi(x)=\int_{-\infty}^x\phi(t)dt$ has no elementary closed form.
+\end{example}
+
+\begin{theorem}
+    A function $f_X(x)$ is a probability density function if and only if
+    \begin{enumerate}
+        \item $f_X(x) \geq 0$ for all $x$, and
+        \item $\int_{-\infty}^\infty f_X(x)\,dx = 1$.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}
+    ($\Rightarrow$) If $f_X$ is a density, then $F_X(x)=\int_{-\infty}^x f_X(t)dt$ is non-decreasing, which forces $f_X(x)\geq0$ wherever the derivative exists. Taking $x\to\infty$ gives $\int_{-\infty}^\infty f_X(t)dt=\lim_{x\to\infty}F_X(x)=1$.
+    ($\Leftarrow$) Conversely, if $f_X\geq0$ and $\int f_X=1$, define $F(x)=\int_{-\infty}^x f_X(t)dt$. Then $F$ is non-decreasing, $\lim_{x\to-\infty}F(x)=0$ and $\lim_{x\to\infty}F(x)=1$, so $F$ is a valid CDF and $f_X$ is its density.
+\end{proof}
+\begin{example}[Uniform over unit interval]
+    $f(x)=1$ for $0\leq x\leq1$ and $0$ otherwise is non-negative and integrates to $1$, hence a PDF.
+\end{example}
+
+\begin{example}[Triangular density]
+    $f(x)=2x$ on $[0,1]$ is non-negative and $\int_0^1 2x\,dx=1$; it is a valid density that concentrates mass near $1$.
+\end{example}
+
+\begin{example}[A non-example]
+    $g(x)=x$ on $[0,2]$ is non-negative but $\int_0^2 x\,dx=2\neq1$, so it cannot be a density; rescaling to $g(x)=x/2$ fixes it.
+\end{example}
+
+
+
 
 
 \section{Expectation, variance, and covariance}
@@ -825,7 +1293,7 @@ and for a continuous random variable with density $p_X$,
 \end{align}
 \end{definition}
 \begin{example}[Expectation of a die roll]
-    For a fair six-sided die, $X\in\{1,\ldots,6\}$ with $\Pr(X=k)=1/6$. Thus
+    For a fair six-sided die, $X\in\{1,\ldots,6\}$ with $\Pr(X=k)= \dfrac{1}{6}$. Thus
     \begin{align}
         \mathrm{E}[X] = \sum_{k=1}^6 k\cdot\frac16
         = \frac{1+2+3+4+5+6}{6} = \frac{21}{6} = 3.5.
@@ -834,7 +1302,7 @@ and for a continuous random variable with density $p_X$,
 \end{example}
 
 \begin{example}[Expectation of an exponential variable]
-    For $X\sim\mathrm{Exp}(\lambda)$ with density
+    For $X\sim\mathrm{Exp}(\lambda)$ (the notation $X\sim\mathscr{D}$ means that $X$ is distributed according to $\mathscr{D}$) with density
     $p_X(x)=\lambda e^{-\lambda x}$ on $x\geq0$,
     \begin{align}
         \mathrm{E}[X] = \int_0^\infty x\,\lambda e^{-\lambda x}\,dx
@@ -859,11 +1327,12 @@ and for a continuous random variable with density $p_X$,
         &= a\sum_x x\,\Pr(X=x) + b\sum_y y\,\Pr(Y=y)\\
         &= a\,\mathrm{E}[X] + b\,\mathrm{E}[Y].
     \end{align}
-    The first equality uses the joint mass function, the second rearranges the
-    finite sums, and the third uses the marginalisation identities
-    $\sum_y p(x,y)=\Pr(X=x)$ and $\sum_x p(x,y)=\Pr(Y=y)$. The continuous case is
-    identical with sums replaced by integrals. Independence is never used, so the
-    result holds for any pair of random variables with finite expectations.
+    The first equality uses the joint mass function, the second rearranges the finite sums, and the third uses the marginalisation identities
+    \begin{align}
+        \sum_y p(x,y) &= \Pr(X=x) \\
+        \sum_x p(x,y) &= \Pr(Y=y).
+    \end{align}
+    The continuous case is identical with sums replaced by integrals. Independence is never used, so the result holds for any pair of random variables with finite expectations.
 \end{proof}
 \begin{example}[Sum of two dice]
     Let $X_1$ and $X_2$ be the outcomes of two fair dice. Linearity gives
@@ -897,20 +1366,45 @@ and for a continuous random variable with density $p_X$,
     required here, although it is needed to compute the variance of $\bar X$.
 \end{example}
 
+
 \begin{definition}
-    The \emph{variance} measures spread about the mean:
+        The \emph{variance} measures spread about the mean:
 \begin{align}
     \Var(X) = \mathrm{E}[(X - \mathrm{E}[X])^2] = \mathrm{E}[X^2] - \mathrm{E}[X]^2.
 \end{align}
-The \emph{covariance} measures joint variation:
+\end{definition}
+
+\begin{example}[Variance of a die roll]
+    For a fair die, $\mathrm{E}[X^2]=\frac{1^2+\cdots+6^2}{6}=\frac{91}{6}$, so $\Var(X)=\frac{91}{6}-\left(\frac72\right)^2=\frac{35}{12}\approx2.92$.
+\end{example}
+
+\begin{example}[Variance of a uniform variable]
+    For $X\sim\mathrm{Unif}[a,b]$, $\mathrm{E}[X]=(a+b)/2$ and $\mathrm{E}[X^2]=(a^2+ab+b^2)/3$, giving $\Var(X)=(b-a)^2/12$.
+\end{example}
+
+\begin{example}[Variance of a Gaussian]
+    If $X\sim\mathcal{N}(\mu,\sigma^2)$, then by definition $\Var(X)=\sigma^2$; the parameter $\sigma$ is the standard deviation, the natural scale of the fluctuations about $\mu$.
+\end{example}
+
+\begin{definition}
+    The \emph{covariance} of random variables $X$ and $Y$ is defined as:
 \begin{align}
     \Cov(X,Y) = \mathrm{E}[(X-\mathrm{E}[X])(Y-\mathrm{E}[Y])] = \mathrm{E}[XY] - \mathrm{E}[X]\mathrm{E}[Y],
 \end{align}
-and the correlation is 
-\begin{align}
-    \rho_{XY} = \Cov(X,Y)/\sqrt{\Var(X)\Var(Y)} \in [-1,1].
-\end{align}
+It measures joint variation.
 \end{definition}
+\begin{example}[Independent variables]
+    If $X$ and $Y$ are independent, $\mathrm{E}[XY]=\mathrm{E}[X]\mathrm{E}[Y]$, hence $\Cov(X,Y)=0$.
+\end{example}
+
+\begin{example}[Perfect positive dependence]
+    Taking $Y=X$ gives $\Cov(X,X)=\Var(X)$ and correlation $1$.
+\end{example}
+
+\begin{example}[Perfect negative dependence]
+    Taking $Y=-X$ gives $\Cov(X,Y)=-\Var(X)$ and correlation $-1$.
+\end{example}
+
 \begin{example}[Variance of a Bernoulli variable]
     For $X\sim\mathrm{Bernoulli}(p)$, $X^2=X$ because $X$ takes only the values
     $0$ and $1$. Hence $\mathrm{E}[X^2]=p$ and
@@ -920,14 +1414,58 @@ and the correlation is
     The variance is largest at $p=1/2$ and vanishes at $p=0$ and $p=1$.
 \end{example}
 
+
+\begin{proposition}
+    The variance satisfies the following properties:
+    \begin{enumerate}
+        \item $\Var(X) \geq 0$.
+        \item $\Var(a) = 0$ for any constant $a$.
+        \item $\Var(X + a) = \Var(X)$ for any constant $a$.
+        \item $\Var(aX) = a^2\Var(X)$ for any constant $a$.
+        \item $\Var(aX+bY) = a^2\Var(X)+b^2\Var(Y)+2ab\Cov(X,Y)$.
+    \end{enumerate}
+\end{proposition}
+\begin{proof}
+    (1) $\Var(X)=\mathrm{E}[(X-\mathrm{E}X)^2]\geq0$ because squares are non-negative.
+    (2) For a constant $a$, $\mathrm{E}[a]=a$, so $\Var(a)=\mathrm{E}[(a-a)^2]=0$.
+    (3) $\Var(X+a)=\mathrm{E}[(X+a-\mathrm{E}X-a)^2]=\Var(X)$.
+    (4) $\Var(aX)=\mathrm{E}[(aX-a\mathrm{E}X)^2]=a^2\Var(X)$.
+    (5) Writing $\tilde X=X-\mathrm{E}X$ and $\tilde Y=Y-\mathrm{E}Y$,
+    \begin{align}
+        \Var(aX+bY)&=\mathrm{E}[(a\tilde X+b\tilde Y)^2]\\
+        &=a^2\mathrm{E}[\tilde X^2]+b^2\mathrm{E}[\tilde Y^2]+2ab\,\mathrm{E}[\tilde X\tilde Y]\\
+        &=a^2\Var(X)+b^2\Var(Y)+2ab\,\Cov(X,Y).\qedhere
+    \end{align}
+\end{proof}
+
+
+
+
+\begin{definition}
+    The \emph{correlation} between random variables $X$ and $Y$ is defined as:\begin{align}
+    \rho_{XY} = \Cov(X,Y)/\sqrt{\Var(X)\Var(Y)} \in [-1,1].
+\end{align}
+\end{definition}
+\begin{example}[Perfect positive correlation]
+    If $Y=X$ with $\Var(X)>0$, then $\rho_{XY}=\Var(X)/\Var(X)=1$.
+\end{example}
+
+\begin{example}[Perfect negative correlation]
+    If $Y=-X$, then $\rho_{XY}=-\Var(X)/\Var(X)=-1$: the two variables move in exactly opposite directions.
+\end{example}
+
+\begin{example}[Uncorrelated but dependent]
+    Independence gives $\Cov(X,Y)=0$ and hence $\rho_{XY}=0$; the converse fails, e.g.\ $X\sim\mathrm{Unif}[-1,1]$ and $Y=X^2$ are dependent but uncorrelated.
+\end{example}
+
+
 \begin{example}[Affine transformations and sums]
     For constants $a,b$,
     \begin{align}
         \Var(aX+b) &= a^2\Var(X),\\
         \Var(X+Y) &= \Var(X)+\Var(Y)+2\Cov(X,Y).
     \end{align}
-    Adding a constant does not change the spread, multiplying by $a$ scales the
-    variance by $a^2$, and variances add exactly when $\Cov(X,Y)=0$. Independent
+    Adding a constant does not change the spread, multiplying by $a$ scales the variance by $a^2$, and variances add exactly when $\Cov(X,Y)=0$. Independent
     variables have zero covariance, but the converse is false in general.
 \end{example}
 
@@ -945,39 +1483,64 @@ and the correlation is
 
 
 \begin{definition}
-    For a random vector $\mathbf{X}$, the covariance matrix is
+    For a random vector $X$, the \emph{covariance matrix}\index{covariance matrix} is
 \begin{align}
-    \boldsymbol{\Sigma} = \mathrm{E}[(\mathbf{X}-\boldsymbol{\mu})(\mathbf{X}-\boldsymbol{\mu})^\top].
+    \Sigma = \mathrm{E}[(\vec{X}-\vec{\mu})(\vec{X}-\vec{\mu})^\top].
 \end{align}
 \end{definition}
+\begin{example}[Independent coordinates]
+    If $X_1$ and $X_2$ are independent with unit variance, then $\Sigma=I_2$: zero off-diagonal entries record the absence of linear dependence.
+\end{example}
+
+\begin{example}[Binary variables]
+    For the binary pair with joint masses $0.4,0.1,0.1,0.4$ from the correlation example, $\Sigma=\begin{bmatrix}0.25&0.15\\0.15&0.25\end{bmatrix}$.
+\end{example}
+
+\begin{example}[Rescaling a coordinate]
+    If $Y=2X$ and $\Var(X)=1$, the vector $(X,Y)$ has covariance matrix $\begin{bmatrix}1&2\\2&4\end{bmatrix}$; the correlation remains $1$.
+\end{example}
+
 \begin{example}[From covariance matrix to correlation matrix]
     Suppose $\Var(X_1)=4$, $\Var(X_2)=9$, and $\Cov(X_1,X_2)=3$. The covariance
     matrix is
     \begin{align}
-        \boldsymbol{\Sigma} =
+        \Sigma =
         \begin{bmatrix}4&3\\3&9\end{bmatrix},
     \end{align}
     and the correlation is $\rho=3/\sqrt{4\cdot9}=3/6=0.5$. Dividing each entry
     by the corresponding standard deviations gives the correlation matrix
     \begin{align}
-        \mathbf{R} =
+        R =
         \begin{bmatrix}1&0.5\\0.5&1\end{bmatrix}.
     \end{align}
-    The diagonal of $\boldsymbol{\Sigma}$ carries the scales, while $\mathbf{R}$
+    The diagonal of $\Sigma$ carries the scales, while $R$
     removes them.
 \end{example}
 
-\begin{example}[Covariance under a linear transformation]
-    If $\mathbf{Y}=\mathbf{A}\mathbf{X}+\mathbf{b}$, then
+
+\begin{proposition}
+    If $\vec{Y}=A \vec{X}+\vec{b}$, then
     \begin{align}
-        \boldsymbol{\Sigma}_{\mathbf{Y}}
-        = \mathbf{A}\,\boldsymbol{\Sigma}_{\mathbf{X}}\,\mathbf{A}^\top.
+        \Sigma_{\vec{Y}}
+        = A\,\Sigma_{\vec{X}}\,A^\top.
     \end{align}
-    For example, with
-    $\boldsymbol{\Sigma}_{\mathbf{X}}=\begin{bmatrix}2&1\\1&2\end{bmatrix}$
-    and $\mathbf{A}=\begin{bmatrix}1&1\\1&-1\end{bmatrix}$,
+\end{proposition}
+\begin{proof}
+    Let $\vec\mu=\mathrm{E}[\vec X]$. Since $\mathrm{E}[\vec Y]=A\vec\mu+\vec b$, the constant $\vec b$ cancels in the centred vector:
     \begin{align}
-        \mathbf{A}\boldsymbol{\Sigma}_{\mathbf{X}}\mathbf{A}^\top
+        \Sigma_{\vec Y}&=\mathrm{E}\!\left[(\vec Y-\mathrm{E}\vec Y)(\vec Y-\mathrm{E}\vec Y)^\top\right]\\
+        &=\mathrm{E}\!\left[A(\vec X-\vec\mu)(\vec X-\vec\mu)^\top A^\top\right]\\
+        &=A\,\Sigma_{\vec X}\,A^\top,
+    \end{align}
+    where $A$ and $A^\top$ are deterministic and may be pulled outside the expectation.
+\end{proof}
+
+\begin{example}[Covariance under a linear transformation]
+    Let
+    $\Sigma_{X}=\begin{bmatrix}2&1\\1&2\end{bmatrix}$
+    and $A=\begin{bmatrix}1&1\\1&-1\end{bmatrix}$,
+    \begin{align}
+        A\Sigma_{X}A^\top
         = \begin{bmatrix}6&0\\0&2\end{bmatrix}.
     \end{align}
     The transformed coordinates are uncorrelated even though the original ones
@@ -993,7 +1556,7 @@ and the correlation is
     and similarly $\Cov(X_2,X_3)=1$, while
     $\Var(X_3)=\Var(X_1)+\Var(X_2)=2$. Hence
     \begin{align}
-        \boldsymbol{\Sigma} =
+        \Sigma =
         \begin{bmatrix}1&0&1\\0&1&1\\1&1&2\end{bmatrix},
     \end{align}
     which has rank two: the vector $(1,1,-1)^\top$ lies in its null space because
@@ -1001,79 +1564,231 @@ and the correlation is
     dependence among the features.
 \end{example}
 
+\begin{example}[Variance along a direction]
+    For a unit vector $\vec u$, the variance of the projection $\vec u^\top\vec X$ equals $\vec u^\top\Sigma\vec u$; the principal axes of the ellipsoid $\vec x^\top\Sigma^{-1}\vec x=\mathrm{const}$ are the eigenvectors of $\Sigma$.
+\end{example}
+
+\begin{example}[Variance of a sum]
+    For $\vec 1=(1,1)^\top$, $\Var(X_1+X_2)=\vec 1^\top\Sigma\vec 1=\Var(X_1)+\Var(X_2)+2\Cov(X_1,X_2)$.
+\end{example}
+
+\begin{example}[Diagonalisation]
+    If $\Sigma=Q\Lambda Q^\top$ with $Q$ orthogonal, the change of coordinates $\vec Z=Q^\top\vec X$ has diagonal covariance $\Lambda$; the transformed features are uncorrelated.
+\end{example}
 
 
 
-\section{Joint, marginal, and conditional distributions}
 
-The \emph{joint distribution} of two random variables $X, Y$ is
-$\Pr(X = x, Y = y)$. The \emph{marginal} is obtained by summing (or integrating) out
-the other variable:
+\section{Associated distributions}
+
+\begin{definition}
+    The \emph{joint distribution}\index{joint distribution} of two random variables $X, Y$ is
+$\Pr(X = x, Y = y)$. The \emph{marginal distribution}\index{marginal distribution} is obtained by summing (or integrating) out the other variable:
 \begin{align}
     \Pr(X = x) = \sum_y \Pr(X = x, Y = y).
 \end{align}
-The \emph{conditional distribution} is
-\begin{align}
-    \Pr(Y = y \mid X = x) = \frac{\Pr(X = x, Y = y)}{\Pr(X = x)},
-    \qquad \Pr(X=x) > 0.
-\end{align}
+\end{definition}
+\begin{example}[Two coin tosses]
+    For two fair tosses, $\Pr(X=\mathrm{H},Y=\mathrm{H})=1/4$ for each of the four pairs. Marginalising, $\Pr(X=\mathrm{H})=\sum_y\Pr(X=\mathrm{H},Y=y)=1/2$.
+\end{example}
 
-\textbf{Bayes' rule:}
-\begin{align}
+\begin{example}[Two dice]
+    Let $X$ be the first die and $S$ the sum of two dice. The joint mass satisfies $\Pr(X=x,S=s)=\Pr(X=x)\Pr(Y=s-x)=1/36$ whenever $1\leq s-x\leq6$; summing over $s$ recovers $\Pr(X=x)=1/6$.
+\end{example}
+
+\begin{example}[Continuous uniform on a square]
+    If $(X,Y)$ is uniform on $[0,1]^2$, the joint density is $f(x,y)=1$ there. The marginal $f_X(x)=\int_0^1 f(x,y)\,dy=1$, so each coordinate is uniform on $[0,1]$.
+\end{example}
+
+
+\begin{definition}
+    The \emph{conditional distribution}\index{conditional distribution} is
+    \begin{align}
+        \Pr(Y = y \mid X = x) = \frac{\Pr(X = x, Y = y)}{\Pr(X = x)},
+        \qquad \Pr(X=x) > 0.
+    \end{align}
+\end{definition}
+\begin{example}[Coin tosses]
+    For two fair tosses, $\Pr(Y=\mathrm{H}\mid X=\mathrm{H})=\frac{\Pr(X=\mathrm{H},Y=\mathrm{H})}{\Pr(X=\mathrm{H})}=\frac{1/4}{1/2}=1/2$; knowing the first toss does not change the second.
+\end{example}
+
+\begin{example}[Die roll]
+    For a fair die, $\Pr(X\text{ even}\mid X>3)=\Pr(\{4,6\})/\Pr(\{4,5,6\})=(2/6)/(3/6)=2/3$.
+\end{example}
+
+\begin{example}[Spam filtering]
+    If $10\%$ of messages are spam and $50\%$ of spam but only $5\%$ of legitimate messages contain ``free'', then $\Pr(\text{spam}\mid\text{``free''})=\frac{0.5\cdot0.1}{0.5\cdot0.1+0.05\cdot0.9}\approx0.53$.
+\end{example}
+
+
+
+\section{Bayes' rule}
+
+\begin{proposition}
+    Let $X$ and $Y$ be random variables. Then
+    \begin{align}
     \Pr(Y = y \mid X = x)
     = \frac{\Pr(X = x \mid Y = y) \, \Pr(Y = y)}{\Pr(X = x)}.
 \end{align}
-The denominator is a normalising constant:
-$\Pr(X=x) = \sum_{y'} \Pr(X=x \mid Y=y')\Pr(Y=y')$. In Bayesian terminology,
-$\Pr(Y=y)$ is the \emph{prior}, $\Pr(X=x\mid Y=y)$ the \emph{likelihood}, and
-$\Pr(Y=y\mid X=x)$ the \emph{posterior}.
+\end{proposition}
 
-$X$ and $Y$ are \emph{independent} if
-$\Pr(X=x, Y=y) = \Pr(X=x)\Pr(Y=y)$ for all $x, y$, equivalently
-$\Pr(Y=y \mid X=x) = \Pr(Y=y)$. They are \emph{conditionally independent} given $Z$
-if $\Pr(X,Y\mid Z) = \Pr(X\mid Z)\Pr(Y\mid Z)$.
+The denominator is a normalising constant: $\Pr(X=x) = \sum_{y'} \Pr(X=x \mid Y=y')\Pr(Y=y')$. In Bayesian terminology, $\Pr(Y=y)$ is the \emph{prior}, $\Pr(X=x\mid Y=y)$ the \emph{likelihood}, and $\Pr(Y=y\mid X=x)$ the \emph{posterior}.
+
+The random variables $X$ and $Y$ are \emph{independent} if $\Pr(X=x, Y=y) = \Pr(X=x)\Pr(Y=y)$ for all $x, y$, equivalently $\Pr(Y=y \mid X=x) = \Pr(Y=y)$. They are \emph{conditionally independent} given $Z$ if $\Pr(X,Y\mid Z) = \Pr(X\mid Z)\Pr(Y\mid Z)$.
+
+
+\begin{example}[Medical testing]
+    A disease affects $1\%$ of a population. A test is positive for $99\%$ of sick people and $5\%$ of healthy people. With $D$ denoting disease and $+$ a positive result,
+    \begin{align}
+        \Pr(D\mid +)&=\frac{0.99\cdot0.01}{0.99\cdot0.01+0.05\cdot0.99}\approx0.167.
+    \end{align}
+    Despite the accurate test, a positive result is more likely to be a false alarm because the prior is small.
+\end{example}
+
+\begin{example}[Spam classification]
+    With prior $\Pr(S)=0.1$ and likelihoods $\Pr(\text{``free''}\mid S)=0.5$, $\Pr(\text{``free''}\mid \neg S)=0.05$, Bayes' rule gives the posterior $\Pr(S\mid\text{``free''})\approx0.53$ computed above. The posterior becomes the prior for the next word.
+\end{example}
+
+\begin{example}[Naive Bayes]
+    Under conditional independence of words given the class, $\Pr(S\mid w_1,\ldots,w_m)\propto\Pr(S)\prod_j\Pr(w_j\mid S)$. This turns a joint distribution with exponentially many entries into a product of per-word estimates.
+\end{example}
 
 \section{Common distributions}
 
-\textbf{Bernoulli:} $X \in \{0,1\}$ with $\Pr(X=1) = p$, $\E[X]=p$,
-$\Var(X)=p(1-p)$.
+\begin{definition}
+    The \emph{Bernoulli distribution}, denoted by $\mathscr{B}(p)$, is a discrete probability distribution for a random variable that takes the value 1 with probability $p$ and the value 0 with probability $1-p$.
+\end{definition}
+\begin{example}[Coin toss]
+    A fair coin gives $X\sim\mathscr{B}\left( \frac{1}{2} \right)$:
+    \begin{align}
+        \Pr(X=1) &= \frac{1}{2}, \\
+        \Pr(X=0) &=\frac{1}{2},
+    \end{align}
+    with mean $\dfrac{1}{2}$ and variance $\dfrac{1}{4}$.
+\end{example}
 
-\textbf{Categorical:} $X \in \{1,\ldots,K\}$ with probabilities
-$p_1,\ldots,p_K$ summing to one.
+\begin{example}[Quality control]
+    If $2\%$ of manufactured items are defective, the indicator of ``defective'' for a randomly chosen item is $\mathscr{B}(0.02)$.
+\end{example}
 
-\textbf{Gaussian (Normal):} $X \sim \mathcal{N}(\mu, \sigma^2)$ with density
-\begin{align}
+\begin{example}[Building block]
+    A binomial random variable is a sum of independent Bernoulli variables: $X\sim\mathscr{B}(n,p)$ counts the number of ones in $n$ Bernoulli$(p)$ trials.
+\end{example}
+
+
+
+
+\begin{definition}
+  The \emph{Gaussian (Normal) distribution}\index{Normal distribution} $X \sim \mathscr{N}(\mu, \sigma^2)$ is a continuous probability distribution with probability density function
+  \begin{align}
     p(x) = \frac{1}{\sqrt{2\pi\sigma^2}}
     \exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right).
 \end{align}
+\end{definition}
+\begin{example}[Standard normal]
+    For $X\sim\mathscr{N}(0,1)$ the density is the familiar symmetric bell curve with its peak at $0$. Its graph shows that about $68\%$ of the mass lies in $[-1,1]$ and about $95\%$ in $[-2,2]$.
+\end{example}
 
-\textbf{Multivariate Gaussian:} $\mathbf{X} \sim \mathcal{N}(\boldsymbol{\mu},
-\boldsymbol{\Sigma})$ with density
-\begin{align}
-    p(\mathbf{x}) = \frac{1}{(2\pi)^{d/2}|\boldsymbol{\Sigma}|^{1/2}}
-    \exp\!\left(-\frac{1}{2}(\mathbf{x}-\boldsymbol{\mu})^\top
-    \boldsymbol{\Sigma}^{-1}(\mathbf{x}-\boldsymbol{\mu})\right).
-\end{align}
+\begin{example}[Heights]
+    Adult heights are often modelled as $\mathscr{N}(170,10^2)$ (in centimetres). The bell curve is centred at $170$ and has inflection points at $160$ and $180$, so most values fall in that range.
+\end{example}
 
-\textbf{Exponential family:} many distributions (Bernoulli, Gaussian, Poisson,
-categorical) can be written as
-\begin{align}
-    p(x\mid\boldsymbol{\theta}) = h(x)\exp\!\left(\boldsymbol{\theta}^\top
-    \mathbf{t}(x) - A(\boldsymbol{\theta})\right),
-\end{align}
-where $\mathbf{t}(x)$ is the sufficient statistic and $A$ the log-partition function.
-This form underlies generalised linear models (Chapter~\ref{ch:logistic}).
+\begin{example}[Effect of variance]
+    Plotting $\mathscr{N}(0,1)$ and $\mathscr{N}(0,4)$ together shows that increasing $\sigma^2$ flattens and widens the bell while keeping the total area equal to one; the peak height falls as $1/\sigma$.
+\end{example}
 
-\section{Limits and estimation}
 
-The \emph{law of large numbers} says that the sample mean converges to the expectation,
-which is why empirical risk is a sensible proxy for expected risk. The
-\emph{central limit theorem} says that, under mild conditions, the normalised sample
-mean is approximately Gaussian:
+\begin{definition}
+    The \emph{Multivariate Gaussian distribution} $\vec{X} \sim \mathscr{N}(\vec{\mu}, \vec{\Sigma})$ is a continuous probability distribution with probability density function
+    \begin{align}
+    p(\vec{x}) = \frac{1}{(2\pi)^{d/2}|{\Sigma}|^{1/2}}
+    \exp\!\left(-\frac{1}{2}(\vec{x}-\vec{\mu})^\top
+    {\Sigma}^{-1}(\vec{x}-\vec{\mu})\right).
+    \end{align}
+    where $\vec{\Sigma}$ is the covariance matrix with entries
+    \begin{align}
+        (\vec{\Sigma})_{ij} = \mathbb{E}[(x_i - \mu_i)(x_j - \mu_j)]
+    \end{align}
+\end{definition}
+A key property of the normal distribution is that it is completely specified by its first two moments. Another key property is that the normal distribution is preserved under linear transformations. 
+
+\begin{example}[Linear transformation]
+    If $\vec Z\sim\mathscr{N}(\vec 0,I_2)$ and $\vec X=\vec\mu+A\vec Z$ with $\vec\mu=(1,2)^\top$ and $A=\begin{bmatrix}2&0\\1&3\end{bmatrix}$, then
+    \begin{align}
+        \vec X\sim\mathscr{N}\!\left(\begin{bmatrix}1\\2\end{bmatrix}, AA^\top\right)
+        = \mathscr{N}\!\left(\begin{bmatrix}1\\2\end{bmatrix},
+        \begin{bmatrix}4&2\\2&10\end{bmatrix}\right).
+    \end{align}
+    The off-diagonal covariance $2$ appears because both coordinates share the first standard normal.
+\end{example}
+
+\begin{example}[Marginals and conditioning]
+    For $\vec X=(X_1,X_2)^\top\sim\mathscr{N}(\vec 0,\Sigma)$ with $\Sigma=\begin{bmatrix}2&0.6\\0.6&1\end{bmatrix}$, the marginal is $X_1\sim\mathscr{N}(0,2)$. The conditional distribution is
+    \begin{align}
+        X_2\mid X_1=x_1 \sim \mathscr{N}\!\left(\frac{0.6}{2}x_1,\;1-\frac{0.6^2}{2}\right)
+        = \mathscr{N}(0.3x_1,\;0.82).
+    \end{align}
+    Observing $X_1$ shifts the mean of $X_2$ and reduces its variance from $1$ to $0.82$.
+\end{example}
+
+\begin{example}[Isotropic Gaussian]
+    For $\vec X\sim\mathscr{N}(\vec 0,I_2)$ the density depends only on $\|\vec x\|^2$, so its level sets are concentric circles centred at the origin: the coordinates are independent standard normals.
+\end{example}
+
+
+\begin{example}[Correlated Gaussian]
+    With $\Sigma=\begin{bmatrix}1&0.8\\0.8&1\end{bmatrix}$ the contours become ellipses tilted along the line $x_1=x_2$; the strong positive covariance means large values tend to occur together.
+\end{example}
+
+\begin{example}[Unequal variances]
+    For $\Sigma=\mathrm{diag}(2,1)$ the ellipses are axis-aligned and twice as wide in the $x_1$ direction. Conditioning on one coordinate shifts the mean and shrinks the variance of the other.
+\end{example}
+
+\coderef{Code/multivariate_gaussian.ipynb}
+\coderef{Code/probabilistic_models.py}
+
+
+
+
+
+
+\begin{definition}
+    The \emph{Exponential family} of distribution is a class of probability distributions that can be expressed in the form
+    \begin{align}
+        p_{\vec{\theta}}(x) = h(x)\exp\!\left(\vec{\theta}^\top \mathbf{t}(x) - A(\vec{\theta})\right),
+    \end{align}
+    where $\mathbf{t}(x)$ is the sufficient statistic and $A$ the log-partition function.
+\end{definition}
+
+\begin{example}[Bernoulli]
+    Writing $p=\sigma(\theta)=1/(1+e^{-\theta})$, the Bernoulli mass becomes $\exp\!\big(\theta x-\log(1+e^\theta)\big)$, so $t(x)=x$ and $A(\theta)=\log(1+e^\theta)$.
+\end{example}
+
+\begin{example}[Gaussian with known variance]
+    For $\mathcal{N}(\mu,\sigma^2)$ with fixed $\sigma^2$, take $\vec\theta=(\mu/\sigma^2,-1/(2\sigma^2))$ and $\mathbf t(x)=(x,x^2)$; then $A(\vec\theta)=\mu^2/(2\sigma^2)+\tfrac12\log(2\pi\sigma^2)$.
+\end{example}
+
+\begin{example}[Poisson]
+    The Poisson mass $p(x\mid\lambda)=e^{-\lambda}\lambda^x/x!=\exp\!\big(x\log\lambda-\lambda-\log x!\big)$ belongs to the family with $\theta=\log\lambda$, $t(x)=x$, $A(\theta)=e^\theta$.
+\end{example}
+
+\section{Law of large numbers}
+
+
+
+The \emph{law of large numbers} says that the sample mean converges to the expectation, which is why empirical risk is a sensible proxy for expected risk. 
+
+\section{Central limit theorem}
+
+
+\begin{proposition}
+    The \emph{central limit theorem} says that, under mild conditions, the normalised sample mean is approximately Gaussian:
 \begin{align}
     \frac{1}{\sqrt{n}}\sum_{i=1}^n (X_i - \mu)
     \xrightarrow{d} \mathcal{N}(0,\sigma^2).
 \end{align}
+\end{proposition}
+
 
 Given data $\mathbf{x}^{(1)},\ldots,\mathbf{x}^{(n)}$ from $p(\cdot\mid\theta)$, the
 \emph{maximum-likelihood estimate} (MLE) is
@@ -1096,23 +1811,410 @@ an $\ell_2$ penalty corresponds to a Gaussian prior, and an $\ell_1$ penalty to 
 Laplace prior.
 
 \section{Information theory}
+Information theory was founded by Claude Shannon in 1948 as a discipline to study the quantification, storage, and communication of information. In the past decades, it has played a critical role in modern communication as well as many other applications in engineering and computer science. The references for this section are \cite{unpingco2016python}.
 
-The \emph{entropy} of a discrete distribution is
-\begin{align}
-    H(p) = -\sum_x p(x)\log p(x),
-\end{align}
-a measure of uncertainty. The \emph{KL divergence}
-\begin{align}
-    D_{\mathrm{KL}}(p\,\|\,q) = \sum_x p(x)\log\frac{p(x)}{q(x)}
-\end{align}
-measures how much $q$ differs from $p$; it is non-negative and zero iff $p=q$, but it
-is not symmetric. The \emph{cross-entropy} is
-\begin{align}
-    H(p,q) = -\sum_x p(x)\log q(x) = H(p) + D_{\mathrm{KL}}(p\,\|\,q).
-\end{align}
+Let us consider the space of all messages to have a probability distribution. The probability distribution tell us how likely is it that we get a certain message. So we have some information about the occurrence of each message. Once we have received a message, we gain some amount of information. For example, if probability of given message is 1, then we do not gain any new information after the occurrence of that message. The gain in the amount of information depends on the probability of its occurrence. Therefore, we can write the amount of information conveyed by a message $x$ as $I(p_x)$. This is also referred to as \emph{suprisal}\index{surprisal}, as it measures the amount of surprise we have after observing the message. 
+
+\emph{Desidarata}: We would like the function $I: [0,1] \longrightarrow \mathbb{R}_{\geq 0}$ to satisfy the following properties:
+\begin{enumerate}
+    \item \emph{Non-negativity}: The information conveyed by a message cannot be negative. It has to be at least 0, that is
+    \begin{align}
+        I(p_x) \geq 0
+    \end{align}
+    % \item If the event is definite, that is, if the probability of the occurrence of the event is 1, then the corresponding information conveyed by the event will be 0. That is, 
+    % \begin{align}
+    %     I(1) &= 0
+    % \end{align}
+    \item \emph{Additivity}: The information conveyed by composite independent messages is simply given by the sum of the individual information content. That is,
+    \begin{align}
+        I(p_x p_y) &= I(p_x) + I(p_y)
+    \end{align}
+    \item \emph{Continuity}: The information $I$ is a continuous function.
+\end{enumerate}
+
+
+% ref: Python for Probability, Statistics and Machine Learning by Jose Unpingco
+The only mathematical operator that satisfies these relations is the logarithm operator (up to scalar multiple). Therefore, we have the following definition:
+\begin{definition}
+    The \emph{Shannon} \emph{information content} (or \emph{uncertainty content} or \emph{surprisal}) of an outcome $X = x$ is defined by
+    \begin{align}
+    I(x) &\defn \log\left(  \frac{1}{\Pr(X = x)} \right) \\
+    &= -\log(p(x))
+    \end{align}
+\end{definition}
+The unit of the information is bits, nats or Hartley (or decits), when the base of the logarithm is the number $2$, the Euler's number $e$, or the number 10, respectively. The Shannon information can be interpreted as quantifying the level of \emph{surprise} of a particular outcome.
+
+\begin{example}[Fair coin]
+    A fair coin has $\Pr(H)=\Pr(T)=\dfrac{1}{2}$, so either outcome conveys
+    \begin{align}
+        I(H)=I(T)=\log_2\left(\frac{1}{\frac{1}{2}}\right)=1~\text{bit}.
+    \end{align}
+    On average one binary question is needed to communicate the result.
+\end{example}
+
+\begin{example}[Biased coin]
+    Suppose $\Pr(H)=0.9$ and $\Pr(T)=0.1$. Then
+    \begin{align}
+        I(H) &= -\log_2(0.9) \approx 0.152~\text{bits}, \\
+        I(T) &= -\log_2(0.1) \approx 3.322~\text{bits}.
+    \end{align}
+    A head is nearly unsurprising, while the rare tail carries over 3 bits of information.
+\end{example}
+
+\begin{example}[Two dice and additivity]
+    A fair six-sided die has $I(x)=\log_2 6\approx2.585$ bits per roll. For two independent rolls,
+    \begin{align}
+        I(x,y) &= \log_2 36 = \log_2 6 + \log_2 6 \approx 5.170~\text{bits},
+    \end{align}
+    which illustrates additivity.
+\end{example}
+
+
+
+\begin{definition}
+    The (\emph{Shannon}) \emph{entropy}\index{entropy} or \emph{uncertainty} of a discrete random variable $X$ with a probability distribution function $p: S \longrightarrow [0,1]$ is defined by
+    \begin{align}
+        H(X) &\defn \sum_{x \in S} p(x) \log\left( \frac{1}{p(x)} \right)  \\
+        &= -\sum_{x \in S} p_x \log(p_x) \\
+        &= \mathrm{E}[I(X)] 
+    \end{align}
+    If we restrict to binary logarithm $\log_2(\square)$, we refer to $H(X)$ as \emph{binary} (\emph{Shannon}) entropy. When the base is not mentioned, we assume that it to be 2. So mostly we are dealing with the binary entropy. We can also think of entropy as the average information. Observe that $\log(x)$ is undefined if $x = 0$. Hence, entropy is sometimes defined to be the relevant sum over all the non-zero probabilities\footnote{Also referred as $\mathrm{supp}(X)$}. However, since
+        \begin{align}
+        \lim_{x \longrightarrow 0} x \log\left( \frac{1}{x} \right) = 0
+    \end{align}
+    there is no real difficulty with allowing $p(x) = 0$ for some $x$'s. For continuous random variables, the entropy is defined as
+    \begin{align}
+        H(X) &= -\int_{-\infty}^{\infty} f(x) \log f(x) \, dx
+    \end{align}
+    Unlike discrete entropy, this can be negative and depends on the units of $x$. 
+\end{definition}
+\begin{example}[Fair coin]
+    For a fair coin,
+    \begin{align}
+        H &= -\frac{1}{2}\log\frac{1}{2}-\frac{1}{2}\log\frac{1}{2} \\
+        &=\log 2 \\
+        &= 1~\text{bits}
+    \end{align}
+    One fair bit is needed, on average, to communicate the outcome.
+\end{example}
+
+\begin{example}[Degenerate distribution]
+    If one outcome has probability $1$, then $H=-1\log 1=0$: there is no uncertainty to resolve, and the entropy curve touches zero at $p=0$ and $p=1$.
+\end{example}
+
+\begin{example}
+    Let the discrete random variable $X$ takes values from the set $\{1,2,3,4,5,6\}$ with $\Pr(X = i) = \dfrac{1}{6}$ for each $i = 1, 2, \ldots, 6$. The entropy in this case is given by 
+    \begin{align}
+        H(X) &= -\sum_{i=1}^6 \frac{1}{6}\log_2\left(\frac{1}{6}\right) \\
+            &= \log_2(6) \approx 2.585
+    \end{align}
+    This is the entropy of an unloaded die, which is the maximum possible entropy for a random variable with six equally likely outcomes.
+\end{example}
+
+
+
+\begin{example}[Binary entropy curve]
+    For $X \sim \mathrm{B}(p)$, then
+    \begin{align}
+        H(\mathrm{B}(p)) &= -p\log p-(1-p)\log(1-p)
+    \end{align}
+    is a concave arch symmetric about $p= \dfrac{1}{2}$, where it attains its maximum $\log 2$, as Figure~\ref{fig:binary-entropy} illustrates.
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.72\textwidth, height=5cm,
+    xlabel={$p$}, ylabel={$H_2(p)$},
+    domain=0.001:0.999, samples=200,
+    xmin=0, xmax=1, ymin=0, ymax=1.05,
+    xtick={0,0.5,1}, ytick={0,0.5,1},
+    axis lines=left, legend pos=north west
+]
+\addplot[thick, blue] {-x*log2(x)-(1-x)*log2(1-x)};
+\addlegendentry{binary entropy}
+\addplot[thick, red, dashed] coordinates {(0.5,0) (0.5,1)};
+\addlegendentry{maximum at $p= \frac{1}{2}$}
+\end{axis}
+\end{tikzpicture}
+\caption{The binary entropy function $H_2(p)$ is symmetric, concave, and maximised at $p= \frac{1}{2}$.}
+\label{fig:binary-entropy}
+\end{figure}
+
+
+
+
+
+\begin{example}
+    Let $S = \{0,1\}$ with $p(0) = p$ and $p(1) = 1 - p$. Then
+    \begin{align}
+        H(p(x)) &= -p\log_2(p) - (1-p)\log_2(1-p)
+    \end{align}
+    The maximum entropy $H(p(x)) = 1$ is achieved when $p = \tfrac{1}{2}$, that is, when the two outcomes are equally likely.
+\end{example}
+
+
+\begin{example}
+    \emph{Entropy of English language}: Shannon estimated the entropy of English text by having subjects predict the next letter in a sequence. He estimated that the entropy of English is approximately $1.0$ to $1.5$ bits per character. This means that despite using 26 letters (which would require $\log_2(26) \approx 4.7$ bits each if uniformly distributed), the inherent uncertainty is much lower due to the statistical structure of the language. This result has profound implications for data compression: English text can theoretically be compressed to roughly $30\%$ of its original size.
+\end{example}
+
+
+
+\begin{example}
+    If $X\sim\mathrm{U}(a,b)$, then 
+    \begin{align}
+        H(X)=\log(b-a)
+    \end{align}
+    (with natural logarithms). Thus $\mathrm{U}(0,1)$ has $H=0$ nats, $\mathrm{U}(0,2)$ has $H=\log 2$ nats, and $\mathrm{U}(0,\tfrac12)$ has $H=-\log 2$ nats. Unlike discrete entropy, differential entropy may be negative; it measures spread relative to the units of $x$.
+\end{example}
+
+\begin{example}[Gaussian distribution]
+    If $X\sim\mathrm{N}(\mu,\sigma^2)$, then
+    \begin{align}
+        H(X) &= \tfrac12\log\left(2\pi e\sigma^2\right).
+    \end{align}
+    For the standard normal this is $\tfrac12\log(2\pi e)\approx1.419$ nats. Increasing $\sigma$ increases the entropy by $\log\sigma$, so doubling the standard deviation adds $\log 2$ nats.
+\end{example}
+
+\begin{example}[Exponential distribution]
+    If $X\sim\mathrm{Exp}(\lambda)$ with density $\lambda e^{-\lambda x}$ for $x\ge0$, then
+    \begin{align}
+        H(X) &= 1+\log\lambda.
+    \end{align}
+    For $\lambda=2$, $H=1-\log 2\approx0.307$ nats; a tighter rate concentrates the mass and lowers the entropy.
+\end{example}
+
+\begin{definition}
+    A real-valued function $f$ is a concave function on an interval $I$ if
+    \begin{align}
+        \frac{f(x) + f(y)}{2} &\leq f \bigg( \frac{x+y}{2} \bigg)
+    \end{align}
+    for all $x, y \in I$. A function $f$ is a strictly concave function on an interval $I$ if
+    \begin{align}
+        \frac{f(x) + f(y)}{2} &< f \bigg( \frac{x+y}{2} \bigg)
+    \end{align}
+    for all $x, y \in I$, $x \neq y$.
+\end{definition}
+
+\begin{example}[A concave function]
+    The square root $f(x)=\sqrt{x}$ is concave on $(0,\infty)$. For $x=1$ and $y=4$,
+    \begin{align}
+        \frac{f(1)+f(4)}{2} &= \frac{1+2}{2}=1.5
+        \leq \sqrt{2.5}\approx1.581 = f\!\left(\frac{1+4}{2}\right),
+    \end{align}
+    so averaging inputs gives a larger value than averaging outputs.
+\end{example}
+
+
+\begin{example}[Another concave function]
+    The logarithm $f(x)=\log x$ is concave on $(0,\infty)$ because $f''(x)=-1/x^2<0$. For $x=1$ and $y=e^2$,
+    \begin{align}
+        \frac{\log 1+\log e^2}{2}=1 \leq \log\left(\frac{1+e^2}{2}\right)\approx1.063.
+    \end{align}
+\end{example}
+
+
+\begin{example}[A concave function on a closed interval]
+    The function $f(x)=x(1-x)$ is concave on $[0,1]$ since $f''(x)=-2$. Its graph is a downward parabola with maximum $1/4$ at $x=1/2$.
+\end{example}
+
+\begin{example}[A strictly concave function]
+    The function $f(x)=\sin x$ is strictly concave on $[0,\pi]$ because $f''(x)=-\sin x<0$ on $(0,\pi)$. For $x=0$ and $y=\pi$,
+    \begin{align}
+        \frac{\sin 0+\sin\pi}{2}=0 < 1=\sin\frac{\pi}{2}.
+    \end{align}
+\end{example}
+
+\begin{example}[Another strictly concave function]
+    The negative quadratic $f(x)=-x^2$ is strictly concave on $\mathbb{R}$: $f''(x)=-2<0$ everywhere, and for $x\neq y$,
+    \begin{align}
+        \frac{f(x)+f(y)}{2} = -\frac{x^2+y^2}{2}
+        < -\left(\frac{x+y}{2}\right)^2 = f\!\left(\frac{x+y}{2}\right).
+    \end{align}
+    The inequality is strict because $(x-y)^2>0$.
+\end{example}
+
+
+\begin{theorem}
+    (\emph{Jensen's inequality}) Suppose $f$ is a continuous strictly concave function on the interval $I$. Suppose further that
+    \begin{align}
+        \sum_{i=1}^n a_i = 1
+    \end{align}
+    and $a_i > 0$, for $1 \leq i \leq n$. Then 
+    \begin{align}
+        \sum_{i=1}^n a_i f(x_i) &\leq f\bigg( \sum_{i=1}^n a_i x_i\bigg)
+    \end{align}
+    where $x_i \in I$, for $1 \leq i \leq n$. Further, equality occurs if and only if $x_1 = \ldots = x_n$.
+\end{theorem}
+\begin{proof}
+    We argue by induction on $n$. For $n=2$ the statement is exactly the definition of concavity, since $a_2=1-a_1$.
+    Suppose the result holds for $n-1$ weights and set $b=1-a_n>0$ and
+    \begin{align}
+        y = \frac{1}{b}\sum_{i=1}^{n-1} a_i x_i \in I .
+    \end{align}
+    The point $y$ lies in $I$ because an interval is convex. Applying the induction hypothesis to the normalised weights $a_i/b$ and then concavity to the two points $y$ and $x_n$ gives
+    \begin{align}
+        \sum_{i=1}^n a_i f(x_i)
+        &= b\sum_{i=1}^{n-1}\frac{a_i}{b}f(x_i) + a_n f(x_n) \\
+        &\leq b f(y) + a_n f(x_n) \\
+        &\leq f\big( b y + a_n x_n \big)
+        = f\left( \sum_{i=1}^n a_i x_i \right).
+    \end{align}
+    If $f$ is strictly concave, equality in the induction step forces $x_1=\cdots=x_{n-1}$, while equality in the second step forces $y=x_n$; hence all $x_i$ are equal. Conversely, equality is immediate when all $x_i$ coincide.
+\end{proof}
+
+% ref: N. Sahu - Mathematics for Machine Learning_ A Deep Dive into Algorithms (2023).pdf
+
+
+\begin{definition}
+    Given discrete distributions $p: S \to [0,1]$ and $q: S \to [0,1]$, the \emph{relative entropy} (\emph{information divergence}, \emph{Kullback-Leibler divergence}, $\mathrm{KL}$-divergence \index{KL-divergence} \emph{discrimination}) from $p$ to $q$ is defined as
+    \begin{align}
+    D_{\mathrm{KL}}(p\,\|\,q) &\defn \sum_{x \in S} p(x)\log\frac{p(x)}{q(x)}\\
+    &= \underset{x\sim p}{\mathrm{E}}\left[\log\frac{p(x)}{q(x)}\right].
+    \end{align}
+    For a continuous distribution, it is given by
+    \begin{align}
+        D_{\mathrm{KL}}(p\,\|\,q) \defn \int p(x)\log\frac{p(x)}{q(x)} dx.
+    \end{align}
+    It is a measure of how much $q$ differs from $p$. Note that in general $D_{\mathrm{KL}}(p\,\|\,q) \neq D_{\mathrm{KL}}(q\,\|\,p)$.
+\end{definition}
+
+
+\begin{lemma}
+    We have that $D_{\mathrm{KL}}(p\,\|\,q) \geq 0$ with equality if and only if $p=q$.
+\end{lemma}
+\begin{proof}
+    Let $\mu$ denote counting measure in the discrete case and Lebesgue measure in the continuous case, so that
+    \begin{align}
+        D_{\mathrm{KL}}(p\,\|\,q) = \int_{\mathcal{X}} p(x)\log\frac{p(x)}{q(x)}\,d\mu(x)
+    \end{align}
+    specialises to a sum or an integral as appropriate. Put $S=\{x:p(x)>0\}$; where $p(x)=0$ the integrand is zero by convention. Since $-\log$ is convex, Jensen's inequality gives
+    \begin{align}
+        D_{\mathrm{KL}}(p\,\|\,q)
+        &= -\int_S p(x)\log\frac{q(x)}{p(x)}\,d\mu(x) \\
+        &\geq -\log\!\left(\int_S p(x)\frac{q(x)}{p(x)}\,d\mu(x)\right) \\
+        &= -\log\!\left(\int_S q(x)\,d\mu(x)\right)
+        \geq -\log 1 = 0,
+    \end{align}
+    because $\int_S q\,d\mu\leq\int_{\mathcal{X}} q\,d\mu=1$.
+
+    Equality forces $\frac{q(x)}{p(x)}$ to be constant $\mu$-almost everywhere on $S$ and $\int_S q\,d\mu=1$. The latter implies $q=0$ off $S$, while the former gives $q=cp$ on $S$. Normalising $\int q\,d\mu=1$ then yields $c=1$, so $q=p$ $\mu$-almost everywhere. Conversely, $p=q$ clearly gives zero. The divergence is not symmetric: for the Bernoulli example above, $D_{\mathrm{KL}}(p\,\|\,q)\approx0.289$ while $D_{\mathrm{KL}}(q\,\|\,p)\approx0.198$.
+\end{proof}
+
+
+
+\begin{example}[Bernoulli mismatch]
+    For $p=\mathscr{B}\left(\dfrac{1}{2}\right)$ and $q=\mathscr{B}(0.1)$, 
+    \begin{align}
+        D_{\mathrm{KL}}(p\,\|\,q) &= \tfrac12\log\tfrac{0.5}{0.1}+\tfrac12\log\tfrac{0.5}{0.9} \\
+        &\approx 0.289\text{ nats},
+    \end{align}
+    quantifying the extra coding cost of using $q$.     Swapping the arguments gives $D_{\mathrm{KL}}(q\,\|\,p)\approx0.198\neq0.289$; the graph of $D_{\mathrm{KL}}$ as a function of $q$ is tilted and vanishes only at $q=p$.
+\end{example}
+
+
+
+\begin{example}[Gaussian mismatch]
+    For $p=\mathscr{N}(0,1)$ and $q=\mathscr{N}(1,1)$,
+    \begin{align}
+        D_{\mathrm{KL}}(p\,\|\,q) &= \frac12\left(\frac{(0-1)^2}{1}+\frac{1}{1}-1-\log\frac{1}{1}\right) \\
+        &= \frac12~\text{nats}.
+    \end{align}
+    The means differ by one standard deviation; the penalty is independent of the common scale.
+\end{example}
+
+The $\mathrm{KL}$-divergence has applications in the following:
+\begin{enumerate}
+    \item \emph{Model comparison}: KL-Divergence can be used to compare how well a model $Q$ approximates the true data distribution $P$. Smaller KL divergence indicates a better.approximation.
+    \item \emph{Information Theory}: KL-Divergence is a key concept in information theory, providing a measure of how much information is lost when approximating one distribution with another.
+    \item \emph{Probabilistic Modeling}: In machine learning, KL-Divergence is used in tasks like variational inference, where it quantifies the difference between the true posterior distribution and the approximating distribution.
+    \item \emph{Variational Autoencoders (VAEs)}: In VAEs, KL-Divergence is used to regularize the latent space. It encourages the learned latent distribution to be similar to a known prior distribution, typically a simple Gaussian distribution.
+    \item \emph{Natural Language Processing}: Supports language modeling, word embedding comparisons and topic modeling approaches such as Latent Dirichlet Allocation (LDA).
+    \item \emph{Computer Vision}: Used in VAEs, GANs and recognition systems to align generated data with real world distributions.
+    \item \emph{Anomaly Detection}: Identifies unusual or suspicious patterns by measuring distribution shifts, helpful in fraud detection and cybersecurity.
+    \item \emph{Probabilistic Models}: Aligns learned distributions with target distributions like in Variational Autoencoders (VAEs).
+    \item \emph{Reinforcement Learning}: Stabilizes policy updates in algorithms like PPO by limiting divergence from previous policies.
+    \item \emph{Language Models}: Guides token probability distributions during fine-tuning and model distillation.
+    \item \emph{Generative Models}: Measures how closely generated data matches real data distributions.
+\end{enumerate}
+
+\coderef{Code/information_theory.py}
+\coderef{Code/entropy.ipynb}
+\coderef{Code/cross_entropy.ipynb}
+\coderef{Code/kl_divergence.ipynb}
+\coderef{Code/bayes_rule.ipynb}
+
+
+
+\begin{proposition}
+    The $\mathrm{KL}$ divergence  is non-negative and zero iff $p=q$, but it is not symmetric. 
+\end{proposition}
+
+
+
+
+\begin{definition}
+    The \emph{cross-entropy} between two distributions $p$ and $q$ is
+    \begin{align}
+        H(p,q) &\defn -\sum_x p(x)\log q(x)\\
+        &=  H(p) + D_{\mathrm{KL}}(p\,\|\,q).
+    \end{align}
+\end{definition}
 Minimising cross-entropy over $q$ is equivalent to minimising
-$D_{\mathrm{KL}}(p\,\|\,q)$ because $H(p)$ does not depend on $q$. This is why
-cross-entropy is the standard classification loss.
+$D_{\mathrm{KL}}(p\,\|\,q)$ because $H(p)$ does not depend on $q$. This is why cross-entropy is the standard classification loss.
+
+\begin{example}[Binary labels]
+    For $p=(1,0)$, $H(p,q)=-\log q(1)$: the loss penalises confident wrong predictions heavily and is minimised at $q(1)=1$, matching the logistic loss.
+\end{example}
+
+\begin{example}[Binary entropy relation]
+    For $p=\mathrm{Bernoulli}(1/2)$ and $q=\mathrm{Bernoulli}(q_1)$, $H(p,q)=\log 2+D_{\mathrm{KL}}(p\,\|\,q)$; the curve is minimised at $q_1=1/2$, where cross-entropy equals the entropy of $p$.
+\end{example}
+
+\begin{example}[Classification]
+    For a $k$-class problem with one-hot target $y$, cross-entropy reduces to $-\log q_y$, the negative log-likelihood of the true class. Minimising it is equivalent to maximum likelihood for the softmax classifier.
+\end{example}
+
+
+
+\begin{definition}
+    The \emph{Jensen-Shannon divergence} between two distributions $p$ and $q$ is
+    \begin{align}
+        D_{\mathrm{JS}}(p\,\|\,q) = \frac{1}{2}D_{\mathrm{KL}}(p\,\|\,r) + \frac{1}{2}D_{\mathrm{KL}}(q\,\|\,r),
+    \end{align}
+    where $r = \frac{1}{2}(p + q)$.
+\end{definition}
+Some nice videos can be found \href{https://www.youtube.com/watch?v=KHVR587oW8I}{here}.
+
+\begin{example}[Identical distributions]
+    If $p=q=(0.5,0.5)$, then $r=p$ and both KL terms vanish, so $D_{\mathrm{JS}}(p\,\|\,q)=0$. In general $D_{\mathrm{JS}}=0$ only when $p=q$ almost everywhere.
+\end{example}
+
+\begin{example}[Disjoint support]
+    If $p=(1,0)$ and $q=(0,1)$, then $r=(0.5,0.5)$ and
+    \begin{align}
+        D_{\mathrm{JS}}(p\,\|\,q) = \tfrac12\log 2+\tfrac12\log 2 = \log 2\approx0.693~\text{nats}.
+    \end{align}
+    This is the maximum value for binary distributions, so JS divergence is bounded, unlike KL.
+\end{example}
+
+\begin{example}[Overlapping Bernoulli laws]
+    For $p=(0.9,0.1)$ and $q=(0.1,0.9)$, again $r=(0.5,0.5)$ and
+    \begin{align}
+        D_{\mathrm{KL}}(p\,\|\,r) = 0.9\log 1.8+0.1\log 0.2 \approx0.368,
+    \end{align}
+    with the same value for $D_{\mathrm{KL}}(q\,\|\,r)$ by symmetry. Hence $D_{\mathrm{JS}}(p\,\|\,q)\approx0.368$ nats, or about $0.531$ bits. Unlike KL, the JS divergence is symmetric and its square root is a metric.
+\end{example}
+
+\coderef{Code/js_divergence.ipynb}
+\coderef{Code/information_theory.py}
+
+
+
+
+
+
 
 \chapter{Introduction}
 \label{ch:intro}
@@ -1139,23 +2241,32 @@ The \emph{machine-learning approach} is therefore to program an algorithm that a
 
 \section{History}
 
-\begin{enumerate}
-    \item 1957 — Perceptron algorithm (implemented as a circuit!)
-    \item 1959 — Arthur Samuel wrote a learning-based checkers program that could defeat him.
-    \item 1969 — Minsky and Papert’s book Perceptrons (limitations of linear models)
-    \item 1980s — Some foundational ideas
-    \item Connectionist psychologists explored neural models of cognition
-    \item 1984 — Leslie Valiant formalized the problem of learning as PAC learning.
-    \item 1988 — Backpropagation (re-)discovered by Geoffrey Hinton and colleagues.
-    \item 1988 — Judea Pearl’s book Probabilistic Reasoning in Intelligent Systems introduced Bayesian networks.
-    \item 1990s — the “AI Winter”, a time of pessimism and low funding.
-    \item But looking back, the ’90s were also sort of a golden age for ML research: Markov chain Monte Carlo, variational inference, kernels and support vector machines, boosting, convolutional networks.
-    \item 2000s — applied AI fields (vision, NLP, etc.) adopted ML.
-    \item 2010s — deep learning.
-    \item 2010–2012 — neural nets smashed previous records in speech-to-text and object recognition
-    \item increasing adoption by the tech industry
-    \item 2016 — AlphaGo defeated the human Go champion
-\end{enumerate}
+
+\begin{table}[H]
+    \centering
+    \caption{A short timeline of machine learning.}
+    \label{tab:ml-history}
+    \begin{tabularx}{\textwidth}{@{}p{1.8cm}X@{}}
+        \toprule
+        Period & Milestone \\
+        \midrule
+        1957 & Perceptron algorithm (implemented as a circuit). \\
+        1959 & Arthur Samuel's learning-based checkers program could defeat its author. \\
+        1969 & Minsky and Papert's \emph{Perceptrons} exposed limitations of linear models. \\
+        1980s & Connectionist psychologists explored neural models of cognition. \\
+        1984 & Leslie Valiant formalised learning as PAC learning. \\
+        1988 & Backpropagation (re)discovered by Geoffrey Hinton and colleagues. \\
+        1988 & Judea Pearl's \emph{Probabilistic Reasoning in Intelligent Systems} introduced Bayesian networks. \\
+        1990s & The ``AI Winter'': pessimism and low funding. \\
+        1990s & A golden age for ML research: Markov chain Monte Carlo, variational inference, kernels and support vector machines, boosting, and convolutional networks. \\
+        2000s & Applied AI fields (vision, NLP, etc.) adopted ML. \\
+        2010s & Deep learning. \\
+        2010--2012 & Neural networks broke previous records in speech-to-text and object recognition, and industry adoption accelerated. \\
+        2016 & AlphaGo defeated the human Go champion. \\
+        2017--2026 & Transformers (2017) enabled large language models; AlphaFold~2 (2020) advanced protein structure prediction; diffusion models (2020--2024) transformed image generation; ChatGPT (2022) and multimodal reasoning models (2024--2026) brought generative AI into widespread use. \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
 
 
 
@@ -1164,22 +2275,38 @@ The \emph{machine-learning approach} is therefore to program an algorithm that a
 
 
 \section{ML workflow}
-ML workflow sketch:
+
+
+We formulate machine learning as combinations of three components:
 \begin{enumerate}
-    \item  Should I use ML on this problem?
-    \item \begin{enumerate}
-        \item Is there a pattern to detect?
-        \item Can I solve it analytically?
-        \item Do I have data?
-    \end{enumerate}
+    \item \emph{Data}: Collections of individual data points that are characterized by features.
+    \item \emph{Model}: a model or hypothesis space that consists of computationally feasible hypothesis.
+    \item \emph{Loss function}: a function that measures the quality of a hypothesis map.
+\end{enumerate}
+
+
+
+    % \item  Should I use ML on this problem?
+    % \item \begin{enumerate}
+    %     \item Is there a pattern to detect?
+    %     \item Can I solve it analytically?
+    %     \item Do I have data?
+    % \end{enumerate}
+
+Once we have decided a ML strategy for the problem at hand. Here is the sketch of the workflow:
+\begin{enumerate}
     \item Gather and organize data.
+    \item Load and inspect the data.
     \item Preprocessing, cleaning, visualizing.
     \item Establishing a baseline.
-    \item Choosing a model, loss, regularization, ...
-    \item Optimization (could be simple, could be a Phd...).
+    \item Standardize the features.
+    \item Choosing a model, loss, regularization.
+    \item Optimization (could be simple, could be a Phd.).
     \item Hyperparameter search.
-    \item Analyze performance and mistakes, and iterate back to step 5
+    \item Analyze performance and mistakes, and iterate back.
 \end{enumerate}
+
+
 
 \section{Supervised versus unsupervised}
 
@@ -1247,24 +2374,33 @@ Averaged over all possible target functions, every learning algorithm has the sa
 expected off-training-set performance.
 \end{theorem}
 
-The theorem does not say that all algorithms are equally good in practice. Real
-problems are not uniformly distributed, and a good inductive bias matches the
-structure of the problem. Model choice is therefore the art of choosing assumptions
-that are appropriate for the data at hand.
+The theorem does not say that all algorithms are equally good in practice. Real problems are not uniformly distributed, and a good inductive bias matches the structure of the problem. Model choice is therefore the art of choosing assumptions that are appropriate for the data at hand.
+
+
+
+
+
+
+
+
+
 
 \chapter{Supervised Learning: Foundations}
 \label{ch:supervised}
 
 \section{The supervised-learning problem}
 
-Let $\EuScript{X}$ be the input space (predictors, independent variables, features) and $\EuScript{Y}$ the output space (response, dependent variable). We observe
-labelled pairs
+Let $\EuScript{X} \subseteq \mathbb{R}^{d}$ be the input space (predictors, independent variables, features) and $\EuScript{Y} \subseteq \mathbb{R}$\footnote{In general, the output space can be in $\mathbb{R}^k$ for some $k \geq 1$.} the output space (response, dependent variable). We observe
+the \emph{data set} of labelled pairs
 \begin{align}
-    (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n),
+    D = \bigg\{ (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n) \bigg\},
 \end{align}
-drawn from an unknown joint distribution $\mathcal{D}$ over $\EuScript{X} \times \EuScript{Y}$. The goal is to learn a function
+drawn from an unknown joint distribution $\mathscr{D}$ over $\EuScript{X} \times \EuScript{Y}$. The goal is to learn a function
 $f : \EuScript{X} \to \EuScript{Y}$ that predicts $y$ from $\mathbf{x}$ and
-generalises to new observations. The classical statistical model is
+generalises to new observations. 
+
+
+The classical statistical model is
 \begin{align}
     y = f(\mathbf{x}) + \varepsilon,
 \end{align}
@@ -1273,12 +2409,7 @@ $\E[\varepsilon]=0$. Even with a perfect estimate of $f$, the noise limits how
 accurate any prediction can be.
 
 In supervised learning, the input is represented by a vector
-$\mathbf{x} \in \R^d$. Each coordinate $x_i$ is a \emph{feature}, a numerical value
-describing a characteristic of the input. Images, text, audio, and waveforms can all
-be represented this way (images as pixel vectors, text as token counts or embeddings,
-audio as frames). Vector representations are convenient because we can apply linear
-algebra. The output is represented by a number $t \in \R$ in regression, or by an
-element of a discrete set in classification.
+$\mathbf{x} \in \R^d$. Each coordinate $x_i$ is a \emph{feature}\index{feature}, a numerical value describing a characteristic of the input. Images, text, audio, and waveforms can all be represented this way (images as pixel vectors, text as token counts or embeddings, audio as frames). Vector representations are convenient because we can apply linear algebra. The output is represented by a number $t \in \R$ in regression, or by an element of a discrete set in classification.
 
 \innote{Prediction versus inference}{%
 Predicting the response $y$ given inputs $\mathbf{x}$ is \emph{prediction}.
@@ -1319,20 +2450,44 @@ Given an image of a digit, predict which digit it is.
 
 \section{Loss functions, risk, and empirical risk}
 
-To say what a \emph{good} prediction is, we need a loss $\ell(y,\hat{y})$. Common
-choices are squared error for regression, $\ell(y,\hat{y})=(y-\hat{y})^2$, and the
-zero-one loss for classification, $\ell(y,\hat{y})=\mathbf{1}\{y \neq \hat{y}\}$.
-The \emph{risk} is the expected loss under the data distribution:
+To say what a \emph{good} prediction is, we need a loss function $\ell(y,\hat{y})$. Common choices are squared error for regression, 
 \begin{align}
-    \risk(f) = \E_{(\mathbf{x},y)\sim\mathcal{D}}[\ell(y,f(\mathbf{x}))].
+    \ell(y,\hat{y})=(y-\hat{y})^2,
 \end{align}
-Because $\mathcal{D}$ is unknown, we minimise the \emph{empirical risk}
+and the zero-one loss for classification, 
 \begin{align}
-    \hat{\risk}_n(f) = \frac{1}{n}\sum_{i=1}^n \ell(y_i, f(\mathbf{x}^{(i)})).
+    \ell(y,\hat{y})=\mathbf{1}_{\{y \neq \hat{y}\}}.
 \end{align}
-This is the \emph{empirical risk minimisation} (ERM) principle. Much of learning
-theory (Chapter~\ref{ch:slt}) studies when small empirical risk implies small true
-risk.
+\begin{definition}
+The \emph{risk} of a predictor $f$ is the expected loss under the data distribution:
+\begin{align}
+    \risk(f) \defn \underset{(\mathbf{x},y)\sim\mathscr{D}}{\mathrm{E}}[\ell(y,f(\mathbf{x}))].
+\end{align}
+The \emph{empirical risk} is defined as 
+\begin{align}
+    \hat{\risk}_n(f) \defn \frac{1}{n}\sum_{i=1}^n \ell(y_i, f(\mathbf{x}^{(i)})).
+\end{align}
+\end{definition}
+\begin{example}[Squared error]
+    For squared-error loss and a linear predictor $f(\mathbf{x})=\mathbf{x}^\top\boldsymbol{\beta}$, the risk $\risk(f)=\mathrm{E}[(y-f(\mathbf{x}))^2]$ is the mean squared error; its empirical counterpart is $\hat\risk_n(f)=\frac1n\sum_i(y_i-f(\mathbf{x}^{(i)}))^2$.
+\end{example}
+
+\begin{example}[Zero-one loss]
+    For zero-one loss, $\risk(f)=\Pr(y\neq f(\mathbf{x}))$ is the misclassification probability, while $\hat\risk_n(f)$ is the fraction of errors on the training set.
+\end{example}
+
+\begin{example}[Irreducible noise]
+    If $y=f^*(\mathbf{x})+\varepsilon$ with $\mathrm{E}[\varepsilon]=0$ and $\mathrm{Var}(\varepsilon)=\sigma^2$, then even the true predictor has risk $\risk(f^*)=\sigma^2$: the irreducible noise floor.
+\end{example}
+
+
+\begin{principle}
+The \emph{empirical risk minimisation} (ERM) principle states that we should choose the predictor that minimises the empirical risk.
+\end{principle}
+Much of learning theory (Chapter~\ref{ch:slt}) studies when small empirical risk implies small true risk.
+
+
+
 
 \section{\texorpdfstring{$k$}{k}-nearest neighbours}
 
@@ -1349,14 +2504,153 @@ The $k$-nearest-neighbour ($k$-NN) classifier is one of the simplest learners. I
 
 
 \begin{problem}
-   Let $X$ be the data space, where we can think of $X$ as a set of points in Euclidean space\footnote{or with any other metric space}, along with a labelling function $f: X \longrightarrow I$, where $I$ is the set of labels. We are given some training data $\hat{f} \subseteq f$, where each point $(\mathbf{x}, t) \in f$ informs us that the point $\mathbf{x}$ has label $t$. Given a point $\mathbf{x} \in X$, we want to (predict its label i.e.) find the closest point $\hat{\mathbf{x}} \in \hat{X}$ such that the distance $d(\mathbf{x}, \hat{\mathbf{x}})$ is minimised. That is, find 
+   Let $X$ be the data space, where we can think of $X$ as a set of points in Euclidean space\footnote{or with any other metric space}, along with a labelling function $f: X \longrightarrow Y$, where $Y$ is the set of labels. We are given some training data $\hat{f} \subseteq f$, where each point $(\hat{\mathbf{x}}, \hat{y}) \in \hat{f}$ informs us that the point $\hat{\mathbf{x}}$ has label $\hat{y}$. Given a point $\mathbf{x} \in X$, we want to (predict its label i.e.) find the closest point $\hat{\mathbf{x}} \in \hat{X}$ such that the distance $d(\mathbf{x}, \hat{\mathbf{x}})$ is minimised. That is, find 
    \begin{align}
         \hat{\mathbf{x}} = \arg\min_{\hat{\mathbf{x}} \in \hat{X}} d(\mathbf{x}, \hat{\mathbf{x}})
    \end{align}
-   and output $\hat{t} = f(\hat{\mathbf{x}})$.
+   and output $\hat{y} = f(\hat{\mathbf{x}})$.
 \end{problem}
 
-The problem can be visualized using a \emph{Voronoi diagram}: a partition of the input space into regions, one around each training point, such that every location in a given region is closer to its associated training point than to any other. The \emph{decision boundary} is the boundary between regions of input space assigned to different categories. 
+The problem can be visualized using a \emph{Voronoi diagram}: a partition of the input space into regions, one around each training point, such that every location in a given region is closer to its associated training point than to any other.
+
+\begin{example}[Voronoi diagram for six training points]
+    Figure~\ref{fig:voronoi} shows six labelled training points and the Voronoi
+    partition they induce. The cells of the three blue points (class $0$) and the
+    three red points (class $1$) tile the plane. Inside a cell, the corresponding
+    training point is the nearest neighbour, so the $1$-NN classifier predicts the
+    label of that point everywhere in the cell.
+\end{example}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=0.95]
+        % Background grid and axes.
+        \draw[black!12, thin, step=1] (-0.8,-0.8) grid (6.8,5.8);
+        \draw[->, thick] (-0.9,0) -- (7.0,0) node[right] {$x_1$};
+        \draw[->, thick] (0,-0.9) -- (0,6.0) node[above] {$x_2$};
+
+        % Voronoi edges, clipped to the plotting rectangle.
+        \draw[black, thick] (1.1,3.1) -- (2.5,2.1667);
+        \draw[black, thick] (1.1,3.1) -- (3.8,5.8);
+        \draw[black, thick] (1.1,3.1) -- (-0.8,3.575);
+        \draw[black, thick] (2.5,2.1667) -- (2.5,-0.8);
+        \draw[black, thick] (2.5,2.1667) -- (3.5,2.5);
+        \draw[black, thick] (3.5,2.5) -- (4.5,3.5);
+        \draw[black, thick] (4.5,3.5) -- (4.5,5.8);
+        \draw[black, thick] (4.5,3.5) -- (6.8,2.35);
+        \draw[black, thick] (3.5,2.5) -- (6.8,-0.8);
+
+        % Training points of class 0.
+        \filldraw[blue!70!black, fill=blue!25] (1,1) circle (2.5pt);
+        \filldraw[blue!70!black, fill=blue!25] (3,4) circle (2.5pt);
+        \filldraw[blue!70!black, fill=blue!25] (5,2) circle (2.5pt);
+
+        % Training points of class 1.
+        \filldraw[red!70!black, fill=red!25] (1.94,4.94) rectangle (2.06,5.06);
+        \filldraw[red!70!black, fill=red!25] (3.94,0.94) rectangle (4.06,1.06);
+        \filldraw[red!70!black, fill=red!25] (5.94,3.94) rectangle (6.06,4.06);
+
+        \node[font=\footnotesize, blue!70!black] at (2.4,0.8) {class $0$};
+        \node[font=\footnotesize, red!70!black] at (3.2,5.2) {class $1$};
+    \end{tikzpicture}
+    \caption{Voronoi diagram for six training points. Each cell contains the points
+    that are closer to its associated training point than to any other training
+    point.}
+    \label{fig:voronoi}
+\end{figure}
+
+\begin{example}[Classifying a new point by $k$-NN]
+    Take the six training points of Figure~\ref{fig:voronoi} and query
+    $\mathbf{x}=(3.2,2.5)$. Its distances to the training points, in increasing
+    order, are:
+    \begin{center}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        Training point & Label & Distance & Rank \\
+        \midrule
+        $(3,4)$ & $0$ & $1.513$ & $1$ \\
+        $(4,1)$ & $1$ & $1.700$ & $2$ \\
+        $(5,2)$ & $0$ & $1.868$ & $3$ \\
+        $(1,1)$ & $0$ & $2.663$ & $4$ \\
+        $(2,5)$ & $1$ & $2.773$ & $5$ \\
+        $(6,4)$ & $1$ & $3.176$ & $6$ \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    For $k=1$ the prediction is the label of $(3,4)$, namely $0$. For $k=3$ the
+    labels of the three nearest points are $0,1,0$, whose majority is again $0$.
+    The query point lies in the Voronoi cell of $(3,4)$.
+\end{example}
+
+
+The \emph{decision boundary} is the boundary between regions of input space assigned to different categories. 
+
+\begin{example}[Decision boundary of a $1$-NN classifier]
+    In the six-point example, the decision boundary of the $1$-NN rule is the
+    union of those Voronoi edges that separate training points of different
+    labels. These edges are drawn as thick lines in
+    Figure~\ref{fig:knn-boundary}. Crossing one of them changes the nearest
+    training point from a class-$0$ point to a class-$1$ point (or vice versa),
+    so the predicted label changes.
+\end{example}
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=0.95]
+        % Shade the decision regions according to the label of the nearest point.
+        \fill[blue!10] (-0.8,-0.8) -- (2.5,-0.8) -- (2.5,2.1667) --
+            (1.1,3.1) -- (-0.8,3.575) -- cycle;
+        \fill[blue!10] (1.1,3.1) -- (2.5,2.1667) -- (3.5,2.5) --
+            (4.5,3.5) -- (4.5,5.8) -- (3.8,5.8) -- cycle;
+        \fill[blue!10] (3.5,2.5) -- (4.5,3.5) -- (6.8,2.35) --
+            (6.8,-0.8) -- cycle;
+        \fill[red!10] (-0.8,3.575) -- (1.1,3.1) -- (3.8,5.8) --
+            (-0.8,5.8) -- cycle;
+        \fill[red!10] (2.5,-0.8) -- (2.5,2.1667) -- (3.5,2.5) --
+            (6.8,-0.8) -- cycle;
+        \fill[red!10] (4.5,3.5) -- (4.5,5.8) -- (6.8,5.8) --
+            (6.8,2.35) -- cycle;
+
+        % Voronoi edges inside a class are drawn faintly.
+        \draw[black!30, thin] (1.1,3.1) -- (2.5,2.1667);
+        \draw[black!30, thin] (3.5,2.5) -- (4.5,3.5);
+
+        % Edges that separate the two classes.
+        \draw[red!70!black, very thick] (-0.8,3.575) -- (1.1,3.1) -- (3.8,5.8);
+        \draw[red!70!black, very thick] (2.5,-0.8) -- (2.5,2.1667) -- (3.5,2.5);
+        \draw[red!70!black, very thick] (3.5,2.5) -- (6.8,-0.8);
+        \draw[red!70!black, very thick] (4.5,3.5) -- (4.5,5.8);
+        \draw[red!70!black, very thick] (4.5,3.5) -- (6.8,2.35);
+
+        % Training points.
+        \filldraw[blue!70!black, fill=blue!25] (1,1) circle (2.5pt);
+        \filldraw[blue!70!black, fill=blue!25] (3,4) circle (2.5pt);
+        \filldraw[blue!70!black, fill=blue!25] (5,2) circle (2.5pt);
+        \filldraw[red!70!black, fill=red!25] (1.94,4.94) rectangle (2.06,5.06);
+        \filldraw[red!70!black, fill=red!25] (3.94,0.94) rectangle (4.06,1.06);
+        \filldraw[red!70!black, fill=red!25] (5.94,3.94) rectangle (6.06,4.06);
+
+        \draw[->, thick] (-0.9,0) -- (7.0,0) node[right] {$x_1$};
+        \draw[->, thick] (0,-0.9) -- (0,6.0) node[above] {$x_2$};
+        \node[font=\footnotesize, blue!70!black] at (0.5,0.3) {class $0$};
+        \node[font=\footnotesize, red!70!black] at (5.9,5.3) {class $1$};
+    \end{tikzpicture}
+    \caption{Decision boundary of the $1$-NN classifier for the data of
+    Figure~\ref{fig:voronoi}. The thick segments separate the class-$0$ and
+    class-$1$ decision regions; the faint segments are Voronoi edges between
+    points of the same class.}
+    \label{fig:knn-boundary}
+\end{figure}
+
+\begin{example}[A linear decision boundary]
+    A logistic-regression classifier with $\mathbf{w}=(1,1)^\top$ and $b=-6$
+    predicts class $1$ when $x_1+x_2>6$ and class $0$ otherwise. Its decision
+    boundary is the straight line $x_1+x_2=6$. For instance, the score at
+    $(2,2)$ is $2+2-6=-2$, so the predicted label is $0$, while the score at
+    $(3,4)$ is $3+4-6=1$, so the predicted label is $1$. Unlike the piecewise
+    linear $1$-NN boundary in Figure~\ref{fig:knn-boundary}, this boundary is a
+    single line.
+\end{example}
 
 
 
@@ -1377,29 +2671,15 @@ The problem can be visualized using a \emph{Voronoi diagram}: a partition of the
 \end{example}
 
 \begin{example}[Image Classification Datasets: MNIST]
-    MNIST is a classic handwritten-digit dataset: 10 classes (digits 0 to 9), each
-    image is $28\times28$ grayscale, and the standard split is 50k training images
-    and 10k test images. Despite its small size by modern standards, MNIST remains
-    a common first benchmark because it is easy to load, quick to train on, and
-    illustrates the whole image-classification pipeline.
+    MNIST is a classic handwritten-digit dataset: 10 classes (digits 0 to 9), each image is $28\times28$ grayscale, and the standard split is 50k training images and 10k test images. Despite its small size by modern standards, MNIST remains a common first benchmark because it is easy to load, quick to train on, and illustrates the whole image-classification pipeline.
 \end{example}
 
 \begin{example}[Image Classification Datasets: ImageNet]
-    ImageNet is a large-scale image-classification benchmark with 1000 classes. The
-    standard version (ILSVRC) contains roughly 1.3M training images (about 1.3K per
-    class), 50K validation images (50 per class), and 100K test images (100 per
-    class). Its size and diversity made it the key driver of the deep-learning
-    revolution in computer vision beginning around 2012.
+    ImageNet is a large-scale image-classification benchmark with 1000 classes. The standard version (ILSVRC) contains roughly 1.3M training images (about 1.3K per class), 50K validation images (50 per class), and 100K test images (100 per class). Its size and diversity made it the key driver of the deep-learning revolution in computer vision beginning around 2012.
 \end{example}
 
-\begin{example}[iris]
-    The iris dataset is one of the most famous small datasets in statistics and
-    machine learning. It contains 150 measurements of iris flowers: 50 from each of
-    three species (setosa, versicolor, virginica). For each flower it records four
-    features---sepal length, sepal width, petal length, and petal width---in
-    centimetres. It is often used to teach classification, clustering, and data
-    visualisation because it is small, easy to understand, and exhibits clear
-    structure.
+\begin{example}[IRIS]
+    The IRIS dataset is one of the most famous small datasets in statistics and machine learning. It contains 150 measurements of iris flowers: 50 from each of three species (setosa, versicolor, virginica). For each flower it records four features---sepal length, sepal width, petal length, and petal width---in centimetres. It is often used to teach classification, clustering, and data visualisation because it is small, easy to understand, and exhibits clear structure.
 \end{example}
 
 
@@ -1425,35 +2705,285 @@ nested procedures for using data efficiently.
 
 \section{Model flexibility, underfitting, and overfitting}
 
-As model flexibility increases, training error generally decreases: a flexible model
-can fit more of the variance in the training set. Some of that variance may be noise.
-Therefore test error may decrease at first and then increase. If the test error is
-much larger than the training error, the model is \emph{overfitting}. If both errors
-are large, the model is \emph{underfitting} and needs more capacity or better
-features.
 
-% \begin{figure}[htbp]
-% \centering
-% \begin{tikzpicture}
-% \begin{axis}[
-%     width=0.78\textwidth, height=6.2cm,
-%     xlabel={Model flexibility}, ylabel={Error},
-%     xtick=\empty, ytick=\empty, axis lines=left,
-%     legend pos=north east, legend cell align=left,
-%     domain=0.05:1.0, samples=120, ymajorgrids=false
-% ]
-% \addplot[thick, blue] {0.62*exp(-3.2*x)+0.02};
-% \addlegendentry{Training error}
-% \addplot[thick, red] {0.07+0.55*(x-0.58)^2};
-% \addlegendentry{Test error}
-% \addplot[thick, green!55!black, dashed] {0.07+0.55*(x-0.58)^2-0.5*exp(-3.2*x)};
-% \addlegendentry{Bayes error + approximation}
-% \end{axis}
-% \end{tikzpicture}
-% \caption{The classic U-shaped test-error curve. Increasing flexibility reduces bias
-% but increases variance; the best model balances the two.}
-% \label{fig:bias-variance}
-% \end{figure}
+\emph{Model flexibility} (also called model \emph{capacity}) is a measure of how rich
+a family of functions the model can represent. A flexible model can approximate
+complicated, highly nonlinear relationships; an inflexible one is restricted to a
+smaller hypothesis class, such as linear functions. Flexibility is controlled by
+architectural choices---for example the degree of a polynomial, the number of
+neighbours in $k$-NN, or the depth and width of a neural network---and by
+regularisation.
+
+As model flexibility increases, training error generally decreases: a flexible model can fit more of the variance in the training set. Some of that variance may be noise. Therefore test error may decrease at first and then increase. 
+
+There is always a healthy balance to seek when you train any model
+between high bias/low variance (or underfit) and high variance/low
+bias (or overfit).
+
+
+If the test error is much larger than the training error, the model is \emph{overfitting}. If both errors are large, the model is \emph{underfitting} and needs more capacity or better features.
+
+
+\section{Error metrics}
+We have the following metrics to evaluate the performance of a model:
+\begin{enumerate}
+\item \emph{Mean squared error}\index{mean squared error}, often used as the driving cost
+function of the model in regression problems
+\item \emph{Mean absolute error}\index{mean absolute error}, sometimes used as an additional
+performance metric
+\item \emph{Classification error}\index{classification error}, used as a driving cost function both
+in logistic regression and neural networks
+\item \emph{Accuracy}\index{accuracy}, defined as number of correct classifications
+divided by the total number of samples, and probably
+one of the most popular performance metrics
+\end{enumerate}
+
+
+For simplicity, let us consider a binary classification problem:
+\begin{problem}
+    We have data $D = \{(x, y)\}$ where $y \in \{0, 1\}$. Our model makes a prediction for each data point. Either $f(x) = 0$ or $f(x) = 1$.
+\end{problem}
+We can define the following metrics:
+\begin{enumerate}
+    \item \emph{True positive}\index{True positive}: Data points labelled as positive and predicted as positive. That is, $y=1$, and $f_{\Theta}(\hat{x}) = 1$. The model correctly predicts a positive case.
+    \item \emph{True negative}\index{True negative}: Data points labelled as negative and predicted as negative. That is, $y = 0$, and $f_{\Theta}(\hat{x}) = 0$. The model correctly predicts a negative case.
+    \item \emph{False positive}\index{False positive}: Data points labelled as negative but predicted as positive. That is, $y = 0$, and $f_{\Theta}(\hat{x}) = 1$. The model incorrectly predicts a positive case when it is actually negative.
+    \item \emph{False negative}\index{False negative}: Data points labelled as positive but predicted as negative. That is, $y = 1$, and $f_{\Theta}(\hat{x}) = 0$. The model incorrectly predicts a negative case when it is actually positive.
+\end{enumerate}
+
+\begin{definition}
+    A \emph{confusion matrix} is a $2 \times 2$ table that summarizes the accuracy of a classification model or diagnostic test by comparing predicted outcomes to actual outcomes. 
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[>=stealth]
+    \def\w{3.5}
+    \def\h{2.2}
+    % Column headings
+    \node at (3.5, 5.6) {\Huge{Predicted}};
+    \node at (1.75, 4.7) {\Large Positive};
+    \node at (5.25, 4.7) {\Large Negative};
+
+    % Row headings
+    \node[rotate=90] at (-2.0, 2.2) {\Huge{Actual}};
+    \node[rotate=90] at (-0.7, 3.3) {\Large Positive};
+    \node[rotate=90] at (-0.7, 1.1) {\Large Negative};
+
+    % Matrix
+    \draw[line width=1.5pt] (0,0) rectangle (7,4.4);
+    \draw[line width=1.5pt] (3.5,0) -- (3.5,4.4);
+    \draw[line width=1.5pt] (0,2.2) -- (7,2.2);
+
+    % Entries
+    \node at (1.75,3.3) {True Positive};
+    \node at (5.25,3.3) {False Negative};
+    \node at (1.75,1.1) {False Positive};
+    \node at (5.25,1.1) {True Negative};
+\end{tikzpicture}
+\end{center}
+    \caption{Confusion matrix}
+\end{figure}
+\end{definition}
+It shows where the model or test made correct predictions and where it was wrong. This summary helps you understand whether it confuses positive and negatives, helping you improve its accuracy. Also check \url{https://en.wikipedia.org/wiki/Confusion_matrix}. There are few metrics based on confusion matrix.
+
+\begin{definition}
+    The \emph{accuracy}\index{accuracy} is defined as 
+    \begin{align}
+        \text{accuracy} &\defn \frac{\mathrm{TP} + \mathrm{TN}}{\mathrm{TP} + \mathrm{TN} + \mathrm{FP} + \mathrm{FN}}
+    \end{align}
+\end{definition}
+Accuracy shows how many predictions the model got right out of all the predictions. It gives idea of overall performance but it can be misleading when one class is more dominant over the other. For example a model that predicts the majority class correctly most of the time might have high accuracy but still fail to capture important details about other classes. 
+\begin{example}[Accuracy of a spam filter]
+    A spam filter is evaluated on $1{,}000$ emails and produces
+    $\mathrm{TP}=80$, $\mathrm{FP}=15$, $\mathrm{FN}=5$, and $\mathrm{TN}=900$.
+    Its accuracy is
+    \begin{align}
+        \frac{80+900}{80+15+5+900} = \frac{980}{1000} = 0.98.
+    \end{align}
+    That is, $98\%$ of all predictions are correct.
+\end{example}
+
+\begin{example}[Accuracy with imbalanced classes]
+    On a fraud dataset with $990$ legitimate transactions and $10$ fraudulent
+    ones, the classifier that always predicts ``legitimate'' has
+    $\mathrm{TN}=990$, $\mathrm{TP}=0$, and accuracy $990/1000=0.99$. It is
+    nevertheless useless for fraud detection because it never identifies a
+    fraudulent transaction. This is why accuracy should be reported together
+    with precision and recall on imbalanced data.
+\end{example}
+
+
+\begin{definition}
+    The \emph{precision}\index{precision} is defined as
+    \begin{align}
+        \mathrm{precision} &\defn \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FP}}
+    \end{align}
+\end{definition}
+Precision focus on the quality of the model’s positive predictions. It tells us how many of the ``positive'' predictions were actually correct. It is important in situations where false positives need to be minimized such as detecting spam emails or fraud.
+\begin{example}[Precision of a spam filter]
+    Suppose a spam filter has $\mathrm{TP}=90$, $\mathrm{FP}=10$,
+    $\mathrm{FN}=30$, and $\mathrm{TN}=870$. Then
+    \begin{align}
+        \mathrm{precision} = \frac{90}{90+10} = 0.90.
+    \end{align}
+    Of the $100$ emails that the filter flags as spam, $90$ really are spam.
+\end{example}
+
+\begin{example}[Precision and low disease prevalence]
+    A screening test is applied to $10{,}000$ people. It gives
+    $\mathrm{TP}=18$, $\mathrm{FP}=182$, $\mathrm{FN}=2$, and
+    $\mathrm{TN}=9798$, so
+    \begin{align}
+        \mathrm{precision} = \frac{18}{18+182} = 0.09.
+    \end{align}
+    Although the test finds $18$ of the $20$ diseased people, only $9\%$ of the
+    positive test results are true positives. When the disease is rare, even a
+    modest false-positive rate can dominate the positive predictions.
+\end{example}
+
+
+
+\begin{definition}
+    The \emph{recall}\index{recall} is defined as
+    \begin{align}
+        \mathrm{recall} &\defn \frac{\mathrm{TP}}{\mathrm{TP}+\mathrm{FN}}
+    \end{align}
+\end{definition}
+\begin{example}[Recall of a disease test]
+    With $\mathrm{TP}=60$, $\mathrm{FN}=40$, $\mathrm{FP}=20$, and
+    $\mathrm{TN}=880$,
+    \begin{align}
+        \mathrm{recall} = \frac{60}{60+40} = 0.60.
+    \end{align}
+    The test finds $60\%$ of all people who actually have the disease.
+\end{example}
+
+\begin{example}[Recall of a fire alarm]
+    A fire-alarm system that misses one fire in five has recall $0.8$. A second
+    system that misses one fire in twenty has recall $0.95$. When false negatives
+    are dangerous, recall is the key metric even if the more sensitive system
+    produces more false alarms.
+\end{example}
+
+
+\begin{definition}
+    The \emph{$\mathrm{F1}$-score}\index{F1-score} is defined as
+    \begin{align}
+        \mathrm{F1} &\defn 2 \cdot \frac{\mathrm{precision} \cdot \mathrm{recall}}{\mathrm{precision} + \mathrm{recall}}
+    \end{align}
+    It is defined as the harmonic mean of precision and recall.
+\end{definition}
+F1-score combines precision and recall into a single metric to balance their trade-off. It provides a better sense of a model’s overall performance particularly for imbalanced datasets. It is helpful when both false positives and false negatives are important though it assumes precision and recall are equally important but in some situations one might matter more than the other.
+\begin{example}[Computing the F1-score]
+    For a classifier with $\mathrm{TP}=40$, $\mathrm{FP}=10$, $\mathrm{FN}=20$,
+    and $\mathrm{TN}=930$,
+    \begin{align}
+        \mathrm{precision} = \frac{40}{50} = 0.80,
+        \qquad
+        \mathrm{recall} = \frac{40}{60} = 0.667,
+    \end{align}
+    and therefore
+    \begin{align}
+        \mathrm{F1}
+        = 2\cdot\frac{0.80\cdot0.667}{0.80+0.667}
+        \approx 0.727.
+    \end{align}
+\end{example}
+
+\begin{example}[F1-score versus a single metric]
+    Model~A has precision $0.9$ and recall $0.2$, so its F1-score is
+    $2(0.9)(0.2)/(0.9+0.2)\approx0.327$. Model~B has precision $0.6$ and recall
+    $0.6$, so its F1-score is $0.6$. The F1-score prefers Model~B because it
+    rewards balanced performance, whereas Model~A is excellent at avoiding false
+    positives but misses most positive cases.
+\end{example}
+
+\begin{definition}
+    The \emph{specificity}\index{specificity} is defined as
+    \begin{align}
+        \mathrm{specificity} &\defn \frac{\mathrm{TN}}{\mathrm{TN}+\mathrm{FP}}
+    \end{align}
+\end{definition}
+Specificity is another important metric in the evaluation of classification models particularly in binary classification. It measures the ability of a model to correctly identify negative instances. Specificity is also known as the True Negative Rate Formula.
+\begin{example}[Specificity of a screening test]
+    A test with $\mathrm{TN}=935$, $\mathrm{FP}=5$, $\mathrm{TP}=50$, and
+    $\mathrm{FN}=10$ has
+    \begin{align}
+        \mathrm{specificity} = \frac{935}{935+5} = 0.9947.
+    \end{align}
+    It correctly clears $99.47\%$ of the healthy people.
+\end{example}
+
+\begin{example}[Specificity and confirmatory tests]
+    A confirmatory test that rarely raises false alarms can have very high
+    specificity; for example, $\mathrm{TN}=9990$ and $\mathrm{FP}=10$ give
+    specificity $0.999$. Specificity is especially important when a false
+    positive triggers costly or invasive follow-up tests.
+\end{example}
+
+
+\begin{definition}
+    The \emph{Matthews correlation coefficient}\index{Matthews correlation coefficient} is defined as
+    \begin{align}
+        \mathrm{MCC} &\defn \frac{\mathrm{TP} \cdot \mathrm{TN} - \mathrm{FP} \cdot \mathrm{FN}}{\sqrt{(\mathrm{TP} + \mathrm{FP})(\mathrm{TP} + \mathrm{FN})(\mathrm{TN} + \mathrm{FP})(\mathrm{TN} + \mathrm{FN})}}
+    \end{align}
+\end{definition}
+The Matthews correlation coefficient is a measure of the quality of binary classifications. It takes into account true and false positives and negatives and is generally regarded as a balanced measure which can be used even if the classes are of very different sizes.
+\begin{example}[Computing the MCC]
+    Using $\mathrm{TP}=40$, $\mathrm{FP}=10$, $\mathrm{FN}=20$, and
+    $\mathrm{TN}=930$,
+    \begin{align}
+        \mathrm{MCC}
+        &= \frac{40\cdot930 - 10\cdot20}
+                {\sqrt{(50)(60)(940)(980)}} \\
+        &= \frac{37000}{52570} \approx 0.704.
+    \end{align}
+    The value is well above zero, indicating a genuine association between the
+    predictions and the labels.
+\end{example}
+
+\begin{example}[MCC for random guessing]
+    On a balanced test set with $\mathrm{TP}=25$, $\mathrm{FP}=25$,
+    $\mathrm{FN}=25$, and $\mathrm{TN}=25$,
+    \begin{align}
+        \mathrm{MCC}
+        = \frac{25\cdot25 - 25\cdot25}
+               {\sqrt{(50)(50)(50)(50)}} = 0.
+    \end{align}
+    Random guessing therefore receives an MCC of zero, while a lopsided
+    classifier can still appear to have high accuracy.
+\end{example}
+
+\begin{definition}
+    The \emph{Type-1 error probability} $\epsilon_1$ is defined as
+    \begin{align}
+        \epsilon_1 &\defn \frac{\mathrm{FP}}{\mathrm{FP} + \mathrm{TN}}
+    \end{align}
+    and the \emph{Type-2 error probability} $\epsilon_2$ is defined as
+    \begin{align}
+        \epsilon_2 &\defn \frac{\mathrm{FN}}{\mathrm{FN} + \mathrm{TP}}
+    \end{align}
+\end{definition}
+Type 1 error occurs when the model incorrectly predicts a positive instance but the actual instance is negative. This is also known as a false positive. Type 1 Errors affect the precision of a model which measures the accuracy of positive predictions. Type 2 error occurs when the model fails to predict a positive instance even though it is actually positive. This is also known as a false negative. Type 2 Errors impact the recall of a model which measures how well the model identifies all actual positive cases.
+\begin{example}[Type-1 and Type-2 error probabilities]
+    With $\mathrm{TP}=45$, $\mathrm{FP}=5$, $\mathrm{FN}=15$, and
+    $\mathrm{TN}=935$,
+    \begin{align}
+        \epsilon_1 &= \frac{5}{5+935} = \frac{5}{940} \approx 0.0053, \\
+        \epsilon_2 &= \frac{15}{15+45} = \frac{15}{60} = 0.25.
+    \end{align}
+    The test has a low false-positive rate but misses $25\%$ of the true
+    positive cases.
+\end{example}
+
+\begin{example}[Errors in a criminal trial]
+    In a criminal trial, a Type-1 error is convicting an innocent defendant and
+    a Type-2 error is acquitting a guilty one. Lowering the standard of evidence
+    reduces Type-2 errors but increases Type-1 errors, and raising it has the
+    opposite effect. This is the same trade-off as moving a classifier's decision
+    threshold.
+\end{example}
+
+
 
 \section{Bias--variance decomposition}
 
@@ -1684,7 +3214,10 @@ can overfit when $p$ is large relative to $n$.
 \section{Classification setup}
 
 In binary classification the target is $y \in \{0,1\}$. A linear model
-$\hat{y} = \mathbf{w}^\top\mathbf{x} + b$ can take any real value, so it is not a
+\begin{align}
+    \hat{y} = \mathbf{w}^\top\mathbf{x} + b
+\end{align}
+can take any real value, so it is not a
 probability. Applying a threshold gives a classifier, but the resulting decision
 boundary is still linear and the model is sensitive to the scale of the scores. We
 want a model that outputs a probability in $(0,1)$ and a loss that is appropriate for
@@ -1692,12 +3225,15 @@ labels.
 
 \section{The logistic model}
 
-The logistic (sigmoid) function is
+The \emph{logistic (sigmoid) function} is
 \begin{align}
-    \sigma(z) = \frac{1}{1+e^{-z}}.
+    \sigma(z) \defn \frac{1}{1+e^{-z}}.
 \end{align}
 It is increasing, maps $\R$ to $(0,1)$, and satisfies
-$\sigma'(z)=\sigma(z)(1-\sigma(z))$. Logistic regression models
+\begin{align}
+    \sigma'(z)=\sigma(z)(1-\sigma(z)).
+\end{align}
+Logistic regression models
 \begin{align}
     \Pr(Y=1\mid\mathbf{x}) = \sigma(\mathbf{w}^\top\mathbf{x} + b)
     = \frac{1}{1+e^{-(\mathbf{w}^\top\mathbf{x}+b)}}.
@@ -1735,21 +3271,66 @@ therefore a \emph{linear classifier}, but a probabilistic one.
 
 \section{Maximum likelihood and cross-entropy}
 
-For a dataset $\{(\mathbf{x}^{(i)},y_i)\}_{i=1}^n$, the likelihood is
-\begin{align}
-    L(\mathbf{w},b)
-    = \prod_{i=1}^n p_i^{y_i}(1-p_i)^{1-y_i},
-    \qquad p_i = \sigma(\mathbf{w}^\top\mathbf{x}^{(i)}+b).
-\end{align}
-Maximising the log-likelihood is equivalent to minimising the negative
-log-likelihood, which is the \emph{binary cross-entropy}:
-\begin{align}
-    \ell(\mathbf{w},b)
-    = -\sum_{i=1}^n \left[
-      y_i \log p_i + (1-y_i)\log(1-p_i)
-    \right].
-\end{align}
-The gradient has the clean form
+\begin{definition}
+    For a dataset $D = \{(\mathbf{x}^{(i)},y_i)\}_{i=1}^n$, the likelihood is
+    \begin{align}
+        L(\mathbf{w},b) \defn \prod_{i=1}^n p_i^{y_i}(1-p_i)^{1-y_i},
+    \end{align}
+    where $p_i = \sigma(\mathbf{w}^\top\mathbf{x}^{(i)}+b)$.
+\end{definition}
+
+\begin{example}[Likelihood for two observations]
+    Suppose $n=2$, with labels $y_1=1$ and $y_2=0$, and predicted probabilities
+    $p_1=0.9$ and $p_2=0.2$. Then
+    \begin{align}
+        L(\mathbf{w},b)
+        = p_1^{1}(1-p_1)^{0}\,p_2^{0}(1-p_2)^{1}
+        = 0.9 \cdot 0.8 = 0.72.
+    \end{align}
+    The log-likelihood is $\log 0.72 \approx -0.329$.
+\end{example}
+
+\begin{example}[Likelihood rewards confident correct predictions]
+    For a single example with label $y=1$, a predicted probability $p=0.99$
+    gives likelihood $0.99$, while $p=0.51$ gives likelihood $0.51$. Maximising
+    the likelihood therefore rewards assigning high probability to the observed
+    label. Note that the likelihood is a function of the parameters, not a
+    probability distribution over them.
+\end{example}
+
+
+\begin{definition}
+    Given a dataset $D = \{(\mathbf{x}^{(i)},y_i)\}_{i=1}^n$, the \emph{binary cross-entropy}\index{binary cross-entropy} is
+    \begin{align}
+        \ell(\mathbf{w},b) \defn -\sum_{i=1}^n \left[ y_i \log p_i + (1-y_i)\log(1-p_i) \right],
+    \end{align}
+    where $p_i = \sigma(\mathbf{w}^\top\mathbf{x}^{(i)}+b)$.
+\end{definition}
+
+\begin{example}[Binary cross-entropy for two observations]
+    Using the same two observations as above, with $(y_1,p_1)=(1,0.9)$ and
+    $(y_2,p_2)=(0,0.2)$,
+    \begin{align}
+        \ell(\mathbf{w},b)
+        &= -\big[\log 0.9 + \log(1-0.2)\big] \\
+        &= -\big[-0.1054 - 0.2231\big]
+        = 0.3285.
+    \end{align}
+    This is exactly the negative log-likelihood, so minimising the cross-entropy
+    is the same as maximising the likelihood.
+\end{example}
+
+\begin{example}[Confident mistakes are penalised heavily]
+    For a correctly classified example with $y=1$ and $p=0.99$, the loss is
+    $-\log 0.99 \approx 0.010$. For a confidently wrong prediction with $y=1$
+    and $p=0.01$, the loss is $-\log 0.01 \approx 4.605$. The loss grows without
+    bound as the predicted probability of the correct class approaches zero,
+    which is why cross-entropy strongly discourages confident mistakes.
+\end{example}
+
+Maximising the log-likelihood is equivalent to minimising the \emph{binary cross-entropy}.
+
+The gradient\index{gradient} of the binary cross-entropy has the clean form
 \begin{align}
     \nabla_{\mathbf{w}} \ell
     = \sum_{i=1}^n (p_i - y_i)\,\mathbf{x}^{(i)},
@@ -1768,11 +3349,11 @@ unregularised maximum-likelihood solution can have infinite weights.
 
 \section{Multiclass logistic regression}
 
-For $K$ classes, use the \emph{softmax} function:
+For $m$ classes, use the \emph{softmax} function:
 \begin{align}
     \Pr(Y=k\mid\mathbf{x})
     = \frac{e^{\mathbf{w}_k^\top\mathbf{x}+b_k}}
-           {\sum_{j=1}^K e^{\mathbf{w}_j^\top\mathbf{x}+b_j}}.
+           {\sum_{j=1}^m e^{\mathbf{w}_j^\top\mathbf{x}+b_j}}.
 \end{align}
 The loss is the categorical cross-entropy
 \begin{align}
@@ -2527,8 +4108,8 @@ where $\phi$ is a hidden activation and $\psi$ is the output activation (identit
 regression, sigmoid for binary classification, softmax for multiclass). Common hidden
 activations are
 \begin{align}
-    \mathrm{ReLU}(z) &= \max(0,z), &
-    \tanh(z) &= \frac{e^z-e^{-z}}{e^z+e^{-z}}, &
+    \mathrm{ReLU}(z) &= \max(0,z) \\
+    \tanh(z) &= \frac{e^z-e^{-z}}{e^z+e^{-z}} \\
     \sigma(z) &= \frac{1}{1+e^{-z}}.
 \end{align}
 ReLU is the default for deep networks because it is cheap and less prone to vanishing
@@ -2959,8 +4540,7 @@ The practical implications are:
 \chapter{Tools}
 \label{ch:tools}
 
-The Python ecosystem is the default for applied machine learning. The table below
-summarises the main libraries used in these notes.
+The Python ecosystem is the default for applied machine learning. The table below summarises the main libraries used in these notes.
 
 \begin{center}
 \renewcommand{\arraystretch}{1.25}
@@ -2968,15 +4548,21 @@ summarises the main libraries used in these notes.
 \toprule
 Library & Role \\
 \midrule
-\texttt{NumPy} & N-dimensional arrays, linear algebra, random numbers. \\
+\texttt{NumPy} & $N$-dimensional arrays, linear algebra, random numbers. \\
 \texttt{pandas} & Tabular data manipulation, cleaning, and exploratory analysis. \\
 \texttt{matplotlib} & Plotting and visualisation. \\
 \texttt{scikit-learn} & Classical ML: regression, classification, clustering, model selection,
 preprocessing, pipelines, metrics. \\
 \texttt{XGBoost} & Gradient-boosted trees with regularisation and efficient split finding. \\
 \texttt{PyTorch} & Deep learning with dynamic computation graphs and automatic differentiation. \\
-\texttt{TensorFlow/Keras} & Deep learning with a high-level API and production deployment tools. \\
+\texttt{TensorFlow} & Deep learning with a high-level API and production deployment tools. probably the most popular framework
+nowadays for building, training, and querying machine
+learning models. \\
+\texttt{Keras} & a very popular library for neural networks
+and regression models that easily integrates on top of
+TensorFlow \\ 
 \texttt{JAX} & Composable numerical computing and automatic differentiation. \\
+\texttt{seaborn} & Statistical data visualization. \\
 \bottomrule
 \end{tabularx}
 \end{center}
@@ -3020,6 +4606,89 @@ A reliable baseline workflow is:
     \item Evaluate once on the test set; inspect errors and calibration.
     \item Only then move to more complex models or deep learning.
 \end{enumerate}
+
+
+\chapter{Resources}
+\label{ch:resources}
+
+\section{People}
+
+\href{https://www.cs.toronto.edu/~rgrosse/}{Roger Grosse}, \href{https://www.cs.toronto.edu/~murat/}{Murat Erdogdu}, \href{https://www.cs.toronto.edu/~zemel/}{Richard Zemel}, \href{https://www.cs.toronto.edu/~juan/}{Juan Felipe Carrasquilla}, \href{https://www.cs.toronto.edu/~emad/}{Emad Andrews}, \href{https://www.cs.toronto.edu/~amir/}{Amir-massoud Farahmand}.
+
+\section{Courses}
+
+\begin{enumerate}
+    \item \href{https://web.stanford.edu/class/cme250/}{Stanford University --- CME 250:
+    Introduction to Machine Learning}.
+    \item \href{https://www.cs.toronto.edu/~rgrosse/courses/csc321_2018/}{University of
+    Toronto --- CSC 321: Intro to Neural Networks and Machine Learning}.
+    \item \href{https://www.d2l.ai/}{Dive into Deep Learning} --- an interactive,
+    open-access deep-learning book.
+\end{enumerate}
+
+\section{Books}
+
+\begin{enumerate}
+    \item \emph{An Introduction to Statistical Learning with Applications in R}
+    \cite{james2021introduction}. Accessible first text; strong on regression,
+    classification, resampling, and trees.
+    \item \emph{The Elements of Statistical Learning}
+    \cite{hastie2009elements}. The more theoretical companion to the previous book.
+    \item \emph{Pattern Recognition and Machine Learning}
+    \cite{theodoridis2006pattern}. Broad coverage with a probabilistic emphasis.
+    \item \emph{Information Theory, Inference, and Learning Algorithms}
+    \cite{mackay2003information}. Beautiful treatment of inference and learning.
+    \item \emph{Bayesian Reasoning and Machine Learning}
+    \cite{barber2012bayesian}. Graphical models and Bayesian methods.
+    \item \emph{Reinforcement Learning: An Introduction}
+    \cite{sutton1998reinforcement}. The standard reference for RL.
+    \item \emph{Mathematics for Machine Learning}
+    \cite{deisenroth2020mathematics}. Linear algebra, calculus, and probability for ML.
+    \item \emph{Understanding Machine Learning: From Theory to Algorithms}
+    \cite{shalev2014understanding}. Learning theory and algorithmic foundations.
+    \item \emph{Machine Learning: A Probabilistic Perspective}
+    \cite{murphy2012machine}. Comprehensive probabilistic treatment.
+    \item Mathematics for Machine Learning by Marc Peter Deisenroth, A.Aldo Faisal and Cheng Soon Ong
+\end{enumerate}
+
+
+\section{Online resources}
+
+\begin{enumerate}
+    \item \href{https://huggingface.co/}{Hugging Face}:
+    \item \href{https://alexsemendinger.github.io/transformers-gentle-introduction}{Transformers: A Gentle Introduction}.
+    \item \href{https://www.turing.ac.uk/about-us}{The Alan Turing Institute}.
+\end{enumerate}
+
+\section{Conferences}
+
+\begin{enumerate}
+    \item \href{https://womeninaisafety.toronto.acm.org/}{Women in AI Safety}.
+\end{enumerate}
+
+\section{Technologies}
+
+\begin{enumerate}
+    \item \href{https://numpy.org/doc/}{NumPy}.
+    \item \href{https://scikit-learn.org/stable/user_guide.html}{scikit-learn user guide}.
+    \item \href{https://pytorch.org/tutorials/}{PyTorch tutorials}.
+    \item \href{https://www.tensorflow.org/tutorials}{TensorFlow tutorials}.
+    \item \href{https://xgboost.readthedocs.io/}{XGBoost documentation}.
+    \item \href{https://github.com/crewAIInc/crewAI}{CrewAI}.
+    \item \href{https://github.com/OpenHands/OpenHands}{OpenHands}.
+    \item \href{https://octo.axiomatic-ai.com/search}{Octo}.
+    \item \href{https://marimo.io/}{marimo}.
+\end{enumerate}
+
+\section{Helpful websites}
+
+\begin{enumerate}
+    \item \href{https://stats.stackexchange.com/}{Cross Validated} --- a question and answer site for people interested in statistics.
+    \item \href{https://www.kaggle.com/}{Kaggle} --- a platform for data science competitions and datasets.
+    \item \href{https://arxiv.org/}{arXiv} --- a repository of electronic preprints of scientific papers in the fields of physics, mathematics, computer science, and quantitative biology.
+\end{enumerate}
+
+
 
 \backmatter
 \printindex

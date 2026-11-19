@@ -8,8 +8,10 @@ tunes an RBF SVM on a real dataset.  Run from the repository root:
 
 from __future__ import annotations
 
-import numpy as np
+import argparse
+
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 
 from sklearn.datasets import load_breast_cancer, make_moons
 from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay
@@ -18,31 +20,24 @@ from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 
+from plotting_utils import plot_margin_boundary
 
-def plot_boundary(ax, model, X, y, title: str) -> None:
-    """Plot a decision boundary and highlight support vectors."""
-    x_min, x_max = X[:, 0].min() - 0.5, X[:, 0].max() + 0.5
-    y_min, y_max = X[:, 1].min() - 0.5, X[:, 1].max() + 0.5
-    xx, yy = np.meshgrid(
-        np.linspace(x_min, x_max, 300), np.linspace(y_min, y_max, 300)
-    )
-    grid = np.c_[xx.ravel(), yy.ravel()]
-    scores = model.decision_function(grid).reshape(xx.shape)
 
-    ax.contourf(xx, yy, scores, levels=[-1e9, 0, 1e9], alpha=0.15,
-                colors=["tab:red", "tab:blue"])
-    ax.contour(xx, yy, scores, levels=[-1, 0, 1], colors="k",
-               linestyles=["--", "-", "--"], linewidths=[1, 2, 1])
-    ax.scatter(X[:, 0], X[:, 1], c=y, cmap="coolwarm", edgecolors="k", s=30)
-    if hasattr(model, "support_vectors_"):
-        sv = model.support_vectors_
-        ax.scatter(sv[:, 0], sv[:, 1], s=120, facecolors="none",
-                   edgecolors="green", linewidths=1.5, label="support vectors")
-        ax.legend(loc="upper right", fontsize=8)
-    ax.set(title=title, xlabel="feature 1", ylabel="feature 2")
+def plot_boundary(
+    ax: Axes, model: SVC, X, y, title: str, resolution: int = 300
+) -> None:
+    """Plot an SVM decision boundary and highlight its support vectors."""
+    plot_margin_boundary(ax, model, X, y, title, resolution=resolution)
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--c", type=float, default=1.0)
+    parser.add_argument("--gamma", type=float, default=1.0)
+    parser.add_argument("--resolution", type=int, default=300)
+    parser.add_argument("--no-plots", action="store_true")
+    args = parser.parse_args()
+
     # ------------------------------------------------------------------
     # 1. Two-dimensional illustration of the margin
     # ------------------------------------------------------------------
@@ -51,12 +46,13 @@ def main() -> None:
         X, y, test_size=0.3, random_state=42, stratify=y
     )
 
-    linear_svm = SVC(kernel="linear", C=1.0).fit(X_train, y_train)
-    rbf_svm = SVC(kernel="rbf", C=1.0, gamma=1.0).fit(X_train, y_train)
+    linear_svm = SVC(kernel="linear", C=args.c).fit(X_train, y_train)
+    rbf_svm = SVC(kernel="rbf", C=args.c, gamma=args.gamma).fit(X_train, y_train)
     print("Two-moons SVM")
     print(f"  linear accuracy = {accuracy_score(y_test, linear_svm.predict(X_test)):.3f}")
     print(f"  RBF    accuracy = {accuracy_score(y_test, rbf_svm.predict(X_test)):.3f}")
     print(f"  linear support vectors = {len(linear_svm.support_)} / {len(X_train)}")
+    print(f"  RBF    support vectors = {len(rbf_svm.support_)} / {len(X_train)}")
 
     # ------------------------------------------------------------------
     # 2. Hyperparameter search with cross-validation
@@ -70,19 +66,27 @@ def main() -> None:
         "svc__C": [0.1, 1.0, 10.0, 100.0],
         "svc__gamma": [0.001, 0.01, 0.1, 1.0],
     }
-    search = GridSearchCV(pipeline, param_grid, cv=5, scoring="accuracy", n_jobs=-1)
+    search = GridSearchCV(
+        pipeline, param_grid, cv=5, scoring="accuracy", n_jobs=-1,
+        return_train_score=True,
+    )
     search.fit(Xc_train, yc_train)
     print("\nRBF SVM grid search (breast cancer)")
     print(f"  best params = {search.best_params_}")
     print(f"  CV accuracy = {search.best_score_:.4f}")
     print(f"  test accuracy = {search.score(Xc_test, yc_test):.4f}")
 
+    if args.no_plots:
+        return
+
     # ------------------------------------------------------------------
     # 3. Plots
     # ------------------------------------------------------------------
     fig, axes = plt.subplots(1, 3, figsize=(16, 4.8))
-    plot_boundary(axes[0], linear_svm, X_train, y_train, "Linear SVM")
-    plot_boundary(axes[1], rbf_svm, X_train, y_train, "RBF SVM")
+    plot_boundary(axes[0], linear_svm, X_train, y_train, "Linear SVM",
+                  resolution=args.resolution)
+    plot_boundary(axes[1], rbf_svm, X_train, y_train, "RBF SVM",
+                  resolution=args.resolution)
 
     ConfusionMatrixDisplay.from_estimator(
         search.best_estimator_, Xc_test, yc_test,

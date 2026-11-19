@@ -9,8 +9,11 @@ repository root:
 
 from __future__ import annotations
 
+import argparse
+
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.axes import Axes
 
 from sklearn.datasets import make_moons
 from sklearn.metrics import accuracy_score
@@ -18,17 +21,40 @@ from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 
+from plotting_utils import plot_score_boundary
+
+
+def _check_fitted(model: object, attributes: tuple[str, ...]) -> None:
+    """Raise a helpful error if ``model`` has not been fitted yet."""
+    if any(getattr(model, name, None) is None for name in attributes):
+        raise RuntimeError(f"{type(model).__name__} must be fitted before prediction")
+
 
 class Perceptron:
-    """Classic perceptron with a step activation."""
+    """Classic perceptron with a step activation and binary labels.
+
+    Accepts labels in either {0, 1} or {-1, 1} and returns predictions in the
+    same encoding used during fitting.
+    """
 
     def __init__(self, learning_rate: float = 0.1, n_epochs: int = 100):
         self.learning_rate = learning_rate
         self.n_epochs = n_epochs
         self.weights: np.ndarray | None = None
         self.bias = 0.0
+        self.classes_: np.ndarray | None = None
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> "Perceptron":
+        X = np.asarray(X, dtype=float)
+        y = np.asarray(y).ravel()
+        if not set(np.unique(y)).issubset({0, 1, -1}):
+            raise ValueError("Perceptron expects binary labels in {0, 1} or {-1, 1}")
+        if len(X) != len(y):
+            raise ValueError("X and y must have the same length")
+        classes = np.unique(y)
+        if classes.size != 2:
+            raise ValueError("Perceptron needs exactly two classes")
+        self.classes_ = np.array([classes.min(), classes.max()])
         y_signed = np.where(y > 0, 1.0, -1.0)
         self.weights = np.zeros(X.shape[1])
         self.bias = 0.0
@@ -44,11 +70,18 @@ class Perceptron:
         return self
 
     def predict(self, X: np.ndarray) -> np.ndarray:
-        return (X @ self.weights + self.bias > 0).astype(int)
+        _check_fitted(self, ("weights", "classes_"))
+        signed = np.asarray(X) @ self.weights + self.bias > 0
+        return np.where(signed, self.classes_[1], self.classes_[0])
+
+    def score(self, X: np.ndarray, y: np.ndarray) -> float:
+        return float(accuracy_score(y, self.predict(X)))
 
 
 class MLP:
     """One-hidden-layer MLP with tanh hidden units and a sigmoid output."""
+
+    EPS = 1e-12
 
     def __init__(self, n_inputs: int, n_hidden: int = 16, learning_rate: float = 0.1,
                  n_epochs: int = 2000, seed: int = 0):
@@ -59,6 +92,7 @@ class MLP:
         self.b2 = 0.0
         self.learning_rate = learning_rate
         self.n_epochs = n_epochs
+        self.fitted_ = False
         self.loss_history: list[float] = []
 
     @staticmethod
@@ -72,12 +106,16 @@ class MLP:
         return self._sigmoid(z2), a1
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> "MLP":
+        X = np.asarray(X, dtype=float)
+        y = np.asarray(y, dtype=float).ravel()
+        if len(X) != len(y):
+            raise ValueError("X and y must have the same length")
         n = len(X)
         for _ in range(self.n_epochs):
             y_hat, a1 = self._forward(X)
-            eps = 1e-12
-            loss = -np.mean(y * np.log(y_hat + eps) + (1 - y) * np.log(1 - y_hat + eps))
-            self.loss_history.append(loss)
+            loss = -np.mean(y * np.log(y_hat + self.EPS)
+                            + (1 - y) * np.log(1 - y_hat + self.EPS))
+            self.loss_history.append(float(loss))
 
             dz2 = (y_hat - y) / n
             dW2 = a1.T @ dz2
@@ -91,29 +129,36 @@ class MLP:
             self.b2 -= self.learning_rate * db2
             self.W1 -= self.learning_rate * dW1
             self.b1 -= self.learning_rate * db1
+        self.fitted_ = True
         return self
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
-        return self._forward(X)[0]
+        if not self.fitted_:
+            raise RuntimeError("MLP must be fitted before prediction")
+        return self._forward(np.asarray(X, dtype=float))[0]
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         return (self.predict_proba(X) >= 0.5).astype(int)
 
+    def score(self, X: np.ndarray, y: np.ndarray) -> float:
+        return float(accuracy_score(y, self.predict(X)))
 
-def plot_boundary(ax, predict, X, y, title: str) -> None:
-    x_min, x_max = X[:, 0].min() - 0.5, X[:, 0].max() + 0.5
-    y_min, y_max = X[:, 1].min() - 0.5, X[:, 1].max() + 0.5
-    xx, yy = np.meshgrid(np.linspace(x_min, x_max, 300),
-                         np.linspace(y_min, y_max, 300))
-    grid = np.c_[xx.ravel(), yy.ravel()]
-    zz = np.asarray(predict(grid)).reshape(xx.shape)
-    ax.contourf(xx, yy, zz, levels=20, cmap="coolwarm", alpha=0.25)
-    ax.contour(xx, yy, zz, levels=[0.5], colors="k", linewidths=1.5)
-    ax.scatter(X[:, 0], X[:, 1], c=y, cmap="coolwarm", edgecolors="k", s=25)
-    ax.set(title=title, xlabel="feature 1", ylabel="feature 2")
+
+def plot_boundary(
+    ax: Axes, predict, X: np.ndarray, y: np.ndarray, title: str,
+    resolution: int = 300,
+) -> None:
+    """Plot a probability surface and the samples (shared implementation)."""
+    plot_score_boundary(ax, predict, X, y, title, resolution=resolution)
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--epochs", type=int, default=3000)
+    parser.add_argument("--resolution", type=int, default=300)
+    parser.add_argument("--no-plots", action="store_true")
+    args = parser.parse_args()
+
     # ------------------------------------------------------------------
     # 1. Perceptron on XOR: a linear model cannot solve it
     # ------------------------------------------------------------------
@@ -122,7 +167,7 @@ def main() -> None:
     perceptron = Perceptron(n_epochs=100).fit(X_xor, y_xor)
     print("Perceptron on XOR")
     print(f"  predictions = {perceptron.predict(X_xor)}")
-    print(f"  accuracy    = {accuracy_score(y_xor, perceptron.predict(X_xor)):.2f}")
+    print(f"  accuracy    = {perceptron.score(X_xor, y_xor):.2f}")
 
     # ------------------------------------------------------------------
     # 2. MLP on two moons
@@ -132,22 +177,22 @@ def main() -> None:
         X, y, test_size=0.3, random_state=42, stratify=y
     )
     scaler = StandardScaler().fit(X_train)
-    X_train_s = scaler.transform(X_train)
-    X_test_s = scaler.transform(X_test)
+    X_train_s, X_test_s = scaler.transform(X_train), scaler.transform(X_test)
 
-    mlp = MLP(n_inputs=2, n_hidden=16, learning_rate=0.5, n_epochs=3000, seed=0)
-    mlp.fit(X_train_s, y_train.astype(float))
-    mlp_acc = accuracy_score(y_test, mlp.predict(X_test_s))
+    mlp = MLP(n_inputs=2, n_hidden=16, learning_rate=0.5,
+              n_epochs=args.epochs, seed=0).fit(X_train_s, y_train.astype(float))
 
     sklearn_mlp = MLPClassifier(
         hidden_layer_sizes=(16,), activation="tanh", solver="adam",
         max_iter=3000, random_state=42,
     ).fit(X_train_s, y_train)
-    sklearn_acc = sklearn_mlp.score(X_test_s, y_test)
 
     print("\nMLP on two moons")
-    print(f"  NumPy MLP accuracy    = {mlp_acc:.4f}")
-    print(f"  sklearn MLP accuracy  = {sklearn_acc:.4f}")
+    print(f"  NumPy MLP accuracy    = {mlp.score(X_test_s, y_test):.4f}")
+    print(f"  sklearn MLP accuracy  = {sklearn_mlp.score(X_test_s, y_test):.4f}")
+
+    if args.no_plots:
+        return
 
     # ------------------------------------------------------------------
     # 3. Plots
@@ -162,7 +207,7 @@ def main() -> None:
     axes[0].legend()
 
     plot_boundary(axes[1], mlp.predict_proba, X_train_s, y_train,
-                  "NumPy MLP decision boundary")
+                  "NumPy MLP decision boundary", resolution=args.resolution)
     axes[1].scatter(X_test_s[:, 0], X_test_s[:, 1], c=y_test, cmap="coolwarm",
                     edgecolors="k", marker="^", s=25)
 

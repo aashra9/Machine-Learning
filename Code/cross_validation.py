@@ -8,6 +8,8 @@ imputation pipelines.  Run from the repository root:
 
 from __future__ import annotations
 
+import argparse
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,27 +17,63 @@ from sklearn.datasets import load_breast_cancer
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import (
-    GridSearchCV,
-    KFold,
-    LeaveOneOut,
-    StratifiedKFold,
-    cross_val_score,
-    learning_curve,
+    GridSearchCV, LeaveOneOut, StratifiedKFold, cross_val_score, learning_curve,
     train_test_split,
 )
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import StandardScaler
 
 
-def make_model(**kwargs) -> object:
-    """A scaled logistic-regression pipeline."""
+def make_model(**kwargs) -> Pipeline:
+    """Return a scaled logistic-regression pipeline."""
     return make_pipeline(
         StandardScaler(),
         LogisticRegression(max_iter=5000, random_state=42, **kwargs),
     )
 
 
+def inject_missing(
+    X: np.ndarray,
+    rate: float,
+    rng: np.random.Generator,
+    min_observations_per_column: int = 1,
+) -> np.ndarray:
+    """Copy ``X`` and mask a random fraction of entries as NaN.
+
+    Columns with fewer than ``min_observations_per_column`` observed values are
+    retried so that every feature retains some information.
+    """
+    if not 0.0 <= rate < 1.0:
+        raise ValueError("rate must lie in [0, 1)")
+    result = np.asarray(X, dtype=float).copy()
+    n_rows = result.shape[0]
+    if not 1 <= min_observations_per_column <= n_rows:
+        raise ValueError("min_observations_per_column must be between 1 and n_rows")
+    mask = rng.random(result.shape) < rate
+    for col in range(result.shape[1]):
+        observed = int(np.sum(~mask[:, col]))
+        while observed < min_observations_per_column:
+            row = int(rng.integers(result.shape[0]))
+            mask[row, col] = False
+            observed += 1
+    result[mask] = np.nan
+    return result
+
+
+def boxplot_with_labels(ax, data: list, labels: list[str]) -> None:
+    """Boxplot that works with Matplotlib versions before and after 3.9."""
+    try:
+        ax.boxplot(data, tick_labels=labels)
+    except (TypeError, AttributeError):
+        ax.boxplot(data, labels=labels)
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--missing-rate", type=float, default=0.10)
+    parser.add_argument("--no-plots", action="store_true")
+    args = parser.parse_args()
+
     data = load_breast_cancer()
     X, y = data.data, data.target
     X_train, X_test, y_train, y_test = train_test_split(
@@ -50,7 +88,6 @@ def main() -> None:
     cv10 = cross_val_score(make_model(), X_train, y_train,
                            cv=StratifiedKFold(10, shuffle=True, random_state=42))
 
-    # LOOCV is expensive; use a small subset to keep the example quick.
     rng = np.random.default_rng(42)
     subset = rng.choice(len(X_train), size=80, replace=False)
     loo = cross_val_score(make_model(), X_train[subset], y_train[subset],
@@ -67,15 +104,13 @@ def main() -> None:
     param_grid = {"logisticregression__C": [0.01, 0.1, 1.0, 10.0, 100.0]}
     outer = StratifiedKFold(5, shuffle=True, random_state=1)
     inner = StratifiedKFold(4, shuffle=True, random_state=2)
-    nested_scores = []
-    chosen_C = []
+    nested_scores, chosen_C = [], []
     for train_idx, valid_idx in outer.split(X_train, y_train):
         search = GridSearchCV(
             make_model(), param_grid, cv=inner, scoring="accuracy", n_jobs=-1
         )
         search.fit(X_train[train_idx], y_train[train_idx])
-        score = search.score(X_train[valid_idx], y_train[valid_idx])
-        nested_scores.append(score)
+        nested_scores.append(search.score(X_train[valid_idx], y_train[valid_idx]))
         chosen_C.append(search.best_params_["logisticregression__C"])
     print("\nNested cross-validation")
     print(f"  outer scores = {np.round(nested_scores, 4)}")
@@ -93,14 +128,10 @@ def main() -> None:
     )
 
     # ------------------------------------------------------------------
-    # 4. Imputation: compare mean and k-NN imputation
+    # 4. Imputation: compare mean, median, and k-NN imputation
     # ------------------------------------------------------------------
-    X_missing = X_train.copy()
-    mask = rng.random(X_missing.shape) < 0.10
-    X_missing[mask] = np.nan
-    X_test_missing = X_test.copy()
-    test_mask = rng.random(X_test_missing.shape) < 0.10
-    X_test_missing[test_mask] = np.nan
+    X_missing = inject_missing(X_train, args.missing_rate, rng)
+    X_test_missing = inject_missing(X_test, args.missing_rate, rng)
 
     imputers = {
         "mean": SimpleImputer(strategy="mean"),
@@ -110,8 +141,7 @@ def main() -> None:
     imputation_scores = {}
     for name, imputer in imputers.items():
         pipeline = make_pipeline(
-            imputer,
-            StandardScaler(),
+            imputer, StandardScaler(),
             LogisticRegression(max_iter=5000, random_state=42),
         )
         score = cross_val_score(
@@ -120,15 +150,18 @@ def main() -> None:
         ).mean()
         imputation_scores[name] = score
         pipeline.fit(X_missing, y_train)
-        test_score = pipeline.score(X_test_missing, y_test)
-        print(f"\n{name:6s} imputation: CV={score:.4f}  test={test_score:.4f}")
+        print(f"\n{name:6s} imputation: CV={score:.4f}"
+              f"  test={pipeline.score(X_test_missing, y_test):.4f}")
+
+    if args.no_plots:
+        return
 
     # ------------------------------------------------------------------
     # 5. Plots
     # ------------------------------------------------------------------
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.5))
 
-    axes[0].boxplot([cv5, cv10], tick_labels=["5-fold", "10-fold"])
+    boxplot_with_labels(axes[0], [cv5, cv10], ["5-fold", "10-fold"])
     axes[0].set(ylabel="Accuracy", title="Repeated-fold variability")
 
     axes[1].plot(sizes, train_scores.mean(axis=1), marker="o", label="Training")
@@ -142,7 +175,9 @@ def main() -> None:
 
     axes[2].bar(list(imputation_scores), list(imputation_scores.values()),
                 color="steelblue")
-    axes[2].set(ylim=(0.7, 1.0), ylabel="CV accuracy", title="Imputation strategies")
+    axes[2].set(ylabel="CV accuracy", title="Imputation strategies")
+    axes[2].set_ylim(min(imputation_scores.values()) - 0.05,
+                    min(1.0, max(imputation_scores.values()) + 0.05))
     for i, value in enumerate(imputation_scores.values()):
         axes[2].text(i, value + 0.005, f"{value:.3f}", ha="center", fontsize=9)
 

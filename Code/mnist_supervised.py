@@ -1,165 +1,179 @@
-"""MNIST Supervised Learning Example
+"""MNIST supervised-learning example.
 
-Demonstrates supervised learning on handwritten digit classification.
-Uses scikit-learn's fetch_openml for MNIST (falls back to load_digits offline).
+Demonstrates supervised learning on handwritten digit classification.  Uses
+scikit-learn's ``fetch_openml`` for MNIST and falls back to ``load_digits``
+offline.  Run from the repository root:
+
+    python Code/mnist_supervised.py
 """
+
+from __future__ import annotations
+
+import argparse
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from sklearn.model_selection import train_test_split
+from sklearn.datasets import fetch_openml, load_digits
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    ConfusionMatrixDisplay, accuracy_score, classification_report,
+)
+from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import (
-    accuracy_score,
-    confusion_matrix,
-    classification_report,
-    ConfusionMatrixDisplay,
-)
 
-plt.rcParams["figure.figsize"] = (10, 6)
-np.random.seed(42)
 
-# ---------------------------------------------------------------------------
-# 1. Load data
-# ---------------------------------------------------------------------------
-USE_MNIST = True
-try:
-    from sklearn.datasets import fetch_openml
+def load_digit_data(force_digits: bool = False) -> tuple[np.ndarray, np.ndarray, bool]:
+    """Load MNIST (or the small digits fallback) and return ``(X, y, used_mnist)``."""
+    if force_digits:
+        digits = load_digits()
+        return digits.data, digits.target.astype(np.uint8), False
+    try:
+        mnist = fetch_openml("mnist_784", version=1, as_frame=False, parser="auto")
+        return (np.asarray(mnist.data), mnist.target.astype(np.uint8), True)
+    except Exception as exc:
+        print(f"Fell back to load_digits: {exc}")
+        digits = load_digits()
+        return digits.data, digits.target.astype(np.uint8), False
 
-    mnist = fetch_openml("mnist_784", version=1, as_frame=False)
-    X, y = mnist["data"], mnist["target"]
-    y = y.astype(np.uint8)
-    print("Loaded MNIST from OpenML")
-except Exception as exc:
-    USE_MNIST = False
-    from sklearn.datasets import load_digits
 
-    digits = load_digits()
-    X, y = digits.data, digits.target.astype(np.uint8)
-    print(f"Fell back to load_digits: {exc}")
+def plot_gallery(
+    X: np.ndarray, y: np.ndarray, image_shape: tuple[int, int],
+    n_show: int = 10, title: str = "Sample digits",
+    predictions: np.ndarray | None = None,
+) -> None:
+    """Show one example per digit (or misclassified samples)."""
+    n_cols = 5
+    n_rows = max(1, int(np.ceil(n_show / n_cols)))
+    fig, axes = plt.subplots(n_rows, n_cols, figsize=(10, 2 * n_rows))
+    axes_flat = np.atleast_1d(axes).ravel()
+    for ax in axes_flat:
+        ax.axis("off")
+    for ax, idx in zip(axes_flat[:n_show], range(n_show)):
+        ax.imshow(X[idx].reshape(image_shape), cmap="gray")
+        label = f"True: {y[idx]}" if predictions is None else (
+            f"True: {y[idx]}  Pred: {predictions[idx]}"
+        )
+        color = "red" if predictions is not None else "black"
+        ax.set_title(label, color=color, fontsize=9)
+    fig.suptitle(title)
+    fig.tight_layout()
+    plt.show()
 
-print(f"X shape: {X.shape}")
-print(f"y shape: {y.shape}")
-print(f"Pixel range: [{X.min()}, {X.max()}]")
-print(f"Classes: {np.unique(y)}")
-print(f"Class counts:\n{np.bincount(y)}")
 
-# ---------------------------------------------------------------------------
-# 2. Visualize sample digits
-# ---------------------------------------------------------------------------
-img_side = int(np.sqrt(X.shape[1]))
+def make_models(seed: int = 42) -> dict:
+    """Return the classifiers compared in the demo."""
+    return {
+        "Logistic Regression": LogisticRegression(max_iter=1000, random_state=seed),
+        "k-NN (k=5)": KNeighborsClassifier(n_neighbors=5),
+        "SVM (RBF)": SVC(kernel="rbf", C=1.0, gamma="scale", random_state=seed),
+        "Random Forest": RandomForestClassifier(
+            n_estimators=200, n_jobs=-1, random_state=seed
+        ),
+    }
 
-fig, axes = plt.subplots(2, 5, figsize=(10, 4))
-for digit in range(10):
-    idx = np.where(y == digit)[0][0]
-    img = X[idx].reshape(img_side, img_side)
-    ax = axes[digit // 5, digit % 5]
-    ax.imshow(img, cmap="gray")
-    ax.set_title(f"Digit {digit}")
-    ax.axis("off")
-plt.tight_layout()
-plt.show()
 
-# ---------------------------------------------------------------------------
-# 3. Preprocess and split
-# ---------------------------------------------------------------------------
-# Scale pixels to [0, 1]
-X = X / X.max()
+def evaluate_models(models: dict, X_train: np.ndarray, X_test: np.ndarray,
+                    y_train: np.ndarray, y_test: np.ndarray) -> dict[str, float]:
+    """Fit every model and return its test accuracy."""
+    results = {}
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        acc = accuracy_score(y_test, model.predict(X_test))
+        results[name] = float(acc)
+        print(f"{name:18s}  test accuracy = {acc:.4f}")
+    return results
 
-# Stratified train/test split
-n_test = 10000 if USE_MNIST and len(y) >= 20000 else 0.2
-n_train = 60000 if USE_MNIST and len(y) >= 70000 else None
 
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y,
-    test_size=n_test,
-    train_size=n_train,
-    random_state=42,
-    stratify=y,
-)
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--force-digits", action="store_true",
+                        help="use scikit-learn's 8x8 digits dataset instead of MNIST")
+    parser.add_argument("--limit", type=int, default=None,
+                        help="cap the number of training samples (useful for a quick run)")
+    parser.add_argument("--no-plots", action="store_true")
+    args = parser.parse_args()
 
-print(f"Train: {X_train.shape}, {y_train.shape}")
-print(f"Test:  {X_test.shape},  {y_test.shape}")
+    X, y, used_mnist = load_digit_data(args.force_digits)
+    print(f"Loaded {'MNIST' if used_mnist else 'load_digits'}")
+    print(f"X shape: {X.shape}  y shape: {y.shape}")
+    print(f"Pixel range: [{X.min()}, {X.max()}]")
+    print(f"Classes: {np.unique(y)}")
+    print(f"Class counts: {np.bincount(y)}")
 
-# ---------------------------------------------------------------------------
-# 4. Train and compare classifiers
-# ---------------------------------------------------------------------------
-models = {
-    "Logistic Regression": LogisticRegression(
-        max_iter=1000, n_jobs=-1, random_state=42
-    ),
-    "k-NN (k=5)": KNeighborsClassifier(n_neighbors=5, n_jobs=-1),
-    "SVM (RBF)": SVC(kernel="rbf", C=1.0, gamma="scale", random_state=42),
-    "Random Forest": RandomForestClassifier(
-        n_estimators=200, max_depth=None, n_jobs=-1, random_state=42
-    ),
-}
+    side = int(np.sqrt(X.shape[1]))
+    image_shape = (side, side)
+    max_value = float(X.max())
+    if max_value <= 0:
+        raise ValueError("all pixel values are zero")
+    X = X / max_value
 
-results = {}
+    if not args.no_plots:
+        samples = []
+        for digit in np.unique(y):
+            idx = np.where(y == digit)[0]
+            if len(idx):
+                samples.append(idx[0])
+        if samples:
+            sample_X = X[np.array(samples)]
+            sample_y = y[np.array(samples)]
+            plot_gallery(sample_X, sample_y, image_shape,
+                         n_show=len(samples), title="One example per digit")
 
-for name, model in models.items():
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    acc = accuracy_score(y_test, y_pred)
-    results[name] = acc
-    print(f"{name:18s}  test accuracy = {acc:.4f}")
+    test_size = 10000 if used_mnist and len(y) >= 20000 else 0.2
+    train_size = 60000 if used_mnist and len(y) >= 70000 else None
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, train_size=train_size,
+        random_state=42, stratify=y,
+    )
+    if args.limit is not None and args.limit < len(X_train):
+        X_train, y_train = X_train[:args.limit], y_train[:args.limit]
+    print(f"Train: {X_train.shape}, {y_train.shape}")
+    print(f"Test:  {X_test.shape},  {y_test.shape}")
 
-# ---------------------------------------------------------------------------
-# Plot accuracy comparison
-# ---------------------------------------------------------------------------
-names = list(results.keys())
-accs = list(results.values())
+    models = make_models()
+    results = evaluate_models(models, X_train, X_test, y_train, y_test)
+    best_name = max(results, key=results.get)
+    best_model = models[best_name]
+    y_pred = best_model.predict(X_test)
+    print(f"\nBest model: {best_name} (accuracy = {results[best_name]:.4f})\n")
+    print(classification_report(y_test, y_pred, digits=4))
 
-plt.bar(names, accs, color="steelblue")
-plt.ylim(0, 1)
-plt.ylabel("Test accuracy")
-plt.title("MNIST Classifier Comparison")
-plt.xticks(rotation=15)
-for i, v in enumerate(accs):
-    plt.text(i, v + 0.01, f"{v:.4f}", ha="center")
-plt.tight_layout()
-plt.show()
+    if args.no_plots:
+        return
 
-# ---------------------------------------------------------------------------
-# 5. Detailed evaluation of the best model
-# ---------------------------------------------------------------------------
-best_name = max(results, key=results.get)
-best_model = models[best_name]
-y_pred = best_model.predict(X_test)
+    names, accs = list(results), list(results.values())
+    plt.bar(names, accs, color="steelblue")
+    plt.ylim(0, 1)
+    plt.ylabel("Test accuracy")
+    plt.title("MNIST Classifier Comparison")
+    plt.xticks(rotation=15)
+    for i, value in enumerate(accs):
+        plt.text(i, value + 0.01, f"{value:.4f}", ha="center")
+    plt.tight_layout()
+    plt.show()
 
-print(f"\nBest model: {best_name} (accuracy = {results[best_name]:.4f})\n")
-print(classification_report(y_test, y_pred, digits=4))
+    fig, ax = plt.subplots()
+    ConfusionMatrixDisplay.from_predictions(
+        y_test, y_pred, cmap="Blues", colorbar=False, ax=ax
+    )
+    ax.set_title(f"Confusion Matrix - {best_name}")
+    fig.tight_layout()
+    plt.show()
 
-# ---------------------------------------------------------------------------
-# Confusion matrix
-# ---------------------------------------------------------------------------
-disp = ConfusionMatrixDisplay.from_predictions(
-    y_test, y_pred,
-    cmap="Blues",
-    colorbar=False,
-)
-plt.title(f"Confusion Matrix - {best_name}")
-plt.tight_layout()
-plt.show()
+    wrong = np.where(y_pred != y_test)[0]
+    print(f"Misclassified: {len(wrong)} / {len(y_test)} test samples")
+    n_show = min(10, len(wrong))
+    if n_show:
+        plot_gallery(
+            X_test[wrong[:n_show]], y_test[wrong[:n_show]], image_shape,
+            n_show=n_show, title="Misclassified digits",
+            predictions=y_pred[wrong[:n_show]],
+        )
+    print("\nDone!")
 
-# ---------------------------------------------------------------------------
-# 6. Inspect misclassified digits
-# ---------------------------------------------------------------------------
-wrong = np.where(y_pred != y_test)[0]
-print(f"Misclassified: {len(wrong)} / {len(y_test)} test samples")
 
-n_show = min(10, len(wrong))
-fig, axes = plt.subplots(2, 5, figsize=(10, 4))
-for i, idx in enumerate(wrong[:n_show]):
-    img = X_test[idx].reshape(img_side, img_side)
-    ax = axes[i // 5, i % 5]
-    ax.imshow(img, cmap="gray")
-    ax.set_title(f"True: {y_test[idx]}  Pred: {y_pred[idx]}", color="red")
-    ax.axis("off")
-plt.tight_layout()
-plt.show()
-
-print("\nDone!")
+if __name__ == "__main__":
+    main()
