@@ -11,9 +11,8 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 
@@ -76,7 +75,7 @@ def main() -> None:
             self.conv2 = nn.Conv2d(16, 32, kernel_size=3, padding=1)
             self.fc = nn.Linear(32 * 2 * 2, 10)
 
-        def forward(self, x: "torch.Tensor") -> "torch.Tensor":
+        def forward(self, x: torch.Tensor) -> torch.Tensor:
             x = F.relu(self.conv1(x))
             x = F.max_pool2d(x, 2)
             x = F.relu(self.conv2(x))

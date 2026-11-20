@@ -1,7 +1,5 @@
 import numpy as np
 import pytest
-from scipy.optimize import check_grad
-
 from gradient_descent import (
     batch_gradient,
     full_loss,
@@ -10,6 +8,7 @@ from gradient_descent import (
     run_gd,
     train_sgd,
 )
+from scipy.optimize import check_grad
 
 
 def test_gradient_matches_finite_differences() -> None:

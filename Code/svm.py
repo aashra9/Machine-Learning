@@ -12,15 +12,13 @@ import argparse
 
 import matplotlib.pyplot as plt
 from matplotlib.axes import Axes
-
+from plotting_utils import plot_margin_boundary
 from sklearn.datasets import load_breast_cancer, make_moons
-from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
-
-from plotting_utils import plot_margin_boundary
 
 
 def plot_boundary(

@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.special import logsumexp
 from sklearn.mixture import GaussianMixture
 
@@ -68,7 +68,7 @@ class GaussianMixtureEM:
             for k in range(self.n_components)
         ])
 
-    def fit(self, X: np.ndarray) -> "GaussianMixtureEM":
+    def fit(self, X: np.ndarray) -> GaussianMixtureEM:
         X = np.asarray(X, dtype=float)
         if X.ndim != 2:
             raise ValueError("X must be two-dimensional")

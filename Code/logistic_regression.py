@@ -11,9 +11,8 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 from sklearn.calibration import CalibrationDisplay
 from sklearn.datasets import load_breast_cancer, load_digits
 from sklearn.linear_model import LogisticRegression

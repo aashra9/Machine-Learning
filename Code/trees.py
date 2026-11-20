@@ -9,17 +9,18 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.axes import Axes
-
 from sklearn.base import BaseEstimator
 from sklearn.datasets import load_breast_cancer
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.inspection import permutation_importance
 from sklearn.metrics import ConfusionMatrixDisplay
 from sklearn.model_selection import (
-    StratifiedKFold, cross_val_score, train_test_split,
+    StratifiedKFold,
+    cross_val_score,
+    train_test_split,
 )
 from sklearn.tree import DecisionTreeClassifier, plot_tree
 

@@ -11,14 +11,15 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 from sklearn.datasets import fetch_openml, load_digits
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
-    ConfusionMatrixDisplay, accuracy_score, classification_report,
+    ConfusionMatrixDisplay,
+    accuracy_score,
+    classification_report,
 )
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier

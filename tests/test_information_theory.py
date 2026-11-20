@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from information_theory import (
     bayes_posterior,
     categorical_cross_entropy,
@@ -68,10 +67,10 @@ def test_gaussian_kl_known_value() -> None:
 
 def test_bayes_posterior_normalises() -> None:
     posterior, evidence = bayes_posterior([0.2, 0.5, 0.3], [0.1, 0.8, 0.4])
-    assert evidence == pytest.approx(0.45)
+    assert evidence == pytest.approx(0.54)
     assert posterior.sum() == pytest.approx(1.0)
-    np.testing.assert_allclose(posterior, [0.2 * 0.1 / 0.45, 0.5 * 0.8 / 0.45,
-                                           0.3 * 0.4 / 0.45])
+    np.testing.assert_allclose(posterior, [0.2 * 0.1 / 0.54, 0.5 * 0.8 / 0.54,
+                                           0.3 * 0.4 / 0.54])
 
 
 def test_naive_bayes_log_odds_matches_direct_posterior() -> None:

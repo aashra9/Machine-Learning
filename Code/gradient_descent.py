@@ -11,8 +11,8 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def loss(theta: np.ndarray, kappa: float) -> float:

@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.stats import wasserstein_distance
 
 

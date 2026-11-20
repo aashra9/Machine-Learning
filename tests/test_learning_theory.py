@@ -1,7 +1,8 @@
 import numpy as np
-
 from learning_theory import (
-    bias_variance_experiment, double_descent_experiment, true_function,
+    bias_variance_experiment,
+    double_descent_experiment,
+    true_function,
 )
 
 

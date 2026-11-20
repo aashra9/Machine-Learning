@@ -1,7 +1,7 @@
 \documentclass[a4paper, 12pt]{book}
 % \newcommand{\abs}[1]{\lvert #1 \rvert}
+\usepackage{../Files/Style/course}
 
-\usepackage{course}
 %--- Fixed head height to satisfy scrlayer-scrpage's minimum.
 \setlength{\headheight}{15pt}
 
@@ -59,17 +59,56 @@ $\mathbf{x} \in \R^d$ & input (feature) vector \\
 $y$ or $t$ & target (label, response) \\
 $n$ & number of training examples \\
 $d$ or $p$ & number of features \\
-$\mathbf{X} \in \R^{n \times d}$ & design matrix, one example per row \\
-$\boldsymbol{\beta}$ & model parameters \\
+$X \in \R^{n \times d}$ & design matrix, one example per row \\
+${\beta}$ & model parameters \\
 $\hat{y}$ & prediction \\
 $\ell(\cdot,\cdot)$ & loss function \\
-$\mathcal{D}$ & data distribution \\
+$\mathscr{D}$ & data distribution \\
 $\mathcal{H}$ & hypothesis class \\
 $\risk(\cdot)$ & risk (expected loss) \\
 $\norm{\cdot}_1, \norm{\cdot}_2$ & $\ell_1$ and $\ell_2$ norms \\
 $\nabla f$, $H_f$ & gradient and Hessian of $f$ \\
-$\E[\cdot]$, $\Var[\cdot]$ & expectation and variance \\
-$\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})$ & Gaussian distribution \\
+$\mathrm{E}[\cdot]$, $\mathrm{Var}[\cdot]$ & expectation and variance \\
+$\mathscr{N}(\mu,\Sigma)$ & Gaussian distribution \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+\section*{Abbreviations}
+\addcontentsline{toc}{section}{Abbreviations}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{ll}
+\toprule
+Abbreviation & Meaning \\
+\midrule
+CDF & Cumulative Distribution Function \\
+CNN & Convolutional Neural Network \\
+PCA & Principal Component Analysis \\
+PDF & Probability Density Function \\
+PGM & Probabilistic Graphic Models \\  
+PSD & Positive SemiDefinite \\
+SAD & Sum of Absolute Differences \\
+TV & Total Variation \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\newpage
+\section*{Common Datasets}
+\addcontentsline{toc}{section}{Common Datasets}
+
+\todo{complete this table below}
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{ll}
+\toprule
+Datasets & Details \\
+\midrule
+
 \bottomrule
 \end{tabular}
 \end{center}
@@ -81,11 +120,10 @@ $\mathcal{N}(\boldsymbol{\mu},\boldsymbol{\Sigma})$ & Gaussian distribution \\
 \label{ch:calc}
 
 
-\section{Calculus}
 
-Differentiation is the operation of transforming one mathematical function to another, called the derivative. The derivative tells the slope, or the rate of change, of the original function.
+\section{Linear algebra}
 
-\section{Vectors, matrices, and norms}
+\subsection{Vectors, matrices, and norms}
 
 We write vectors as columns and use
 \begin{align}
@@ -227,8 +265,24 @@ for the Euclidean inner product. The most common norms are
     definite, and the origin is a strict local (and global) minimum.
 \end{example}
 
+\subsection{Useful matrix identities}
 
-\section{Gradients and directional derivatives}
+For invertible matrices and vectors of compatible dimensions,
+\begin{align}
+    \nabla_{\mathbf{x}} (\mathbf{a}^\top \mathbf{x}) &= \mathbf{a}, &
+    \nabla_{\mathbf{x}} (\mathbf{x}^\top \mathbf{A}\mathbf{x}) &= (A+A^\top)\mathbf{x},\\
+    \nabla_{\mathbf{X}} \norm{\mathbf{X}}_F^2 &= 2\mathbf{X}, &
+    \nabla_{\mathbf{X}} \tr(\mathbf{A}\mathbf{X}) &= \mathbf{A}^\top.
+\end{align}
+If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\mathbf{x}
+= 2\mathbf{A}\mathbf{x}$.
+
+
+\section{Calculus}
+
+Differentiation is the operation of transforming one mathematical function to another, called the derivative. The derivative tells the slope, or the rate of change, of the original function.
+
+\subsection{Gradients}
 
 \begin{definition}
     The \emph{gradient} of a differentiable function $f : \R^d \to \R$ at a point $\mathbf{x}$ is the vector of partial derivatives
@@ -262,6 +316,8 @@ for the Euclidean inner product. The most common norms are
     $\mathbf{A}^\top\mathbf{A}\mathbf{x}=\mathbf{A}^\top\mathbf{b}$.
 \end{example}
 
+
+\section{Directional derivative}
 \begin{definition}
     The \emph{directional derivative} of $f$ at a point $\mathbf{x}$ in the direction $\mathbf{u}$ (with $\norm{\mathbf{u}}=1$) is
     \begin{align}
@@ -303,7 +359,7 @@ the intuition behind gradient-based optimisation.
 
 
 
-\section{Jacobian and chain rule}
+\subsection{Jacobian}
 
 If $\mathbf{g} : \R^n \to \R^m$ is differentiable, its \emph{Jacobian}\index{Jacobian} is the $m \times n$ matrix $J_{\mathbf{g}}(\mathbf{x})$ with entries
 \begin{align}
@@ -344,6 +400,9 @@ If $\mathbf{g} : \R^n \to \R^m$ is differentiable, its \emph{Jacobian}\index{Jac
     Cartesian to polar coordinates in integrals.
 \end{example}
 
+
+
+\subsection{Chain rule}
 \begin{proposition}\label{prop:nabla-jacob}
     For $h(\mathbf{x}) = f(\mathbf{g}(\mathbf{x}))$ with $f : \R^m \to \R$,
 \begin{align}
@@ -383,7 +442,7 @@ This proposition \ref{prop:nabla-jacob} is the engine behind backpropagation in 
 \end{example}
 
 
-\section{Hessian}
+\subsection{Hessian}
 
 \begin{definition}
     The \emph{Hessian}\index{Hessian} of a twice differentiable function
@@ -428,7 +487,7 @@ downward curvature, and a mixture of signs indicates a saddle.
     minimizer (when it exists) solves the normal equations.
 \end{example}
 
-\section{Taylor approximation and curvature}
+\subsection{Taylor approximation}
 
 
 \begin{proposition}
@@ -484,8 +543,12 @@ The Hessian governs local curvature and hence the stability of gradient-based op
     higher derivatives vanish.
 \end{example}
 
-\section{Convexity and optimality}
+\subsection{Curvature}
 
+\section{Convexity}
+
+
+\subsection{Convex sets}
 \begin{definition}
     A set $X$ is \emph{convex}\index{convex set} if the segment between any two points in $X$ stays in $X$. A function $f$ is \emph{convex}\index{convex function} if
 \begin{align}
@@ -502,6 +565,7 @@ The Hessian governs local curvature and hence the stability of gradient-based op
     is concave, not convex.
 \end{example}
 
+
 \begin{example}[Convex sets]
     Balls $\{\mathbf{x}:\norm{\mathbf{x}}_2\leq r\}$, half-spaces
     $\{\mathbf{x}:\mathbf{a}^\top\mathbf{x}\leq b\}$, and the positive orthant
@@ -509,6 +573,9 @@ The Hessian governs local curvature and hence the stability of gradient-based op
     $\{\mathbf{x}\in\R^2:1\leq\norm{\mathbf{x}}_2\leq2\}$ is not convex: the segment
     between two points on opposite sides passes through the hole.
 \end{example}
+
+
+\subsection{Convex functions}
 
 \begin{proposition}
     For differentiable $f$, convexity is equivalent to $f(\mathbf{y}) \geq f(\mathbf{x}) + \nabla f(\mathbf{x})^\top(\mathbf{y}-\mathbf{x})$; for twice-differentiable $f$, it is equivalent to $H_f(\mathbf{x}) \succeq 0$ for all $\mathbf{x}$.
@@ -684,21 +751,11 @@ is the condition number.
     iterations.
 \end{example}
 
-\section{Useful matrix identities}
-
-For invertible matrices and vectors of compatible dimensions,
-\begin{align}
-    \nabla_{\mathbf{x}} (\mathbf{a}^\top \mathbf{x}) &= \mathbf{a}, &
-    \nabla_{\mathbf{x}} (\mathbf{x}^\top \mathbf{A}\mathbf{x}) &= (\mathbf{A}+\mathbf{A}^\top)\mathbf{x},\\
-    \nabla_{\mathbf{X}} \norm{\mathbf{X}}_F^2 &= 2\mathbf{X}, &
-    \nabla_{\mathbf{X}} \tr(\mathbf{A}\mathbf{X}) &= \mathbf{A}^\top.
-\end{align}
-If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\mathbf{x}
-= 2\mathbf{A}\mathbf{x}$.
 
 \section{Metrics}
 
 
+\subsection{Euclidean Distance}
 \begin{definition}[Euclidean distance]
     For $\mathbf{x},\mathbf{y}\in\mathbb{R}^d$, the Euclidean distance is the $\ell_2$ norm of their difference:
     \begin{align}
@@ -732,6 +789,9 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
     is the unit circle in $\mathbb{R}^2$. Euclidean distance is invariant under rotations and reflections, unlike coordinate-wise alternatives.
 \end{example}
 
+\emph{Applications.} Euclidean distance is the default choice when features share a comparable scale: it defines the neighbourhoods in $k$-nearest-neighbour classification, the clusters in $k$-means, and the squared error in least-squares regression. It also measures ordinary straight-line distance in physical space and pixelwise similarity in image matching. Because distances concentrate in high dimensions, practical use usually involves standardising the features or reducing dimensionality first.
+
+\subsection{Manhattan distance}
 \begin{definition}[Manhattan distance]
     The Manhattan (or city-block) distance\index{Manhattan distance} is the $\ell_1$ norm of the difference:
     \begin{align}
@@ -764,12 +824,14 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
     is a diamond with vertices $(\pm1,0)$ and $(0,\pm1)$. Its corners lie on the coordinate axes because movement is only horizontal or vertical.
 \end{example}
 
+\emph{Applications.} Manhattan distance is natural on grid-like domains: it is the length of a shortest route on a city street grid and the sum of absolute differences (SAD) used for block matching in image and video compression. In statistics and machine learning it underlies the $\ell_1$ penalty of the lasso, whose diamond-shaped unit ball has corners on the axes and therefore encourages sparse coefficients. It is also a robust choice for nearest neighbours when a single feature can take very large values, since it does not square their contribution.
 
+\subsection{Chebyshev distance}
 \begin{definition}[Chebyshev distance]
     The Chebyshev distance is the $\ell_\infty$ norm of the difference:
     \begin{align}
-        d_\infty(\mathbf{x},\mathbf{y}) = \norm{\mathbf{x}-\mathbf{y}}_\infty
-        = \max_{1\leq i\leq d}\abs{x_i-y_i}.
+        d_\infty(\mathbf{x},\mathbf{y}) &\defn \norm{\mathbf{x}-\mathbf{y}}_\infty\\
+        &\defn \max_{1\leq i\leq d}\abs{x_i-y_i}.
     \end{align}
 \end{definition}
 
@@ -796,7 +858,12 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
     is the square $[-1,1]^2$. Unlike the Euclidean circle, all coordinates may change simultaneously up to the same bound.
 \end{example}
 
+\todo{insert applications of Chebyshev distance}
 
+
+
+
+\subsection{Minkowski distance}
 \begin{definition}[Minkowski distance]
     For $p\geq1$, the Minkowski (or $\ell_p$) distance is
     \begin{align}
@@ -821,7 +888,11 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
     For $p<1$ the triangle inequality fails. With $\mathbf{x}=(1,0)$, $\mathbf{y}=(0,1)$, and $\mathbf{z}=(0,0)$, the $p=1/2$ expression gives $d_p(\mathbf{x},\mathbf{z})=d_p(\mathbf{z},\mathbf{y})=1$ but $d_p(\mathbf{x},\mathbf{y})=2$, so $d_p(\mathbf{x},\mathbf{y})>2$. Hence it is not a metric.
 \end{example}
 
+\emph{Applications.} The Minkowski family lets us tune how strongly large coordinate differences are penalised. The choices $p=1$ and $p=2$ give the sparse and Euclidean geometries above, while large $p$ approaches a worst-coordinate criterion; in $k$-nearest-neighbour models $p$ can itself be chosen by cross-validation. For $0<p<1$ the resulting quasi-norm is not a metric, but minimising it is a standard sparsity-promoting surrogate in compressed sensing and variable selection.
 
+
+
+\subsection{Hamming distance}
 \begin{definition}[Hamming distance]
     For two equal-length strings (or categorical vectors) $\mathbf{u},\mathbf{v}$ over an alphabet $\Sigma$,
     \begin{align}
@@ -842,7 +913,10 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
     The one-hot vectors $(1,0,0)$ and $(0,1,0)$ differ in two coordinates, so their Hamming distance is $2$. Equal-length inputs are essential; Hamming distance is undefined for strings of different lengths.
 \end{example}
 
+\emph{Applications.} Hamming distance counts positions that disagree, making it the standard measure for equal-length symbolic data. In coding theory the minimum Hamming distance between codewords determines how many errors a code can detect or correct: a minimum distance of $2t+1$ allows correction of up to $t$ errors. It is also used to compare DNA sequences of equal length, to detect duplicate binary records, and to measure disagreement between categorical feature vectors in clustering.
 
+
+\subsection{Jaccard distance}
 \begin{definition}[Jaccard similarity and distance]
     For finite sets $A$ and $B$, the \emph{Jaccard similarity}\index{Jaccard similarity} is given by
     \begin{align}
@@ -867,26 +941,29 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
     If $A=\{\text{cat},\text{dog}\}$ and $B=\{\text{car},\text{bus}\}$, then $A\cap B=\varnothing$, so $J(A,B)=0$ and $d_J(A,B)=1$, the maximum distance.
 \end{example}
 
+\emph{Applications.} Jaccard distance compares sets by their relative overlap rather than by absolute counts. It is used to compare user preference lists in recommender systems, to detect near-duplicate documents from their token sets, and to compare molecular fingerprints or the label sets of image segments. Because shared absences are ignored, it is especially useful for sparse binary vectors where almost all coordinates are zero.
 
+
+\subsection{Hellinger distance}
 \begin{definition}[Hellinger distance]
-    For discrete distributions $p$ and $q$, the Hellinger distance is
+    For discrete distributions $p,q: S \longrightarrow [0,1]$, the Hellinger distance is
     \begin{align}
-        H(p,q) &= \frac{1}{\sqrt{2}}
-        \sqrt{\sum_i \left(\sqrt{p_i}-\sqrt{q_i}\right)^2}
-        = \sqrt{1-\sum_i\sqrt{p_i q_i}},
+        d_{H}(p,q) &\defn \frac{1}{\sqrt{2}}
+        \sqrt{\sum_{x \in S} \left(\sqrt{p(x)}-\sqrt{q(x)}\right)^2}
+        = \sqrt{1-\sum_{x \in S}\sqrt{p(x) q(x)}},
     \end{align}
-     with the integral form $H(p,q)=\frac{1}{\sqrt2}\big(\int(\sqrt p-\sqrt q)^2\big)^{1/2}$
+     with the integral form $d_{H}(p,q)=\frac{1}{\sqrt2}\big(\int(\sqrt p-\sqrt q)^2\big)^{1/2}$
     in the continuous case. It is a metric taking values in $[0,1]$.
 \end{definition}
 
 \begin{example}[Identical distributions]
-    If $p=q=(0.5,0.5)$, every square-root difference is zero, so $H(p,q)=0$. In general $H(p,q)=0$ if and only if $p=q$ almost everywhere.
+    If $p=q=(0.5,0.5)$, every square-root difference is zero, so $d_{H}(p,q)=0$. In general $d_{H}(p,q)=0$ if and only if $p=q$ almost everywhere.
 \end{example}
 
 \begin{example}[Disjoint support]
     If $p=(1,0)$ and $q=(0,1)$, then
     \begin{align}
-        H(p,q)=\frac{1}{\sqrt2}\sqrt{(1-0)^2+(0-1)^2}=1,
+        d_{H}(p,q)=\frac{1}{\sqrt2}\sqrt{(1-0)^2+(0-1)^2}=1,
     \end{align}
     the largest possible value.
 \end{example}
@@ -894,20 +971,38 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
 \begin{example}[Nearby Bernoulli laws]
     For $p=(0.9,0.1)$ and $q=(0.8,0.2)$,
     \begin{align}
-        H(p,q)=\frac{1}{\sqrt2}\sqrt{(\sqrt{0.9}-\sqrt{0.8})^2
+        d_{H}(p,q)=\frac{1}{\sqrt2}\sqrt{(\sqrt{0.9}-\sqrt{0.8})^2
         +(\sqrt{0.1}-\sqrt{0.2})^2}\approx0.100.
     \end{align}
     The square-root transform amplifies small relative differences in the tails.
 \end{example}
 
-\begin{definition}[Wasserstein distance]
-    Let $\Gamma(\mu,\nu)$ be the set of joint distributions with marginals $\mu$ and $\nu$. For $p\geq1$, the $p$-Wasserstein distance is
+
+\emph{Applications.} Hellinger distance is a bounded, well-behaved way to compare probability distributions. It appears in goodness-of-fit testing, in minimum-Hellinger-distance estimation (which is more resistant to contaminated observations than maximum likelihood), and as a loss for density estimation and generative models. Its square-root transform makes it sensitive to differences in the tails, which is why it is also used to compare histograms of image features.
+
+
+\subsection{Wasserstein distance}
+
+\begin{definition}[Optimal Transport distance]
+    The \emph{optimal transport distance}\index{optimal transport distance} between two probabilities $p: S \longrightarrow [0,1]$ and $q: S \longrightarrow [0,1]$ is
     \begin{align}
-        W_p(\mu,\nu) = \left(\inf_{\gamma\in\Gamma(\mu,\nu)}
-        \int \norm{x-y}^p\,d\gamma(x,y)\right)^{1/p}.
+        W(p,q) = \inf_{\gamma \in \Gamma(p,q)} \bigg[ \underset{(x,y) \sim \gamma}{\mathrm{E}}[c(x,y)] \bigg],
     \end{align}
-    It is the minimum cost of moving mass from $\mu$ to $\nu$, and unlike the other distances here it uses the geometry of the underlying space. On $\mathbb{R}$, $W_1(\mu,\nu)=\int abs(F_\mu(x)-F_\nu(x))\,dx$ in terms of the CDFs.
+    where $\Gamma(p,q)$ is the set of all joint distributions with marginals $p$ and $q$, and $c(x,y)$ is a cost function. When the cost is the $k$-th power of a metric distance, $c(x,y)=d(x,y)^k$, the optimal transport cost is the $k$-Wasserstein distance:
+    \begin{align}
+        W_k(p,q) = \left(\inf_{\gamma \in \Gamma(p,q)} \E_{(x,y) \sim \gamma}\left[d(x,y)^k\right]\right)^{1/k}.
+    \end{align}
+    For $k=1$ this is the 1-Wasserstein distance, also known as the \emph{Earth Mover's Distance}, which by the Kantorovich--Rubinstein duality can be written as
+    \begin{align}
+        W_1(p,q) = \sup_{f \in F} \left( \underset{X \sim p}{\mathrm{E}}[f(X)] - \underset{Y \sim q}{\mathrm{E}}[f(Y)] \right),
+    \end{align}
+    where $F$ is the set of all 1-Lipschitz functions.
 \end{definition}
+Informally, we try to match the two probabilities by \emph{moving} the first to the latter in the shortest distance, and that distance is defined as the 1-Wasserstein distance.
+
+
+
+    
 
 \begin{example}[Point masses]
     For $\mu=\delta_0$ and $\nu=\delta_3$ on $\mathbb{R}$, the only coupling puts all mass at $(0,3)$, so $W_p(\mu,\nu)=3$ for every $p\geq1$. Wasserstein distance records how far the mass must travel.
@@ -926,6 +1021,10 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
 \end{example}
 
 
+\emph{Applications.} Unlike the divergences above, Wasserstein distance uses the geometry of the underlying space: moving a small mass a short way is cheap, whereas total variation treats any disjoint supports as maximally different. This makes it useful for comparing images and histograms, for distributional $k$-means and barycentres, and for domain adaptation, where the cost of transporting one data distribution to another is minimised. The Wasserstein GAN replaces the GAN discriminator with this distance to obtain a more informative training signal; in natural-language processing the word-mover's distance uses the same idea to compare documents.
+
+
+\subsection{Total variation distance}
 \begin{definition}[Total variation distance]
     For distributions $p$ and $q$, the total variation distance is
     \begin{align}
@@ -955,9 +1054,127 @@ If $\mathbf{A}$ is symmetric, $\nabla_{\mathbf{x}} \mathbf{x}^\top \mathbf{A}\ma
     while the Hellinger distance is about $0.071$. Both are bounded metrics, but they weight tail differences differently.
 \end{example}
 
+\emph{Applications.} Total variation has a direct operational meaning: $\TV(p,q)$ is the largest gap in the probability assigned to any event, so it bounds the difference between the probabilities of any decision rule under $p$ and $q$. It is therefore used to quantify distribution shift, to bound the error of binary hypothesis tests, and to measure how quickly a Markov chain converges to its stationary distribution $\pi$ via $\TV(P^t(x,\cdot),\pi)$. The related total-variation seminorm of an image, which penalises large gradients while preserving edges, is the basis of Rudin--Osher--Fatemi denoising.
 
+
+\subsection{Cosine similarity}
+\begin{definition}[Cosine Similarity]
+    For two non-zero vectors $\mathbf{u}$ and $\mathbf{v}$, the cosine similarity is defined as
+    \begin{align}
+        \cos(\mathbf{u},\mathbf{v}) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\| \|\mathbf{v}\|},
+    \end{align}
+    where $\cdot$ denotes the dot product and $\|\cdot\|$ denotes the Euclidean norm.
+\end{definition}
+
+\begin{example}
+    Consider two vectors $\mathbf{u}=(1,0)$ and $\mathbf{v}=(0,1)$. Then,
+    \begin{align}
+        \cos(\mathbf{u},\mathbf{v}) = \frac{0}{1 \cdot 1} = 0.
+    \end{align}
+    This indicates that the vectors are orthogonal.
+\end{example}
+
+\begin{example}[Parallel vectors]
+    Let $\mathbf{u}=(1,2,3)$ and $\mathbf{v}=(2,4,6)=2\mathbf{u}$. Then
+    \begin{align}
+        \cos(\mathbf{u},\mathbf{v})
+        = \frac{1\cdot2+2\cdot4+3\cdot6}{\sqrt{14}\sqrt{56}}
+        = \frac{28}{28} = 1.
+    \end{align}
+    Cosine similarity is invariant to positive rescaling: $\mathbf{u}$ and
+    $2\mathbf{u}$ point in exactly the same direction. For unit vectors,
+    $\norm{\mathbf{u}-\mathbf{v}}_2^2=2(1-\cos(\mathbf{u},\mathbf{v}))$.
+\end{example}
+
+\begin{example}[Acute and obtuse angles]
+    For $\mathbf{u}=(1,1,0)$ and $\mathbf{v}=(1,0,1)$,
+    \begin{align}
+        \cos(\mathbf{u},\mathbf{v})=\frac{1}{\sqrt2\sqrt2}=\frac12,
+    \end{align}
+    so the angle between them is $60^\circ$. Replacing $\mathbf{v}$ by
+    $-\mathbf{v}$ gives $\cos(\mathbf{u},-\mathbf{v})=-1/2$: the sign records
+    whether the vectors point broadly together or apart, while the magnitude
+    measures the alignment.
+\end{example}
+
+
+\emph{Applications.} Cosine similarity compares direction rather than magnitude, so it is the standard choice for high-dimensional vectors whose scale is not meaningful. It is used to compare TF--IDF document vectors and word or sentence embeddings in information retrieval, to compare user rating profiles in collaborative filtering, and to match face or image embeddings whose norms change with lighting or exposure. The associated \emph{cosine distance} $1-\cos(\mathbf{u},\mathbf{v})$ satisfies $\norm{\hat{\mathbf{u}}-\hat{\mathbf{v}}}_2^2=2(1-\cos(\mathbf{u},\mathbf{v}))$ for the normalised vectors $\hat{\mathbf{u}},\hat{\mathbf{v}}$, so $k$-means on unit-normalised data effectively uses it.
+
+
+\subsection{Hausdorff distance}
+
+\begin{definition}[Hausdorff distance]
+    Let $A$ and $B$ be non-empty compact subsets of a metric space $(X,d)$. The distance from a point $a$ to the set $B$, and the one-sided (directed) distance from $A$ to $B$, are
+    \begin{align}
+        d(a,B) &\defn \inf_{b\in B} d(a,b), &
+        d(A,B) &\defn \sup_{a\in A} d(a,B).
+    \end{align}
+    The \emph{Hausdorff distance}\index{Hausdorff distance} is the larger of the two directed distances:
+    \begin{align}
+        d_H(A,B) &\defn \max\big\{d(A,B),\,d(B,A)\big\}.
+    \end{align}
+    Thus every point of either set lies within $d_H(A,B)$ of the other set, and compactness ensures that some point attains this bound. On non-empty compact sets, $d_H$ is a metric; in particular $d_H(A,B)=0$ if and only if $A=B$. For bounded non-closed sets one applies the definition to their closures, so a zero distance then only forces the closures to coincide.
+\end{definition}
+
+\begin{example}[Two finite point sets]
+    Let $A=\{(0,0),(1,2),(3,1)\}$ and $B=\{(0,1),(3,2),(5,0)\}$ in $\mathbb{R}^2$ with the Euclidean metric. For $A$, the distances to the nearest point of $B$ are $1$, $\sqrt{2}$, and $1$, so $d(A,B)=\sqrt{2}$. For $B$, they are $1$, $1$, and $\sqrt{5}$, so $d(B,A)=\sqrt{5}$ and
+    \begin{align}
+        d_H(A,B)=\sqrt{5}\approx 2.236.
+    \end{align}
+    Figure~\ref{fig:hausdorff-points} shows the nearest-neighbour arrows: the directed distance is the longest arrow from one set to the other, and the Hausdorff distance keeps the longer of the two directions.
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.9]
+    \draw[step=1cm, gray!20, very thin] (-0.5,-0.5) grid (5.5,2.5);
+    \fill[blue] (0,0) circle (3pt);
+    \fill[blue] (1,2) circle (3pt);
+    \fill[blue] (3,1) circle (3pt);
+    \fill[red] (0,1) circle (3pt);
+    \fill[red] (3,2) circle (3pt);
+    \fill[red] (5,0) circle (3pt);
+    \draw[->, blue, dashed] (0,0) -- (0,1);
+    \draw[->, blue, dashed] (1,2) -- (0,1);
+    \draw[->, blue, dashed] (3,1) -- (3,2);
+    \draw[->, red, dashed] (0,1) -- (0,0);
+    \draw[->, red, dashed] (3,2) -- (3,1);
+    \draw[->, red, very thick] (5,0) -- (3,1)
+        node[midway, above, sloped, fill=white, inner sep=1pt] {$\sqrt{5}$};
+    \node[blue, above right] at (1,2) {$A$};
+    \node[red, above right] at (5,0) {$B$};
+\end{tikzpicture}
+\caption{Nearest-neighbour arrows between two point sets. The longest arrow has length $\sqrt{5}$ and realises $d_H(A,B)$.}
+\label{fig:hausdorff-points}
+\end{figure}
+
+\begin{example}[Sensitivity to a single outlier]
+    Let $A=[0,2]\times[0,2]$ be a filled square and let $B=A\cup\{(3,1)\}$ add one point one unit to its right, as in Figure~\ref{fig:hausdorff-outlier}. Every point of $A$ already belongs to $B$, so $d(A,B)=0$. The extra point of $B$ is at distance $1$ from $A$, hence $d(B,A)=1$ and $d_H(A,B)=1$. A single outlier therefore determines the whole distance, even though the two sets overlap almost completely.
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.1]
+    \draw[fill=blue!10, draw=blue, thick] (0,0) rectangle (2,2);
+    \fill[red] (3,1) circle (3pt);
+    \draw[->, red, thick] (3,1) -- (2,1)
+        node[midway, above, fill=white, inner sep=1pt] {$1$};
+    \node[blue] at (1,1) {$A$};
+    \node[red, right, align=left] at (3,1) {extra point\\of $B$};
+\end{tikzpicture}
+\caption{Adding one outlier at distance $1$ makes $d_H(A,B)=1$; the Hausdorff distance measures worst-case, not average, disagreement.}
+\label{fig:hausdorff-outlier}
+\end{figure}
+
+\begin{example}[A finite sample of an interval]
+    Take $A=[0,1]\subset\mathbb{R}$ and the grid $B=\{0,\tfrac14,\tfrac12,\tfrac34,1\}$. Every point of $B$ lies in $A$, so $d(B,A)=0$. A point of $A$ is at most half a grid spacing away from $B$, attained midway between adjacent grid points, so $d(A,B)=1/8$ and $d_H(A,B)=1/8$. More generally, a uniform sample of mesh size $h$ approximates the interval within Hausdorff distance $h/2$.
+\end{example}
+
+\emph{Applications.} Hausdorff distance compares shapes rather than corresponding points, because it does not require the two sets to have the same cardinality or parametrisation. It is used to evaluate image segmentations by measuring the distance from a predicted boundary to the ground-truth boundary, to compare point clouds in 3D registration and LiDAR scanning, and to quantify the error introduced by simplifying a mesh. Its worst-case nature makes it sensitive to isolated errors, as in Figure~\ref{fig:hausdorff-outlier}, so practical loss functions often use a trimmed or averaged (Chamfer) variant instead.
+
+
+\coderef{Code/distance_metrics.ipynb}  
 \coderef{Code/probability_distances.ipynb}
-\coderef{Code/distance_metrics.ipynb}
 \coderef{Code/knn_tutorial.ipynb}
 
 
@@ -2385,27 +2602,37 @@ The theorem does not say that all algorithms are equally good in practice. Real 
 
 
 
-\chapter{Supervised Learning: Foundations}
+\chapter{Supervised Learning}
 \label{ch:supervised}
+
+
+This chapter introduces the supervised-learning problem and the language used
+throughout the rest of the notes. We first formalise labelled data, features and
+targets, and illustrate the range of tasks with examples spanning regression,
+binary classification, multiclass classification and structured output. We then
+define loss functions, risk and empirical risk, which turn ``good prediction''
+into an optimisation problem, and state the empirical risk minimisation
+principle. The first learning algorithm we study is \texorpdfstring{$k$}{k}-nearest
+neighbours: simple, nonparametric, and a useful baseline. The remainder of the
+chapter asks how performance should be measured: training/validation/test splits,
+cross-validation, error metrics, model flexibility, the bias--variance
+decomposition, and the curse of dimensionality. Later chapters instantiate the
+same framework with linear models, trees, kernels and neural networks.
 
 \section{The supervised-learning problem}
 
-Let $\EuScript{X} \subseteq \mathbb{R}^{d}$ be the input space (predictors, independent variables, features) and $\EuScript{Y} \subseteq \mathbb{R}$\footnote{In general, the output space can be in $\mathbb{R}^k$ for some $k \geq 1$.} the output space (response, dependent variable). We observe
+Let $X \subseteq \mathbb{R}^{d}$ be the input space (predictors, independent variables, features) and $Y \subseteq \mathbb{R}$\footnote{In general, the output space can be in $\mathbb{R}^k$ for some $k \geq 1$.} the output space (response, dependent variable). We observe
 the \emph{data set} of labelled pairs
 \begin{align}
-    D = \bigg\{ (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n) \bigg\},
+    D = \bigg\{ (\mathbf{x}^{(1)}, y_1), (\mathbf{x}^{(2)}, y_2), \ldots, (\mathbf{x}^{(n)}, y_n) \bigg\} \subseteq X \times Y,
 \end{align}
-drawn from an unknown joint distribution $\mathscr{D}$ over $\EuScript{X} \times \EuScript{Y}$. The goal is to learn a function
-$f : \EuScript{X} \to \EuScript{Y}$ that predicts $y$ from $\mathbf{x}$ and
-generalises to new observations. 
-
-
-The classical statistical model is
+drawn from an unknown joint distribution $\mathscr{D}$ over $X \times Y$. The goal is to learn a function
+$f : X \to Y$ that predicts $y$ from $\mathbf{x}$ and
+generalises to new observations.  The classical statistical model is
 \begin{align}
     y = f(\mathbf{x}) + \varepsilon,
 \end{align}
-where $f$ is the systematic part and $\varepsilon$ is irreducible noise with
-$\E[\varepsilon]=0$. Even with a perfect estimate of $f$, the noise limits how
+where $f$ is the systematic part and $\varepsilon$ is irreducible noise with average $\mathrm{E}[\varepsilon]=0$. Even with a perfect estimate of $f$, the noise limits how
 accurate any prediction can be.
 
 In supervised learning, the input is represented by a vector
@@ -2421,31 +2648,198 @@ black box.}
 
 \begin{example}[\emph{Age prediction}]
 Given a headshot, predict the person's age. Input: an image; output: a real number.
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm, >=Latex,
+    every node/.style={draw, rounded corners, align=center, font=\small}]
+    \node (img) {headshot\\$64\times64$ pixels};
+    \node[right=of img] (vec) {features\\$\mathbf{x}\in\R^{4096}$};
+    \node[right=of vec] (pred) {predictor\\$f$};
+    \node[right=of pred] (out) {age\\$\hat y\in\R$};
+    \draw[->] (img) -- (vec);
+    \draw[->] (vec) -- (pred);
+    \draw[->] (pred) -- (out);
+\end{tikzpicture}
+\end{center}
+Representative training examples $(\mathbf{x}^{(i)},y_i)$, summarised by two
+features extracted from each image, are:
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Image & Mean intensity & Eye spacing (px) & Age (years) \\
+\midrule
+A & $0.62$ & $28$ & $24$ \\
+B & $0.55$ & $31$ & $47$ \\
+C & $0.68$ & $26$ & $19$ \\
+\bottomrule
+\end{tabular}
+\end{center}
 \end{example}
 
 \begin{example}[\emph{Image captioning}]
 Given an image, produce a description. Input: an image; output: a sequence of words.
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm, >=Latex,
+    every node/.style={draw, rounded corners, align=center, font=\small}]
+    \node (img) {image};
+    \node[right=of img] (vec) {visual features\\$\mathbf{z}\in\R^{512}$};
+    \node[right=of vec] (pred) {sequence model\\$g$};
+    \node[right=of pred] (out) {caption\\$\hat y_{1:T}$};
+    \draw[->] (img) -- (vec);
+    \draw[->] (vec) -- (pred);
+    \draw[->] (pred) -- (out);
+\end{tikzpicture}
+\end{center}
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Image & Detected objects & Target caption \\
+\midrule
+A & dog, grass & ``A dog runs on the grass.'' \\
+B & bus, street & ``A bus drives down a street.'' \\
+C & person, kite & ``A person flies a kite.'' \\
+\bottomrule
+\end{tabularx}
+\end{center}
+Here the output space $Y$ consists of variable-length sequences rather than a
+single number.
 \end{example}
 
 \begin{example}[\emph{Exam grade}]
 Given assignment and participation records, predict the final exam grade.
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm, >=Latex,
+    every node/.style={draw, rounded corners, align=center, font=\small}]
+    \node (rec) {student records};
+    \node[right=of rec] (vec) {features\\assignment, participation};
+    \node[right=of vec] (pred) {regressor\\$f$};
+    \node[right=of pred] (out) {exam grade\\$\hat y\in\R$};
+    \draw[->] (rec) -- (vec);
+    \draw[->] (vec) -- (pred);
+    \draw[->] (pred) -- (out);
+\end{tikzpicture}
+\end{center}
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Student & Assignments & Participation & Exam grade \\
+\midrule
+1 & $88\%$ & $9/10$ & $82$ \\
+2 & $61\%$ & $5/10$ & $58$ \\
+3 & $95\%$ & $10/10$ & $91$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+This is a regression problem: the target is a real-valued score.
 \end{example}
 
 \begin{example}[\emph{Email spam detection}]
-Given an email, predict whether it is spam. Input: text and metadata; output:
-spam/not-spam.
+Given an email, predict whether it is spam. Input: text and metadata; output: spam/not-spam.
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm, >=Latex,
+    every node/.style={draw, rounded corners, align=center, font=\small}]
+    \node (mail) {email};
+    \node[right=of mail] (vec) {word counts\\$+$ metadata};
+    \node[right=of vec] (pred) {classifier\\$f$};
+    \node[right=of pred] (out) {label\\$\hat y\in\{0,1\}$};
+    \draw[->] (mail) -- (vec);
+    \draw[->] (vec) -- (pred);
+    \draw[->] (pred) -- (out);
+\end{tikzpicture}
+\end{center}
+\begin{center}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Email & Count of ``free'' & Number of links & Label \\
+\midrule
+A & $4$ & $12$ & spam \\
+B & $0$ & $1$ & not spam \\
+C & $2$ & $7$ & spam \\
+\bottomrule
+\end{tabular}
+\end{center}
 \end{example}
 
 \begin{example}[\emph{Iris classification}]
 Classify iris flowers into species from petal and sepal measurements.
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm, >=Latex,
+    every node/.style={draw, rounded corners, align=center, font=\small}]
+    \node (flower) {flower};
+    \node[right=of flower] (vec) {measurements\\$\mathbf{x}\in\R^4$};
+    \node[right=of vec] (pred) {classifier\\$f$};
+    \node[right=of pred] (out) {species\\$\hat y\in\{1,2,3\}$};
+    \draw[->] (flower) -- (vec);
+    \draw[->] (vec) -- (pred);
+    \draw[->] (pred) -- (out);
+\end{tikzpicture}
+\end{center}
+\begin{center}
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+Sepal length & Sepal width & Petal length & Petal width & Species \\
+\midrule
+$5.1$ & $3.5$ & $1.4$ & $0.2$ & setosa \\
+$6.4$ & $3.2$ & $4.5$ & $1.5$ & versicolor \\
+$6.3$ & $3.3$ & $6.0$ & $2.5$ & virginica \\
+\bottomrule
+\end{tabular}
+\end{center}
+All measurements are in centimetres; this is a three-class problem.
 \end{example}
 
 \begin{example}[\emph{Sentiment analysis}]
 Given a piece of text, predict positive, negative, or neutral sentiment.
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm, >=Latex,
+    every node/.style={draw, rounded corners, align=center, font=\small}]
+    \node (text) {text};
+    \node[right=of text] (vec) {features\\token counts};
+    \node[right=of vec] (pred) {classifier\\$f$};
+    \node[right=of pred] (out) {sentiment\\$\hat y$};
+    \draw[->] (text) -- (vec);
+    \draw[->] (vec) -- (pred);
+    \draw[->] (pred) -- (out);
+\end{tikzpicture}
+\end{center}
+\begin{center}
+\begin{tabularx}{\textwidth}{@{}lXX@{}}
+\toprule
+Text snippet & Informative tokens & Label \\
+\midrule
+``The film was delightful.'' & delightful & positive \\
+``It was dull and too long.'' & dull, long & negative \\
+``The film was released today.'' & released & neutral \\
+\bottomrule
+\end{tabularx}
+\end{center}
 \end{example}
 
 \begin{example}[\emph{Handwritten digits}]
 Given an image of a digit, predict which digit it is.
+\begin{center}
+\begin{tikzpicture}[node distance=0.9cm, >=Latex,
+    every node/.style={draw, rounded corners, align=center, font=\small}]
+    \node (img) {digit image\\$28\times28$};
+    \node[right=of img] (vec) {pixels\\$\mathbf{x}\in\R^{784}$};
+    \node[right=of vec] (pred) {classifier\\$f$};
+    \node[right=of pred] (out) {digit\\$\hat y\in\{0,\ldots,9\}$};
+    \draw[->] (img) -- (vec);
+    \draw[->] (vec) -- (pred);
+    \draw[->] (pred) -- (out);
+\end{tikzpicture}
+\end{center}
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Image & Centre-pixel intensity & True digit \\
+\midrule
+A & $0.00$ & $0$ \\
+B & $0.94$ & $1$ \\
+C & $0.76$ & $7$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+This is a ten-class classification problem.
 \end{example}
 
 \section{Loss functions, risk, and empirical risk}
@@ -2456,7 +2850,10 @@ To say what a \emph{good} prediction is, we need a loss function $\ell(y,\hat{y}
 \end{align}
 and the zero-one loss for classification, 
 \begin{align}
-    \ell(y,\hat{y})=\mathbf{1}_{\{y \neq \hat{y}\}}.
+    \ell(y,\hat{y})&=\begin{cases}
+        1, &\text{if $y \neq \hat{y}$},\\
+        0, &\text{otherwise}.
+    \end{cases}
 \end{align}
 \begin{definition}
 The \emph{risk} of a predictor $f$ is the expected loss under the data distribution:
@@ -2465,19 +2862,87 @@ The \emph{risk} of a predictor $f$ is the expected loss under the data distribut
 \end{align}
 The \emph{empirical risk} is defined as 
 \begin{align}
-    \hat{\risk}_n(f) \defn \frac{1}{n}\sum_{i=1}^n \ell(y_i, f(\mathbf{x}^{(i)})).
+    \widehat{\risk}_n(f) \defn \frac{1}{n}\sum_{i=1}^n \ell(y_i, f(\mathbf{x}^{(i)})).
 \end{align}
 \end{definition}
 \begin{example}[Squared error]
-    For squared-error loss and a linear predictor $f(\mathbf{x})=\mathbf{x}^\top\boldsymbol{\beta}$, the risk $\risk(f)=\mathrm{E}[(y-f(\mathbf{x}))^2]$ is the mean squared error; its empirical counterpart is $\hat\risk_n(f)=\frac1n\sum_i(y_i-f(\mathbf{x}^{(i)}))^2$.
+    For squared-error loss and a linear predictor 
+    \begin{align}
+        f(\mathbf{x})=\mathbf{x}^\top\boldsymbol{\beta},
+    \end{align}
+    the risk 
+    \begin{align}
+        \risk(f)=\mathrm{E}[(y-f(\mathbf{x}))^2]
+    \end{align}
+    is the mean squared error; its empirical counterpart is 
+    \begin{align}
+        \widehat\risk_n(f)=\frac1n\sum_i(y_i-f(\mathbf{x}^{(i)}))^2.
+    \end{align}
+    For example, let $n=3$, $f(x)=2x+1$ and take the data below.
+    \begin{center}
+    \begin{tabular}{@{}cccc@{}}
+        \toprule
+        $x_i$ & $y_i$ & $f(x_i)$ & $(y_i-f(x_i))^2$ \\
+        \midrule
+        $1$ & $4$ & $3$ & $1$ \\
+        $2$ & $6$ & $5$ & $1$ \\
+        $3$ & $7$ & $7$ & $0$ \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    The squared errors sum to $2$, so
+    $\widehat\risk_3(f)=2/3\approx0.667$. The empirical risk is just the
+    average of the last column; the true risk $\risk(f)$ replaces that average
+    with an expectation over the unknown distribution $\mathscr{D}$.
 \end{example}
 
 \begin{example}[Zero-one loss]
-    For zero-one loss, $\risk(f)=\Pr(y\neq f(\mathbf{x}))$ is the misclassification probability, while $\hat\risk_n(f)$ is the fraction of errors on the training set.
+    For zero-one loss, 
+    \begin{align}
+        \risk(f)=\Pr(y\neq f(\mathbf{x}))
+    \end{align}
+    is the misclassification probability, while $\hat\risk_n(f)$ is the fraction of errors on the training set.
+    \begin{center}
+    \begin{tabular}{@{}cccc@{}}
+        \toprule
+        $i$ & $y_i$ & $f(\mathbf{x}^{(i)})$ & $\mathbf{1}_{\{y_i\neq f(\mathbf{x}^{(i)})\}}$ \\
+        \midrule
+        $1$ & $0$ & $0$ & $0$ \\
+        $2$ & $1$ & $1$ & $0$ \\
+        $3$ & $0$ & $1$ & $1$ \\
+        $4$ & $1$ & $1$ & $0$ \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    On these $n=4$ examples there is one mistake, so
+    $\hat\risk_4(f)=1/4=0.25$: the empirical misclassification rate. If these
+    data are representative of $\mathscr{D}$, this estimates
+    $\Pr(y\neq f(\mathbf{x}))$.
 \end{example}
 
 \begin{example}[Irreducible noise]
-    If $y=f^*(\mathbf{x})+\varepsilon$ with $\mathrm{E}[\varepsilon]=0$ and $\mathrm{Var}(\varepsilon)=\sigma^2$, then even the true predictor has risk $\risk(f^*)=\sigma^2$: the irreducible noise floor.
+    If 
+    \begin{align}
+        y=f^*(\mathbf{x})+\varepsilon
+    \end{align}
+    with $\mathrm{E}[\varepsilon]=0$ and $\mathrm{Var}(\varepsilon)=\sigma^2$, then even the true predictor has risk $\risk(f^*)=\sigma^2$: the irreducible noise floor.
+    Take $f^*(x)=2x$ and let $\varepsilon$ be $-1$ or $+1$ with equal
+    probability, so $\sigma^2=1$. One realisation of $n=4$ observations is:
+    \begin{center}
+    \begin{tabular}{@{}ccccc@{}}
+        \toprule
+        $x_i$ & $f^*(x_i)$ & $\varepsilon_i$ & $y_i$ & $(y_i-f^*(x_i))^2$ \\
+        \midrule
+        $1$ & $2$ & $-1$ & $1$ & $1$ \\
+        $2$ & $4$ & $+1$ & $5$ & $1$ \\
+        $3$ & $6$ & $-1$ & $5$ & $1$ \\
+        $4$ & $8$ & $+1$ & $9$ & $1$ \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    Even with the correct predictor, every squared error equals $\sigma^2=1$ and
+    $\hat\risk_4(f^*)=1$. More data cannot remove this floor; it only helps us
+    estimate $f^*$ more accurately.
 \end{example}
 
 
@@ -2668,18 +3133,80 @@ The \emph{decision boundary} is the boundary between regions of input space assi
 
 \begin{example}[Two moons]
     The two-moons\index{two moons} dataset is a classic synthetic benchmark in machine learning and data science consisting of two interleaving half-circle shapes in a 2D plane. Each moon is one class: the points of one moon form a crescent that wraps around the other, so the two classes cannot be separated by a straight line. This makes it a good test for classifiers that can learn non-linear decision boundaries, such as kernel methods or neural networks.
+    A few representative points are:
+    \begin{center}
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        Point & $x_1$ & $x_2$ & Class \\
+        \midrule
+        A & $1.00$ & $0.00$ & $0$ \\
+        B & $0.00$ & $1.00$ & $0$ \\
+        C & $-1.00$ & $0.00$ & $0$ \\
+        D & $1.00$ & $-0.50$ & $1$ \\
+        E & $0.00$ & $-1.50$ & $1$ \\
+        F & $-1.00$ & $-0.50$ & $1$ \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    Class $0$ lies on the upper semicircle of radius $1$ centred at the origin;
+    class $1$ lies on the lower semicircle of radius $1$ centred at $(0,-0.5)$.
+    No straight line separates the two classes.
 \end{example}
 
 \begin{example}[Image Classification Datasets: MNIST]
     MNIST is a classic handwritten-digit dataset: 10 classes (digits 0 to 9), each image is $28\times28$ grayscale, and the standard split is 50k training images and 10k test images. Despite its small size by modern standards, MNIST remains a common first benchmark because it is easy to load, quick to train on, and illustrates the whole image-classification pipeline.
+    Each example is a pair $(\mathbf{x},y)$ with $\mathbf{x}\in[0,1]^{784}$ and
+    $y\in\{0,\ldots,9\}$. Four pixel values from three typical images are:
+    \begin{center}
+    \begin{tabular}{@{}lccccc@{}}
+        \toprule
+        Image & $x_{13,13}$ & $x_{13,14}$ & $x_{14,13}$ & $x_{14,14}$ & Label \\
+        \midrule
+        A & $0.00$ & $0.21$ & $0.00$ & $0.00$ & $0$ \\
+        B & $0.94$ & $0.88$ & $0.00$ & $0.00$ & $1$ \\
+        C & $0.76$ & $0.81$ & $0.12$ & $0.03$ & $7$ \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    A digit $0$ is dark around the boundary and light in the centre, while $1$
+    has a bright vertical stroke near the middle.
 \end{example}
 
 \begin{example}[Image Classification Datasets: ImageNet]
     ImageNet is a large-scale image-classification benchmark with 1000 classes. The standard version (ILSVRC) contains roughly 1.3M training images (about 1.3K per class), 50K validation images (50 per class), and 100K test images (100 per class). Its size and diversity made it the key driver of the deep-learning revolution in computer vision beginning around 2012.
+    A single validation example has the following structure:
+    \begin{center}
+    \begin{tabular}{@{}llll@{}}
+        \toprule
+        Image id & Input $\mathbf{x}$ & True class $y$ & Prediction $\hat y$ \\
+        \midrule
+        A & $224\times224\times3$ & \texttt{tabby\ cat} & \texttt{tabby\ cat} \\
+        B & $224\times224\times3$ & \texttt{sports\ car} & \texttt{sports\ car} \\
+        C & $224\times224\times3$ & \texttt{banana} & \texttt{orange} \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    Under top-1 accuracy, images A and B score $1$ and image C scores $0$;
+    top-5 accuracy also counts a prediction if the true class appears among the
+    five most likely classes.
 \end{example}
 
 \begin{example}[IRIS]
     The IRIS dataset is one of the most famous small datasets in statistics and machine learning. It contains 150 measurements of iris flowers: 50 from each of three species (setosa, versicolor, virginica). For each flower it records four features---sepal length, sepal width, petal length, and petal width---in centimetres. It is often used to teach classification, clustering, and data visualisation because it is small, easy to understand, and exhibits clear structure.
+    A representative training set is:
+    \begin{center}
+    \begin{tabular}{@{}ccccc@{}}
+        \toprule
+        Sepal length & Sepal width & Petal length & Petal width & Species \\
+        \midrule
+        $5.1$ & $3.5$ & $1.4$ & $0.2$ & setosa \\
+        $6.4$ & $3.2$ & $4.5$ & $1.5$ & versicolor \\
+        $6.3$ & $3.3$ & $6.0$ & $2.5$ & virginica \\
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    Setosa has short, narrow petals and is linearly separable; versicolor and
+    virginica overlap, so a perfect classifier is impossible.
 \end{example}
 
 
@@ -2999,6 +3526,29 @@ $\mathbf{x}$ decomposes as
     + \underbrace{\sigma^2}_{\text{irreducible noise}}.
 \end{align}
 The expectation is over the randomness of the training set and the noise.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=0.72\textwidth, height=5.5cm,
+    xlabel={model flexibility}, ylabel={expected squared error},
+    domain=0:10, samples=100,
+    xmin=0, xmax=10, ymin=0, ymax=18,
+    xtick=\empty, ytick={0,5,10,15},
+    legend pos=north east, legend cell align=left
+]
+\addplot[thick, blue] {16/(x+1)};
+\addlegendentry{bias$^2$}
+\addplot[thick, orange] {0.5*x};
+\addlegendentry{variance}
+\addplot[thick, black, dashed] {16/(x+1)+0.5*x+1};
+\addlegendentry{test error}
+\end{axis}
+\end{tikzpicture}
+\caption{As model flexibility grows, squared bias falls and variance rises; their sum plus irreducible noise is minimised at an intermediate complexity.}
+\label{fig:bias-variance}
+\end{figure}
 
 Generally, more flexible methods have more variance and less bias; less flexible
 methods have more bias and less variance. The best method for a task balances the two
@@ -3993,7 +4543,7 @@ Unsupervised learning seeks structure in unlabelled data. The two dominant tasks
 \emph{clustering} (grouping similar observations) and \emph{dimensionality reduction}
 (representing data with fewer coordinates while preserving important structure).
 
-\section{K-means clustering}
+\section{\texorpdfstring{$k$}{k}-means clustering}
 
 K-means partitions $n$ observations into $K$ clusters by minimising the within-cluster
 sum of squares:
@@ -4664,6 +5214,8 @@ A reliable baseline workflow is:
 
 \begin{enumerate}
     \item \href{https://womeninaisafety.toronto.acm.org/}{Women in AI Safety}.
+    \item  NeurIPS, ICML, ICLR, UAI.
+    \item 
 \end{enumerate}
 
 \section{Technologies}

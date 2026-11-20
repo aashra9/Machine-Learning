@@ -5,7 +5,7 @@ import pytest
 nbformat = pytest.importorskip("nbformat")
 
 
-NOTEBOOKS = sorted((Path(__file__).resolve().parents[1] / "Code").glob("*.ipynb"))
+NOTEBOOKS = sorted((Path(__file__).resolve().parents[1] / "Code").rglob("*.ipynb"))
 
 
 @pytest.mark.parametrize("path", NOTEBOOKS, ids=lambda p: p.name)

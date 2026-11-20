@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 ACTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # up, down, left, right
 ACTION_NAMES = ["up", "down", "left", "right"]

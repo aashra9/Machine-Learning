@@ -1,8 +1,6 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pytest
-
-import matplotlib.pyplot as plt
-
 from knn_utils import (
     best_row,
     build_knn_pipeline,
@@ -13,7 +11,7 @@ from knn_utils import (
     plot_k_curve,
     tune_k,
 )
-from plotting_utils import decision_grid, score_grid, plot_score_boundary
+from plotting_utils import decision_grid, plot_score_boundary, score_grid
 
 
 def test_build_knn_pipeline() -> None:
@@ -85,8 +83,9 @@ def test_synthetic_images_and_distance_concentration() -> None:
 def test_distance_concentration_excludes_self_matches() -> None:
     X = np.eye(4) * 10.0
     stats = distance_concentration(X, n_query=4)
-    assert stats["mean_nearest"] > 0.0
-    assert 0.0 < stats["ratio"] < 1.0
+    assert stats["mean_nearest"] == pytest.approx(10.0 * np.sqrt(2))
+    assert stats["mean_farthest"] == pytest.approx(10.0 * np.sqrt(2))
+    assert stats["ratio"] == pytest.approx(1.0)
 
 
 def test_plot_image_gallery_accepts_single_axes_for_one_image() -> None:

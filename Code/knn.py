@@ -12,16 +12,14 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.axes import Axes
-
-from sklearn.datasets import load_iris, make_classification
-from sklearn.metrics import accuracy_score, ConfusionMatrixDisplay
-from sklearn.model_selection import train_test_split
-
+import numpy as np
 from knn_utils import best_row, build_knn_pipeline, plot_k_curve, tune_k
+from matplotlib.axes import Axes
 from plotting_utils import decision_grid
+from sklearn.datasets import load_iris, make_classification
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score
+from sklearn.model_selection import train_test_split
 
 
 def pairwise_distances(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
@@ -52,7 +50,7 @@ class KNNClassifier:
         self.y_train: np.ndarray | None = None
         self.classes_: np.ndarray | None = None
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "KNNClassifier":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> KNNClassifier:
         X = np.asarray(X, dtype=float)
         y = np.asarray(y)
         if len(X) != len(y):

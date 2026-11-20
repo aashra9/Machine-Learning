@@ -10,11 +10,15 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 from sklearn.linear_model import (
-    ElasticNetCV, Lasso, LassoCV, LinearRegression, Ridge, RidgeCV,
+    ElasticNetCV,
+    Lasso,
+    LassoCV,
+    LinearRegression,
+    Ridge,
+    RidgeCV,
 )
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split

@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.axes import Axes
 
 

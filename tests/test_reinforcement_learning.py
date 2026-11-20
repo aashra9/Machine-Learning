@@ -1,8 +1,11 @@
 import numpy as np
 import pytest
-
 from reinforcement_learning import (
-    GridWorld, epsilon_greedy, q_learning, sarsa, td_learning,
+    GridWorld,
+    epsilon_greedy,
+    q_learning,
+    sarsa,
+    td_learning,
 )
 
 

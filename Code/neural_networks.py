@@ -11,17 +11,15 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.axes import Axes
-
+from plotting_utils import plot_score_boundary
 from sklearn.datasets import make_moons
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
-
-from plotting_utils import plot_score_boundary
 
 
 def _check_fitted(model: object, attributes: tuple[str, ...]) -> None:
@@ -44,7 +42,7 @@ class Perceptron:
         self.bias = 0.0
         self.classes_: np.ndarray | None = None
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "Perceptron":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> Perceptron:
         X = np.asarray(X, dtype=float)
         y = np.asarray(y).ravel()
         if not set(np.unique(y)).issubset({0, 1, -1}):
@@ -105,7 +103,7 @@ class MLP:
         z2 = a1 @ self.W2 + self.b2
         return self._sigmoid(z2), a1
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "MLP":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> MLP:
         X = np.asarray(X, dtype=float)
         y = np.asarray(y, dtype=float).ravel()
         if len(X) != len(y):

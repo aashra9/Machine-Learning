@@ -8,7 +8,7 @@ companions.
 ```
 .
 ├── .gitignore                       # LaTeX + Python build artifacts
-├── .github/workflows/ci.yml         # pytest + ruff on Python 3.10-3.12
+├── .github/workflows/ci.yml         # pytest + ruff + LaTeX build on Python 3.10-3.12
 ├── compose.yml                      # opencode / kilo dev containers
 ├── Makefile                         # install, test, lint, format, notebooks
 ├── pyproject.toml                   # dependencies, pytest and ruff config
@@ -32,7 +32,8 @@ companions.
 │   ├── plotting_utils.py            # Shared decision-boundary plotting
 │   ├── mnist_supervised.py          # MNIST classifier comparison script
 │   ├── requirements.txt
-│   ├── calculus.ipynb               # Derivatives, integrals, Jacobians, optimisation
+│   ├── Mathematical Background/
+│   │   └── calculus.ipynb           # Derivatives, integrals, Jacobians, optimisation
 │   ├── voronoi_diagram.ipynb        # Voronoi cells and 1-NN decision boundaries
 │   ├── distance_metrics.ipynb       # All nine metrics: points, strings, sets, distributions
 │   ├── probability_distances.ipynb  # Hellinger, Wasserstein, total variation
@@ -51,7 +52,7 @@ companions.
 │   ├── knn_lemons_oranges.ipynb     # k-NN on a synthetic/real citrus image set
 │   └── mnist_supervised.ipynb       # Notebook version of the MNIST example
 ├── tests/                           # pytest suite for pure helpers and notebooks
-└── Lecture Notes/
+└── Lecture-Notes/
     ├── Lectures/
     │   ├── Lectures.tex             # Main notes document
     │   ├── latexmkrc                # latexmk configuration
@@ -64,10 +65,10 @@ companions.
 
 ## LaTeX notes
 
-Compile with `latexmk` from `Lecture Notes/Lectures/`:
+Compile with `latexmk` from `Lecture-Notes/Lectures/`:
 
 ```bash
-cd "Lecture Notes/Lectures"
+cd "Lecture-Notes/Lectures"
 latexmk -pdf Lectures.tex
 ```
 
@@ -117,13 +118,17 @@ exits cleanly.
 
 ## Notebooks
 
+Notebook outputs are intentionally not committed. Clear them before committing
+with `jupyter nbconvert --ClearOutputPreprocessor.enabled=True --inplace Code/<notebook>.ipynb`.
+
 Open any notebook with Jupyter from the repository root:
 
 ```bash
 jupyter notebook Code/knn_tutorial.ipynb
 ```
 
-- `calculus.ipynb` — numerical derivatives, Riemann sums, Jacobians, optimisation.
+- `Mathematical Background/calculus.ipynb` — numerical derivatives, Riemann sums,
+  Jacobians, optimisation.
 - `voronoi_diagram.ipynb` — builds Voronoi diagrams and shows that 1-NN decision
   boundaries are exactly the edges between differently labelled cells.
 - `distance_metrics.ipynb` — detailed tour of all nine metrics in the notes:
@@ -190,7 +195,7 @@ ruff check Code tests
 Or use the Makefile shortcuts: `make install`, `make test`, `make lint`,
 `make format`. The pytest suite covers the pure numeric helpers, input
 validation, and `nbformat.validate` on every notebook. GitHub Actions runs the
-same checks on Python 3.10, 3.11 and 3.12.
+same checks on Python 3.10, 3.11 and 3.12, and also compiles the LaTeX notes.
 
 `compose.yml` provides two development containers (`opencode` and `kilo`) with
 the repository mounted at `/workspace`:

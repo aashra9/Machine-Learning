@@ -1,8 +1,7 @@
 import numpy as np
 import pytest
-from scipy.stats import multivariate_normal
-
 from probabilistic_models import GaussianMixtureEM, log_gaussian, viterbi
+from scipy.stats import multivariate_normal
 
 
 def test_log_gaussian_matches_scipy() -> None:

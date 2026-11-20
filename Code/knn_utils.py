@@ -12,16 +12,15 @@ import time
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.axes import Axes
-
 from sklearn.datasets import fetch_openml, load_digits
 from sklearn.decomposition import PCA
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 
@@ -196,7 +195,7 @@ def plot_image_gallery(
                 current.imshow(images[idx[col]].reshape(image_shape),
                                cmap="gray", vmin=0, vmax=1)
                 current.set_title(f"{cls}", fontsize=9)
-    axes.flat[0].figure.suptitle(title, fontsize=10, loc="left")
+    axes.flat[0].figure.suptitle(title, fontsize=10, x=0.01, ha="left")
     return ax
 
 
@@ -302,7 +301,13 @@ def distance_concentration(
     all_distances = np.linalg.norm(X[:, None, :] - queries[None, :, :], axis=2)
     all_distances[query_idx, np.arange(len(query_idx))] = np.inf
     nearest = all_distances.min(axis=0)
-    farthest = all_distances.max(axis=0)
+    # Self-matches are excluded from both statistics; including the infinities
+    # here would make the farthest distance infinite whenever every point is a query.
+    farthest = np.where(np.isinf(all_distances), -np.inf, all_distances).max(axis=0)
+    # A single-point dataset has no non-self neighbour, so report zero distances.
+    no_neighbour = ~np.isfinite(farthest)
+    nearest = np.where(no_neighbour, 0.0, nearest)
+    farthest = np.where(no_neighbour, 0.0, farthest)
     return {
         "mean_nearest": float(nearest.mean()),
         "mean_farthest": float(farthest.mean()),

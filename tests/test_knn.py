@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from knn import KNNClassifier, pairwise_distances
 
 

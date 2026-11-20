@@ -10,14 +10,17 @@ from __future__ import annotations
 
 import argparse
 
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 from sklearn.datasets import load_breast_cancer
 from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import (
-    GridSearchCV, LeaveOneOut, StratifiedKFold, cross_val_score, learning_curve,
+    GridSearchCV,
+    LeaveOneOut,
+    StratifiedKFold,
+    cross_val_score,
+    learning_curve,
     train_test_split,
 )
 from sklearn.pipeline import Pipeline, make_pipeline
@@ -54,8 +57,9 @@ def inject_missing(
         observed = int(np.sum(~mask[:, col]))
         while observed < min_observations_per_column:
             row = int(rng.integers(result.shape[0]))
-            mask[row, col] = False
-            observed += 1
+            if mask[row, col]:  # only count a row that was actually restored
+                mask[row, col] = False
+                observed += 1
     result[mask] = np.nan
     return result
 

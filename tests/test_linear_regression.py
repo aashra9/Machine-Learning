@@ -1,6 +1,5 @@
 import numpy as np
 import pytest
-
 from linear_regression import (
     adjusted_r2,
     bootstrap_ci_coefficients,
