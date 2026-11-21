@@ -92,6 +92,7 @@ PDF & Probability Density Function \\
 PGM & Probabilistic Graphic Models \\  
 PSD & positive semidefinite \\
 SAD & Sum of Absolute Differences \\
+SVM & Support Vector Machines \\
 TV & Total Variation \\
 \bottomrule
 \end{tabular}
@@ -2325,6 +2326,15 @@ Some nice videos can be found \href{https://www.youtube.com/watch?v=KHVR587oW8I}
 \chapter{Introduction}
 \label{ch:intro}
 
+\begin{epigraph}
+    {O, what learning is!}{William Shakespeare, Romeo and Juliet}
+\end{epigraph}
+
+
+\begin{epigraph}
+    {Learning and intelligence are intimately related to each other. It is usually agreed that a system capable of learning deserves to be called intelligent; and conversely, a system being considered as intelligent is, among other things, usually expected to be able to learn. Learning always has to do with the self- improvement of future behaviour based on past experience.}{Sandip Sen and Gerhard Weiss, Learning in Multiagent Systems}
+\end{epigraph}
+
 What does it mean to learn? The dictionary definition is the activity or process of
 gaining knowledge or skill by studying, practicing, being taught, or experiencing
 something. The operational definition used in this course is Mitchell's:
@@ -3060,6 +3070,9 @@ The \emph{decision boundary} is the boundary between regions of input space assi
     Setosa has short, narrow petals and is linearly separable; versicolor and
     virginica overlap, so a perfect classifier is impossible.
 \end{example}
+
+
+\section{}
 
 \section{Assessing model performance}
 
@@ -4025,12 +4038,15 @@ validation and test data. If the missingness itself is informative, add a
 \section{Maximum-margin classification}
 
 For linearly separable binary data with labels $y_i \in \{-1,+1\}$, a hyperplane
-$\mathbf{w}^\top\mathbf{x}+b=0$ classifies correctly if
-$y_i(\mathbf{w}^\top\mathbf{x}^{(i)}+b) > 0$ for all $i$. Among all separating
-hyperplanes, the support vector machine chooses the one with the largest \emph{margin}:
-the distance from the hyperplane to the closest training points. The geometric margin
-is $2/\norm{\mathbf{w}}$, so maximising the margin is equivalent to minimising
-$\norm{\mathbf{w}}$.
+\begin{align}
+    \mathbf{w}^\top\mathbf{x}+b=0
+\end{align}
+classifies correctly if
+\begin{align}
+    y_i(\mathbf{w}^\top\mathbf{x}^{(i)}+b) > 0
+\end{align}
+for all $i$. Among all separating hyperplanes, the support vector machine chooses the one with the largest \emph{margin}: the distance from the hyperplane to the closest training points. The geometric margin
+is $\dfrac{2}{\norm{\mathbf{w}}}$, so maximising the margin is equivalent to minimising $\norm{\mathbf{w}}$.
 
 \begin{figure}[htbp]
 \centering
@@ -4050,10 +4066,20 @@ $\norm{\mathbf{w}}$.
 \node[right] at (5.25,2.7) {margin};
 \draw[<->] (4.7,1.35) -- (4.7,2.65);
 \end{tikzpicture}
-\caption{Schematic of a maximum-margin classifier. The circled points are support
-vectors; they alone determine the boundary.}
+\caption{Schematic of a maximum-margin classifier.}
 \label{fig:svm}
 \end{figure}
+
+
+\begin{example}
+    \todo{insert a concrete example with small table of data points and graphs.}
+\end{example}
+
+
+\begin{example}
+    \todo{insert another concrete example with small table of data points and graphs.}
+\end{example}
+
 
 \section{Hard-margin primal problem}
 
@@ -5013,11 +5039,9 @@ A reliable baseline workflow is:
 \section{Books}
 
 \begin{enumerate}
-    \item \emph{An Introduction to Statistical Learning with Applications in R}
-    \cite{james2021introduction}. Accessible first text; strong on regression,
-    classification, resampling, and trees.
+    \item \emph{An Introduction to Statistical Learning with Applications in R}\cite{james2021introduction}. Accessible first text; strong on regression, classification, resampling, and trees. It has a dedicated URL \url{https://www.statlearning.com/}.
     \item \emph{The Elements of Statistical Learning}
-    \cite{hastie2009elements}. The more theoretical companion to the previous book.
+    \cite{hastie2009elements}. The more theoretical companion to the previous book. See \url{https://hastie.su.domains/ElemStatLearn/}.
     \item \emph{Pattern Recognition}
     \cite{theodoridis2006pattern}. Broad coverage with a probabilistic emphasis.
     \item \emph{Information Theory, Inference, and Learning Algorithms}
